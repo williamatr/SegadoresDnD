@@ -1,0 +1,20 @@
+{
+  "name": "segadores-dnd-monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Monorepo para SegadoresDnD - Wiki de campaña y gestor interactivo de personajes",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "clean": "turbo run clean"
+  },
+  "devDependencies": {
+    "turbo": "^2.0.0"
+  },
+  "packageManager": "pnpm@9.0.0"
+}

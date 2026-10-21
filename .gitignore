@@ -1,0 +1,44 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Testing & Coverage
+coverage/
+
+# Next.js & Turborepo build outputs
+.next/
+out/
+build/
+dist/
+.turbo/
+
+# Environment variables
+.env
+.env*.local
+!.env.example
+
+# Debug and package manager logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Operating System files
+.DS_Store
+Thumbs.db
+
+# Local symlinks & absolute vault links (avoids broken links on Vercel CI)
+ObsidianDnD
+
+# Obsidian local workspace and cache (preserve notes, ignore client UI state)
+.obsidian/workspace*
+.obsidian/cache/
+
+# Editor directories and files
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

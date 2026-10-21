@@ -1,0 +1,9 @@
+{
+  "name": "@segadores/dnd-core",
+  "version": "0.1.0",
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "scripts": {
+    "lint": "eslint ."
+  }
+}
