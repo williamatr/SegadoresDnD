@@ -2,11 +2,10 @@
 
 Sitio web privado para campaña de Dungeons & Dragons con wiki integrada desde Obsidian y gestor interactivo de hojas de personaje.
 
-## 📖 Especificación Técnica y Arquitectura
+## 📖 Documentación del Proyecto
 
-Para consultar la arquitectura completa, stack tecnológico, flujo de datos, esquema de base de datos y lineamientos de desarrollo para colaboradores y modelos de IA, consulta:
-
-👉 **[PROJECT_SPEC.md](./PROJECT_SPEC.md)**
+* 👉 **[PROJECT_SPEC.md](./PROJECT_SPEC.md)**: Arquitectura completa, stack tecnológico, contratos de datos y roadmap.
+* 👉 **[SYSTEM_SPECS.md](./SYSTEM_SPECS.md)**: Especificaciones del sistema del usuario (Arch Linux, KDE Wayland, AUR con `yay`, etc.).
 
 ## 🚀 Resumen del Stack
 
