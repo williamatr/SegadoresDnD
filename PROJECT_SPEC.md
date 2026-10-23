@@ -67,7 +67,35 @@ Cada paquete dentro de `packages/` es **100% independiente de la infraestructura
 * **Cero acoplamiento al sistema de archivos:** `obsidian-engine` no lee discos duros directamente; recibe strings de Markdown y devuelve componentes o árboles AST procesados.
 * **Cualquier consumidor puede reutilizarlos:** Tanto tu app privada como un tercero en internet pueden instanciar `<CharacterSheet data={miObjetoJson} />` y el componente funcionará inmediatamente.
 
-### 3.2. Estructura del Repositorio (Monorepo)
+### 3.2. Estrategia de Dos Repositorios: Separación de Código y Contenido (Git Submodules)
+
+Para garantizar la protección de derechos de autor (WotC) y permitir que el código sirva como portafolio público, se adopta una arquitectura de **dos repositorios separados**:
+
+> [!WARNING] Incompatibilidad de Enlaces Simbólicos (Symlinks)
+> Los enlaces simbólicos de Linux (`ln -s`) no son viables para despliegue en la nube. Git solo almacena el puntero de texto hacia la ruta local absoluta (`/home/william/...`), la cual no existe en los contenedores de compilación de Vercel, provocando fallos de compilación o carpetas vacías.
+
+```text
+┌──────────────────────────────────────────────────┐      ┌──────────────────────────────────────────────┐
+│  REPOSITORIO 1: segadores-dnd (Código / PÚBLICO) │      │  REPOSITORIO 2: dnd-lore (Contenido / PRIVADO)│
+│  - Monorepo (Next.js, TypeScript, Turborepo)     │      │  - Bóveda de Obsidian (Markdown, imágenes)   │
+│  - Paquetes agnósticos reutilizables             │ <─── │  - Material de campañas y libros de D&D      │
+│  - Portafolio visible para reclutadores          │      │  - Sincronización manual con Git (PC/móvil)  │
+│  - Vincula a REPO 2 como Git Submodule           │      │                                              │
+└──────────────────────────────────────────────────┘      └──────────────────────────────────────────────┘
+```
+
+1. **Repositorio de Código (`segadores-dnd`):**
+   * Contiene toda la lógica técnica, componentes y configuración de Vercel.
+   * Puede ser **público** para lucir en el portafolio profesional.
+   * Contiene el submódulo de Git en `content/wiki/`.
+2. **Repositorio de Lore / Obsidian (`dnd-lore`):**
+   * Contiene exclusivamente las notas Markdown de la campaña y contenido de D&D.
+   * Es **100% privado** para cumplir con la protección de material con derechos.
+   * **Sincronización:** El DM realiza los commits y push **manualmente vía Git** (tanto desde la terminal en Arch Linux como desde el móvil), sin necesidad de plugins automáticos adicionales.
+3. **Compilación en Vercel:**
+   * Vercel clona el repositorio principal e inicializa el submódulo privado (`git submodule update --init --recursive`) mediante permisos de GitHub Deploy Keys o acceso de cuenta.
+
+### 3.3. Estructura del Repositorio (Monorepo)
 ```text
 SegadoresDnD/
 ├── apps/
@@ -78,26 +106,31 @@ SegadoresDnD/
 │   │
 │   └── web-personal/            # (Futuro) Portafolio público consumiendo los mismos paquetes
 │
+├── content/
+│   └── wiki/                    # 📁 GIT SUBMODULE -> Repositorio Privado de Notas Obsidian
+│
 ├── packages/
 │   ├── dnd-core/                # TypeScript puro: fórmulas, modificadores, tiradas de dados
 │   ├── character-sheet/         # React + Tailwind: componentes UI de hojas de personaje
 │   ├── obsidian-engine/         # Parser de Markdown, wikilinks [[...]], callouts y frontmatter
 │   └── ui/                      # Componentes base compartidos (botones, inputs, modales)
 │
-├── package.json                 # Configuración de workspaces (pnpm / npm)
+├── package.json                 # Configuración de workspaces (pnpm)
 ├── turbo.json                   # Pipeline de compilación y caché de Turborepo
 ├── README.md                    # Descripción general
+├── SYSTEM_SPECS.md              # Especificaciones del entorno local del usuario
 └── PROJECT_SPEC.md              # Este documento técnico
 ```
 
-### 3.3. Flujo de la Wiki (Markdown $\rightarrow$ Web)
-1. El DM escribe notas en Markdown dentro de su bóveda de Obsidian.
-2. Los cambios se suben al repositorio privado en GitHub (manualmente o mediante el plugin *Obsidian Git*).
-3. Vercel detecta el commit en GitHub y ejecuta la compilación:
-   * Los archivos Markdown se leen y parsean usando librerías como `gray-matter` (para frontmatter) y `next-mdx-remote` / `remark` / `rehype`.
+### 3.4. Flujo de la Wiki (Markdown $\rightarrow$ Web)
+1. El DM escribe notas en Markdown dentro de su bóveda de Obsidian en su PC o móvil.
+2. El DM hace commit y push **manualmente** a su repositorio privado de lore.
+3. El repositorio web principal actualiza la referencia del submódulo (o un webhook de Vercel dispara la reconstrucción).
+4. Vercel ejecuta la compilación:
+   * Los archivos Markdown del submódulo se leen y parsean usando `@segadores/obsidian-engine`.
    * Se generan páginas estáticas ultrarrápidas con rutas dinámicas (`/wiki/[...slug]`).
 
-### 3.4. Flujo de las Hojas de Personaje (Web $\leftrightarrow$ Supabase)
+### 3.5. Flujo de las Hojas de Personaje (Web $\leftrightarrow$ Supabase)
 1. Los jugadores inician sesión con su cuenta de Google.
 2. La aplicación verifica si el correo del usuario está en la **lista blanca** (allowlist).
 3. Si está autorizado, el jugador accede a su hoja de personaje (`/personajes/[id]`).
@@ -187,22 +220,57 @@ Cuando asistas en este proyecto, sigue estos principios:
    * Soportar frontmatter YAML estándar para etiquetas, fecha de sesión y orden de visualización.
 4. **Preservar la Seguridad:** Nunca eliminar ni relajar el Middleware de autenticación ni los encabezados `noindex`.
 
+## 8. Estrategia de Ramas y GitHub Rulesets (Git Flow)
+
+Para mantener la estabilidad en producción y un historial limpio y profesional, el repositorio se rige bajo la siguiente jerarquía de ramas:
+
+```text
+[feature/* / fix/*] ──(PR)──> [develop] ──(PR de Release)──> [main] ──> (Deploy Automático en Vercel)
+```
+
+### 8.1. Definición de Ramas
+* **`main` (Producción):** Código estable. Cualquier cambio mezclado aquí dispara el despliegue automático en Vercel. **Prohibido el push directo.**
+* **`develop` (Integración):** Rama activa de desarrollo donde convergen las características y correcciones antes de pasar a producción.
+* **`feature/<nombre>` / `fix/<nombre>`:** Ramas efímeras de trabajo individual creadas a partir de `develop`.
+
+### 8.2. Configuración Recomendada de GitHub Rulesets
+
+#### Ruleset 1: `Protección Producción (main)`
+* **Enforcement status:** `Active` (aplica restricciones de bloqueo inmediatamente).
+* **Target branches:** `main`.
+* **Bypass list:** Rol `Repository Admin` (modo `Always` o `Pull Requests only` como salvaguarda de emergencia).
+* **Reglas activas:**
+  * ☑️ `Restrict deletions` (impide borrar la rama).
+  * ☑️ `Block force pushes` (prohíbe reescribir historial).
+  * ☑️ `Require a pull request before merging` (requiere PR para integrar código).
+  * ☑️ `Require linear history` (fomenta commits lineales limpios tipo Squash/Rebase).
+
+#### Ruleset 2: `Protección Integración (develop)`
+* **Enforcement status:** `Active`.
+* **Target branches:** `develop`.
+* **Bypass list:** Rol `Repository Admin`.
+* **Reglas activas:**
+  * ☑️ `Restrict deletions`.
+  * ☑️ `Block force pushes`.
+  * ☑️ `Require a pull request before merging`.
+
 ---
 
-## 8. Hoja de Ruta (Roadmap)
+## 9. Hoja de Ruta (Roadmap)
 
 - [ ] **Fase 1: Estructura Monorepo y Configuración Base**
   - Configurar Monorepo (pnpm/Turborepo) con carpetas `apps/` y `packages/`.
   - Inicializar `apps/segadores-web` (Next.js, TypeScript, Tailwind).
   - Inicializar paquetes base (`@segadores/dnd-core`, `@segadores/character-sheet`, `@segadores/obsidian-engine`).
-  - Configurar repositorio en GitHub y conexión inicial a Vercel.
+  - Configurar repositorio en GitHub, branches `main` / `develop` y Rulesets.
+  - Conectar Vercel a la rama `main`.
 - [ ] **Fase 2: Autenticación y Privacidad**
   - Configurar proyecto en Supabase (Auth con Google).
   - Implementar Middleware de Next.js con lista blanca de correos autorizados.
   - Configurar `robots.txt` y directivas anti-indexación.
 - [ ] **Fase 3: Motor de Wiki (@segadores/obsidian-engine)**
   - Implementar el parser agnóstico de Markdown con soporte para wikilinks `[[...]]`.
-  - Integrar el motor en la app de Next.js para leer la bóveda de Obsidian del DM.
+  - Integrar el motor en la app de Next.js para leer la bóveda de Obsidian del DM vía submódulo `content/wiki/`.
 - [ ] **Fase 4: Lógica y Hoja de Personaje (@segadores/dnd-core y character-sheet)**
   - Modelar tipos y cálculos en `dnd-core`.
   - Construir componentes visuales puros en `character-sheet`.
