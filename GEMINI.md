@@ -60,3 +60,11 @@ Este documento define las reglas de desarrollo, arquitectura, licencias y compat
 * **Sistema:** Arch Linux (Rolling Release) con KDE Plasma sobre Wayland.
 * **Gestor de Paquetes:** `pnpm` (no `npm`), `pacman` y `yay` (nunca `apt`, `dnf` ni `paru`).
 * **Terminal:** Editores `vim` o `nvim` (nunca `nano`).
+
+---
+
+## 7. Control de Versiones con Git (Regla Estricta para Agentes)
+
+* **PROHIBICIÓN TOTAL DE `git push`:** Los agentes **NUNCA** deben ejecutar `git push` bajo ninguna circunstancia. El usuario es el **único** autorizado y encargado de realizar pushes a los repositorios remotos.
+* **Confirmación Previa Obligatoria para `git commit` y `git add`:** Los agentes pueden preparar cambios con `git add` y proponer mensajes de commit semánticos, pero **SIEMPRE deben solicitar aprobación explícita al usuario ANTES de ejecutar el commit**, detallando claramente los archivos afectados y el mensaje que se va a utilizar.
+* **Git Flow:** Ramas `feature/*` / `fix/*` $\rightarrow$ `develop` $\rightarrow$ `main`. Prohibido hacer commits directos a `main`.
