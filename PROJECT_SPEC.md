@@ -107,7 +107,8 @@ SegadoresDnD/
 │   └── web-personal/            # (Futuro) Portafolio público consumiendo los mismos paquetes
 │
 ├── content/
-│   └── wiki/                    # 📁 GIT SUBMODULE -> Repositorio Privado de Notas Obsidian
+│   ├── wiki/                    # 📁 GIT SUBMODULE -> Repositorio Privado de Notas Obsidian
+│   └── mocks/                   # 📁 Mocks públicos legales bajo SRD 5.1/5.2 (CC-BY-4.0) para tests y visitas públicas
 │
 ├── packages/
 │   ├── dnd-core/                # TypeScript puro: fórmulas, modificadores, tiradas de dados
@@ -115,19 +116,25 @@ SegadoresDnD/
 │   ├── obsidian-engine/         # Parser de Markdown, wikilinks [[...]], callouts y frontmatter
 │   └── ui/                      # Componentes base compartidos (botones, inputs, modales)
 │
+├── scripts/
+│   └── sync-wiki.mjs            # Script inteligente de predev: sincroniza submódulo o activa mocks
+│
 ├── package.json                 # Configuración de workspaces (pnpm)
 ├── turbo.json                   # Pipeline de compilación y caché de Turborepo
 ├── README.md                    # Descripción general
-├── SYSTEM_SPECS.md              # Especificaciones del entorno local del usuario
-└── PROJECT_SPEC.md              # Este documento técnico
+├── GEMINI.md                    # Reglas obligatorias inyectadas para agentes de IA
+├── SYSTEM_SPECS.md              # Especificaciones del entorno local del usuario (ignorado en Git)
+└── PROJECT_SPEC.md              # Este documento técnico (Arquitectura completa)
 ```
 
 ### 3.4. Flujo de la Wiki (Markdown $\rightarrow$ Web)
 1. El DM escribe notas en Markdown dentro de su bóveda de Obsidian en su PC o móvil.
-2. El DM hace commit y push **manualmente** a su repositorio privado de lore.
-3. El repositorio web principal actualiza la referencia del submódulo (o un webhook de Vercel dispara la reconstrucción).
+2. El DM hace commit y push **manualmente** a su repositorio privado de lore (`SegadoresDnD-Private`).
+3. El script `scripts/sync-wiki.mjs` (ejecutado automáticamente en `pnpm dev` vía `predev`):
+   * Intenta sincronizar el submódulo `content/wiki/` silenciosamente (`GIT_TERMINAL_PROMPT=0`).
+   * Si el usuario no tiene permisos (ej. un reclutador navegando el repo público o entorno sin internet), activa automáticamente los datos de respaldo legales de `content/mocks/` sin detener el servidor.
 4. Vercel ejecuta la compilación:
-   * Los archivos Markdown del submódulo se leen y parsean usando `@segadores/obsidian-engine`.
+   * Los archivos Markdown del submódulo (o mocks de respaldo) se leen y parsean usando `@segadores/obsidian-engine`.
    * Se generan páginas estáticas ultrarrápidas con rutas dinámicas (`/wiki/[...slug]`).
 
 ### 3.5. Flujo de las Hojas de Personaje (Web $\leftrightarrow$ Supabase)
@@ -219,6 +226,15 @@ Cuando asistas en este proyecto, sigue estos principios:
    * Soportar enlaces estilo wiki `[[NombreDeNota]]` convirtiéndolos a rutas relativas `/wiki/nombre-de-nota`.
    * Soportar frontmatter YAML estándar para etiquetas, fecha de sesión y orden de visualización.
 4. **Preservar la Seguridad:** Nunca eliminar ni relajar el Middleware de autenticación ni los encabezados `noindex`.
+5. **Mantenimiento Obligatorio de CHANGELOG y PRs:**
+   * En cada cambio funcional, corrección o ajuste relevante, el asistente o desarrollador **DEBE** actualizar la sección `[Unreleased]` de [CHANGELOG.md](./CHANGELOG.md) antes de finalizar la tarea.
+   * Al abrir un Pull Request, se debe completar la plantilla [.github/pull_request_template.md](./.github/pull_request_template.md) resumiendo los paquetes afectados, tipo de cambio y las notas del changelog.
+6. **Generación de Mocks y Fixtures Públicos para Pruebas (SRD CC-BY-4.0):**
+   * Al crear datos de prueba, tests unitarios/de integración o notas mock en `content/mocks/`, se DEBE utilizar **exclusivamente** el documento público oficial de reglas `SP_SRD_CC_v5.2.1.pdf` (amparado bajo licencia Creative Commons CC-BY-4.0).
+   * **Prohibición Estricta:** NUNCA utilizar notas privadas de campaña, fichas reales de los jugadores, ni material de suplementos con copyright comercial (*Tasha*, *Xanathar*, *Monsters of the Multiverse*, etc.) en la suite pública de mocks o tests.
+   * **Licenciamiento Dual:** El código fuente del proyecto se rige bajo licencia MIT, mientras que los datos de prueba y mocks de D&D están amparados bajo Creative Commons Atribución 4.0 Internacional (CC-BY-4.0) de Wizards of the Coast LLC.
+
+---
 
 ## 8. Estrategia de Ramas y GitHub Rulesets (Git Flow)
 
