@@ -9,6 +9,9 @@ y este proyecto se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ## [Unreleased] (Sin Publicar)
 
+### Añadido
+* **Arquitectura de Visibilidad de Lore y Anti-Metajuego (Player vs DM):** Especificación en `PROJECT_SPEC.md` (Sección 4.4) y `GEMINI.md` (Regla 8) para el filtrado estricto por roles (`player` vs `dm`) mediante frontmatter (`visibility: 'player' | 'dm'`), tags (`#player-facing`, `#dm-only`) y callouts secretos (`> [!dm]`) procesados por `@segadores/obsidian-engine`.
+
 ## [0.0.1] - 2026-10-23
 
 ### Añadido

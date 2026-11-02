@@ -160,6 +160,44 @@ SegadoresDnD/
    * Middleware de Next.js (`middleware.ts`) que intercepta todas las rutas protegidas (`/wiki/*`, `/personajes/*`).
    * Validación contra una lista de correos autorizados definida en variables de entorno o en una tabla `allowed_users` en Supabase.
 3. **Uso no comercial y privado:** El contenido propietario de D&D (reglas, campañas oficiales) no es visible públicamente y no genera ingresos.
+4. **Control de Visibilidad y Prevención de Metajuego (Matriz Player vs DM):**
+   Para evitar el metajuego y no revelar giros de campaña, trampas ni estadísticas de monstruos, la wiki aplica un filtrado estricto según el rol del usuario (`player` vs `dm`):
+   
+   * **Matriz de Acceso:**
+     | Categoría | Ejemplo de Rutas | Visibilidad `player` | Visibilidad `dm` | Comportamiento |
+     | :--- | :--- | :---: | :---: | :--- |
+     | **Fichas de PJ** | `/personajes/*` | ✅ Sí | ✅ Sí | Jugadores ven y editan su hoja; consultan compañeros. |
+     | **Inventario Grupal** | `Pertenencias de la Compañía/` | ✅ Sí | ✅ Sí | Carreta, fondos comunes, provisiones. |
+     | **Bitácora de Sesión** | `Segadores de Orcos/*` | ✅ Sí | ✅ Sí | Resúmenes de sesiones jugadas hasta la fecha. |
+     | **Compendio de Reglas** | `DnD wiki/*` (spells, items, classes) | ✅ Sí | ✅ Sí | Consulta de reglas oficiales 2024 / SRD. |
+     | **NPCs Descubiertos** | `NPCs/*` | 🟡 Parcial | ✅ Completo | Lore público visible; secretos del DM filtrados. |
+     | **Bestiario y Encuentros** | `Bestiario/*` | ❌ Oculto | ✅ Sí | Estadísticas (CA, HP, salvaciones) bloqueadas. |
+     | **Campañas / Módulos** | `Campañas predefinidas/*` | ❌ Oculto | ✅ Sí | Dungeons numerados, trampas, soluciones y tramas. |
+     | **Notas de Preparación** | `Notas_DM/*` | ❌ Oculto | ✅ Sí | Borradores de sesiones futuras y giros narrativos. |
+
+   * **Convención de Metadatos en Markdown (Obsidian Vault):**
+     * **Propiedad en Frontmatter:** `visibility: 'player' | 'dm'`.
+     * **Etiquetas (Tags):** `#player-facing` o `#dm-only` para filtrado visual rápido y búsquedas en Obsidian.
+     * **Regla de Carpeta por Defecto:**
+       * `Campañas predefinidas/` y `Bestiario/` $\rightarrow$ `visibility: dm` implícito.
+       * `DnD wiki/`, `Personajes_Jugadores/`, `Pertenencias de la Compañía/` $\rightarrow$ `visibility: player` implícito.
+       * Carpetas mixtas (`NPCs/`, `Segadores de Orcos/`) $\rightarrow$ gobernadas por su frontmatter explícito.
+     * **Bloques Secretos en Notas Públicas (`> [!dm]`):**
+       ```markdown
+       # Harbin Wester
+       Alcalde de Phandalin. Hombre tímido que rara vez sale de su oficina.
+       
+       > [!dm] Secreto del DM
+       > Sabe que la Tribu de Colmillo Gélido ronda cerca pero oculta los reportes para no causar pánico.
+       ```
+   * **Comportamiento en el Motor Web (`@segadores/obsidian-engine` & Next.js):**
+     * **Para Jugadores (`role: 'player'`):**
+       * Las páginas `dm-only` se excluyen de la navegación, índices y buscador global.
+       * El acceso por URL directa a una nota `dm` retorna **404 (Not Found)** (no revela ni la existencia del recurso).
+       * En notas con `visibility: player`, los bloques `> [!dm]` son removidos completamente del árbol AST antes del renderizado (cero fugas de información en el HTML entregado al cliente).
+     * **Para el DM (`role: 'dm'`):**
+       * Árbol de contenido completo visible, con indicativo visual 🔒 (*"Solo DM"*) en notas restringidas.
+       * Bloques `> [!dm]` renderizados con diseño temático de pergamino sellado / notas secretas.
 
 ---
 

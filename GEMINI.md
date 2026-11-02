@@ -68,3 +68,15 @@ Este documento define las reglas de desarrollo, arquitectura, licencias y compat
 * **PROHIBICIÓN TOTAL DE `git push`:** Los agentes **NUNCA** deben ejecutar `git push` bajo ninguna circunstancia. El usuario es el **único** autorizado y encargado de realizar pushes a los repositorios remotos.
 * **Confirmación Previa Obligatoria para `git commit` y `git add`:** Los agentes pueden preparar cambios con `git add` y proponer mensajes de commit semánticos, pero **SIEMPRE deben solicitar aprobación explícita al usuario ANTES de ejecutar el commit**, detallando claramente los archivos afectados y el mensaje que se va a utilizar.
 * **Git Flow:** Ramas `feature/*` / `fix/*` $\rightarrow$ `develop` $\rightarrow$ `main`. Prohibido hacer commits directos a `main`.
+
+---
+
+## 8. Control de Visibilidad de Lore y Anti-Metajuego (Player vs DM)
+
+* **Sintaxis en Markdown:** Todas las notas procesadas por `@segadores/obsidian-engine` pueden incluir:
+  * Frontmatter: `visibility: 'player' | 'dm'`.
+  * Tags: `#player-facing` o `#dm-only`.
+  * Callouts secretos: `> [!dm] Título` para fragmentos confidenciales dentro de notas públicas.
+* **Comportamiento Obligatorio del Motor Web:**
+  * Si el usuario autenticado tiene rol `player`: omitir completamente archivos con `visibility: dm` o dentro de carpetas restringidas (`Campañas predefinidas/`, `Bestiario/`). Retornar 404 en rutas directas y purgar bloques `> [!dm]` del HTML.
+  * Si el usuario autenticado tiene rol `dm`: renderizar contenido íntegro con distintivo visual 🔒 de privacidad y diseño temático especial para callouts `> [!dm]`.
