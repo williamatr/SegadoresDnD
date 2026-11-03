@@ -28,6 +28,9 @@ pnpm-debug.log*
 .DS_Store
 Thumbs.db
 
+# Local system and hardware specs
+SYSTEM_SPECS.md
+
 # Local symlinks & absolute vault links (avoids broken links on Vercel CI)
 ObsidianDnD
 

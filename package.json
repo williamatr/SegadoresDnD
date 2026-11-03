@@ -8,6 +8,8 @@
     "packages/*"
   ],
   "scripts": {
+    "submodule:sync": "node scripts/sync-wiki.mjs",
+    "predev": "pnpm submodule:sync",
     "build": "turbo run build",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
