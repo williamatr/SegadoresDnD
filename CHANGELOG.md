@@ -10,6 +10,21 @@ y este proyecto se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 ## [Unreleased] (Sin Publicar)
 
 ### Añadido
+* **Arquitectura de Base de Datos Relacional y RLS en Supabase:** Creación de DDL (`scripts/sql/01_init_schema.sql`) y políticas de Row Level Security (`scripts/sql/02_rls_policies.sql`) con soporte de relación N:M (`campaign_characters`), baúl de campaña compartido (`campaign_vault`) y personajes de demostración aislados (`demo_characters`).
+* **Scripts de Ingesta y Sincronización:**
+  * `scripts/sync-characters-push.mjs` (`pnpm sync:push`): Ingesta y sanitización de fichas reales de jugadores desde Obsidian a PostgreSQL.
+  * `scripts/sync-demo-characters.mjs` (`pnpm sync:demo`): Ingesta de 12 arquetipos de clase canónicos para la demo pública.
+* **Sistema de Pre-Commit y Auditoría de Seguridad Automatizada:**
+  * Hook nativo en `.githooks/pre-commit` vinculado mediante `prepare` (`git config core.hooksPath .githooks`).
+  * Script `scripts/verify-secrets.mjs` que valida:
+    * Detección de credenciales y secretos (GitHub PATs, Supabase JWTs/Service Keys, connection strings con contraseñas, claves privadas SSH/RSA/PGP, tokens AWS/Vercel).
+    * Protección de Privacidad y PII: Bloqueo de correos electrónicos personales o reales (solo `@ejemplo.com` / `@example.com` autorizados), rutas absolutas locales del usuario (`/home/<usuario>`, `/Users/<usuario>`), especificaciones de hardware personal y posibles números telefónicos.
+    * Bloqueo de nombres de archivo sensibles (`.env*`, `*system_specs*`, `*specs_report*`, `*personal*`, `*.pem`, `*.key`, `serviceAccount*.json`, temporales, volcados).
+    * Restricción estricta de archivos `.sql` fuera de `scripts/sql/`.
+    * Prohibición absoluta de archivos `.pdf` y control de tamaño máximo por archivo (10 MB).
+    * Validador de sintaxis `.json` para prevenir fallos de compilación en CI/CD y Vercel.
+    * Auditoría anti-metajuego y fugas de lore (`#dm-only`, `visibility: dm`, `> [!dm]`) en mocks públicos (`content/mocks/`).
+* **Framework Multi-Agente y Backlog Estructurado:** Especificación de roles especialistas en `.agents/` y backlog de tareas en `docs/tasks/` (`task-00` a `task-06`).
 * **Arquitectura de Visibilidad de Lore y Anti-Metajuego (Player vs DM):** Especificación en `PROJECT_SPEC.md` (Sección 4.4) y `GEMINI.md` (Regla 8) para el filtrado estricto por roles (`player` vs `dm`) mediante frontmatter (`visibility: 'player' | 'dm'`), tags (`#player-facing`, `#dm-only`) y callouts secretos (`> [!dm]`) procesados por `@segadores/obsidian-engine`.
 
 ## [0.0.1] - 2026-10-23

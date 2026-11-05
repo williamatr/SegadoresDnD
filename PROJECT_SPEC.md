@@ -72,7 +72,7 @@ Cada paquete dentro de `packages/` es **100% independiente de la infraestructura
 Para garantizar la protección de derechos de autor (WotC) y permitir que el código sirva como portafolio público, se adopta una arquitectura de **dos repositorios separados**:
 
 > [!WARNING] Incompatibilidad de Enlaces Simbólicos (Symlinks)
-> Los enlaces simbólicos de Linux (`ln -s`) no son viables para despliegue en la nube. Git solo almacena el puntero de texto hacia la ruta local absoluta (`/home/william/...`), la cual no existe en los contenedores de compilación de Vercel, provocando fallos de compilación o carpetas vacías.
+> Los enlaces simbólicos de Linux (`ln -s`) no son viables para despliegue en la nube. Git solo almacena el puntero de texto hacia la ruta local absoluta (`/home/usuario/...`), la cual no existe en los contenedores de compilación de Vercel, provocando fallos de compilación o carpetas vacías.
 
 ```text
 ┌──────────────────────────────────────────────────┐      ┌──────────────────────────────────────────────┐
