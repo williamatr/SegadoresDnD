@@ -9,6 +9,9 @@
   ],
   "scripts": {
     "submodule:sync": "node scripts/sync-wiki.mjs",
+    "sync:push": "node scripts/sync-characters-push.mjs",
+    "sync:demo": "node scripts/sync-demo-characters.mjs",
+    "sync:pull": "node scripts/sync-characters-pull.mjs",
     "predev": "pnpm submodule:sync",
     "build": "turbo run build",
     "dev": "turbo run dev",
@@ -18,5 +21,5 @@
   "devDependencies": {
     "turbo": "^2.0.0"
   },
-  "packageManager": "pnpm@9.0.0"
+  "packageManager": "pnpm@11.28.5"
 }

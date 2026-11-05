@@ -31,7 +31,7 @@ Cuando el usuario solicita implementar una funcionalidad o idea nueva, todos los
 | **TASK-02** | **Core de Reglas D&D y Mocks SRD Legales** | 🟡 Pendiente | `backend-engineer`, `qa-integration-tester` | [task-02-dnd-core-mocks.md](./task-02-dnd-core-mocks.md) |
 | **TASK-03** | **Componentes UI de la Hoja de Personaje** | 🟡 Pendiente | `frontend-engineer`, `theme-design-reviewer` | [task-03-character-sheet-ui.md](./task-03-character-sheet-ui.md) |
 | **TASK-04** | **Motor Markdown & Compendio de Jugadores** | 🟡 Pendiente | `backend-engineer`, `frontend-engineer` | [task-04-obsidian-engine.md](./task-04-obsidian-engine.md) |
-| **TASK-05** | **Base de Datos PostgreSQL & Scripts de Sync** | 🟡 Pendiente | `backend-engineer`, `solution-architect-critic` | [task-05-data-sync-backend.md](./task-05-data-sync-backend.md) |
+| **TASK-05** | **Base de Datos PostgreSQL & Scripts de Sync** | 🔵 En Progreso (3/4) | `backend-engineer`, `solution-architect-critic` | [task-05-data-sync-backend.md](./task-05-data-sync-backend.md) |
 | **TASK-06** | **Autenticación, Sesión y Allowlist (Google)** | 🟡 Pendiente | `backend-engineer`, `solution-architect-critic` | [task-06-auth-and-access-control.md](./task-06-auth-and-access-control.md) |
 
 ---
