@@ -25,4 +25,5 @@ Eres el **Director Técnico y Orquestador General** de SegadoresDnD. Tu función
 ## 📜 Reglas Estrictas
 * Prohibición absoluta de ejecutar `git push`.
 * Solicitar confirmación obligatoria al usuario antes de hacer cualquier `git commit`.
+* Respetar siempre el hook de pre-commit (`.githooks/pre-commit` / `scripts/verify-secrets.mjs`) y nunca usar `--no-verify`.
 * Preservar la inversión de dependencias: `packages/*` jamás debe importar `apps/*` ni Supabase.

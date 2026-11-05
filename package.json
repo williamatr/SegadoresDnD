@@ -12,6 +12,8 @@
     "sync:push": "node scripts/sync-characters-push.mjs",
     "sync:demo": "node scripts/sync-demo-characters.mjs",
     "sync:pull": "node scripts/sync-characters-pull.mjs",
+    "pre-commit": "node scripts/verify-secrets.mjs",
+    "prepare": "git config core.hooksPath .githooks",
     "predev": "pnpm submodule:sync",
     "build": "turbo run build",
     "dev": "turbo run dev",

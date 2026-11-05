@@ -1,0 +1,5 @@
+#!/bin/sh
+# Hook de pre-commit para SegadoresDnD
+# Ejecuta el escáner de secretos y validaciones antes de permitir cualquier commit
+
+node scripts/verify-secrets.mjs || exit 1

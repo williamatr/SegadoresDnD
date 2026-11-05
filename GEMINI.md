@@ -67,6 +67,7 @@ Este documento define las reglas de desarrollo, arquitectura, licencias y compat
 
 * **PROHIBICIÓN TOTAL DE `git push`:** Los agentes **NUNCA** deben ejecutar `git push` bajo ninguna circunstancia. El usuario es el **único** autorizado y encargado de realizar pushes a los repositorios remotos.
 * **Confirmación Previa Obligatoria para `git commit` y `git add`:** Los agentes pueden preparar cambios con `git add` y proponer mensajes de commit semánticos, pero **SIEMPRE deben solicitar aprobación explícita al usuario ANTES de ejecutar el commit**, detallando claramente los archivos afectados y el mensaje que se va a utilizar.
+* **Protección Automática Pre-Commit de Secretos:** El repositorio implementa un hook de pre-commit (`.githooks/pre-commit` ejecutando `scripts/verify-secrets.mjs`) que audita en el stage la presencia de tokens (GitHub, Supabase, JWTs, AWS), archivos `.env*` o credenciales quemadas. **Prohibido el uso de `--no-verify`** para saltarse estas protecciones.
 * **Git Flow:** Ramas `feature/*` / `fix/*` $\rightarrow$ `develop` $\rightarrow$ `main`. Prohibido hacer commits directos a `main`.
 
 ---
