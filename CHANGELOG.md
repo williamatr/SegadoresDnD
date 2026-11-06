@@ -10,6 +10,16 @@ y este proyecto se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 ## [Unreleased] (Sin Publicar)
 
 ### Añadido
+* **Ampliación DDL y Funciones RPC para Hojas de Personaje (03_character_sheet_enhancements.sql):**
+  * Campo unificado `active_effects` (JSONB) para almacenar condiciones, buffs, debuffs y heridas temporales/persistentes.
+  * Campos mecánicos y narrativos: `death_saves` (éxitos/fallos 0-3), `inspiration`, `skills`, `saving_throws_prof`, `personality` (rasgos, ideales, vínculos, defectos), `backstory` (TEXT independiente), `multiclass` y `attunement_slots`.
+  * Funciones de seguridad `apply_character_effect` (autorizada para DM, jugador y aliados para buffs) y `remove_character_effect` (restringida estrictamente al DM y al dueño de la ficha).
+  * Habilitación de Supabase Realtime para la tabla `characters`.
+* **Nuevas Épicas en Backlog (`docs/tasks/`):**
+  * `TASK-03`: Suite de Hojas de Personaje para Jugadores (Especificación completa de las 7 Vistas interactivas A a G).
+  * `TASK-07`: Motor de Sincronización Inteligente Bidireccional (Obsidian $\leftrightarrow$ PostgreSQL) con diff semántico (`pnpm sync:diff` y `pnpm sync:smart`).
+  * `TASK-08`: Motor de Reglas D&D y Evaluador de Estados en `@segadores/dnd-core` (Tablas A y B de Heridas d20, Evaluador de Estados y regla de multiclase al 50% de coste en PX).
+* **Actualización de Scripts de Ingesta:** Extracción automática de competencias en salvaciones, habilidades, multiclase y personalidad desde las notas de Obsidian en `scripts/sync-characters-push.mjs` y `scripts/sync-demo-characters.mjs`.
 * **Arquitectura de Base de Datos Relacional y RLS en Supabase:** Creación de DDL (`scripts/sql/01_init_schema.sql`) y políticas de Row Level Security (`scripts/sql/02_rls_policies.sql`) con soporte de relación N:M (`campaign_characters`), baúl de campaña compartido (`campaign_vault`) y personajes de demostración aislados (`demo_characters`).
 * **Scripts de Ingesta y Sincronización:**
   * `scripts/sync-characters-push.mjs` (`pnpm sync:push`): Ingesta y sanitización de fichas reales de jugadores desde Obsidian a PostgreSQL.

@@ -121,6 +121,65 @@ for (const file of files) {
     alignment = 'Pendiente';
   }
 
+  // 10. Extraer Competencias en Tiradas de Salvación
+  const savesProf = [];
+  const savesSectionMatch = cleanContent.match(/### Competencias \(Tiradas de Salvación\)([\s\S]*?)(?=###|##|---|$)/i);
+  if (savesSectionMatch) {
+    const saveLines = savesSectionMatch[1].split('\n');
+    for (const sLine of saveLines) {
+      if (sLine.includes('Fuerza')) savesProf.push('FUE');
+      if (sLine.includes('Destreza')) savesProf.push('DES');
+      if (sLine.includes('Constitución') || sLine.includes('Constitucion')) savesProf.push('CON');
+      if (sLine.includes('Inteligencia')) savesProf.push('INT');
+      if (sLine.includes('Sabiduría') || sLine.includes('Sabiduria')) savesProf.push('SAB');
+      if (sLine.includes('Carisma')) savesProf.push('CAR');
+    }
+  }
+
+  // 11. Extraer Habilidades (Proficiencias)
+  const skills = {};
+  const skillsSectionMatch = cleanContent.match(/### Habilidades \(Proficiencias\)([\s\S]*?)(?=###|##|---|$)/i);
+  if (skillsSectionMatch) {
+    const skillLines = skillsSectionMatch[1].split('\n');
+    for (const skLine of skillLines) {
+      const skMatch = skLine.match(/-\s*\*?\*?([^(:\n\r]+?)(?:\s*\([^)]+\))?\*?\*?:\s*\+?(-?\d+)/);
+      if (skMatch) {
+        skills[skMatch[1].trim()] = parseInt(skMatch[2], 10);
+      }
+    }
+  }
+
+  // 12. Extraer Multiclase (si aplica)
+  const multiclass = [];
+  const rawClass = frontmatter.clase || '';
+  if (rawClass.includes('/')) {
+    const parts = rawClass.split('/').map(p => p.trim());
+    for (const p of parts) {
+      const match = p.match(/^([A-Za-zÁ-ú\s]+?)(?:\s*\(.*?\))?\s*(\d+)$/);
+      if (match) {
+        multiclass.push({ class: match[1].trim(), level: parseInt(match[2], 10) });
+      }
+    }
+  }
+
+  // 13. Extraer Personalidad y Lore
+  const personality = { traits: '', ideals: '', bonds: '', flaws: '' };
+  const persSectionMatch = cleanContent.match(/## Personalidad y Trasfondo[\s\S]*?(?=##|---|$)/i);
+  if (persSectionMatch) {
+    const parseField = (fieldRegex) => {
+      const m = persSectionMatch[0].match(fieldRegex);
+      return m ? m[1].trim().replace(/^\[|\]$/g, '') : '';
+    };
+    personality.traits = parseField(/Rasgos de Personalidad:\s*([^\n\r]+)/i);
+    personality.ideals = parseField(/Ideales:\s*([^\n\r]+)/i);
+    personality.bonds = parseField(/Vínculos:\s*([^\n\r]+)/i);
+    personality.flaws = parseField(/Defectos:\s*([^\n\r]+)/i);
+  }
+
+  // 14. Apariencia y Backstory
+  const appearanceMatch = rawContent.match(/\*\*Apariencia:\*\*\s*([^\n\r]+)/i);
+  const appearanceText = appearanceMatch ? appearanceMatch[1].trim() : '';
+
   const charRecord = {
     name,
     slug,
@@ -140,6 +199,15 @@ for (const file of files) {
     spell_save_dc: spellSaveDc,
     spell_attack_bonus: spellAttackBonus,
     ability_scores: abilityScores,
+    saving_throws_prof: savesProf,
+    skills,
+    multiclass,
+    personality,
+    backstory: appearanceText,
+    active_effects: [],
+    death_saves: { successes: 0, failures: 0 },
+    inspiration: false,
+    attunement_slots: (frontmatter.clase || '').toLowerCase().includes('artificiero') && parseInt(frontmatter.nivel || '1', 10) >= 10 ? 4 : 3,
     source_file: `Personajes_Jugadores/${file}`
   };
 

@@ -117,7 +117,17 @@ for (const file of files) {
     inventory: [
       { name: 'Mochila de aventurero', qty: 1 },
       { name: 'Raciones (días)', qty: 5 }
-    ]
+    ],
+    active_effects: [],
+    personality: { traits: '', ideals: '', bonds: '', flaws: '' },
+    backstory: 'Plantilla canónica de clase del SRD para pruebas públicas.',
+    death_saves: { successes: 0, failures: 0 },
+    inspiration: false,
+    skills: {},
+    saving_throws_prof: [],
+    multiclass: [],
+    attunement_slots: 3,
+    known_spells: []
   };
 
   parsedDemoCharacters.push(demoChar);

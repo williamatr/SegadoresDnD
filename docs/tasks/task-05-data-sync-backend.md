@@ -28,7 +28,12 @@ Definir las tablas `players`, `campaigns`, `characters`, `campaign_characters`, 
   - **Archivos:** `scripts/sync-characters-push.mjs`.
   - **Criterio de Aceptación:** Los 5 personajes quedan registrados en PostgreSQL con sus datos íntegros y vinculados a la campaña `SEG-001`.
 
-- [ ] **SUBTASK-05.4: Script CLI de Volcado (`pnpm sync:pull`)**
+- [x] **SUBTASK-05.4: Migración DDL y RPC para Hojas de Personaje Mejoradas**
+  - **Objetivo:** Ampliar `characters` y `demo_characters` con campos unificados `active_effects`, `personality`, `backstory`, `death_saves`, `inspiration`, `skills`, `saving_throws_prof`, `multiclass`, `attunement_slots`, `known_spells`. Crear funciones RPC `apply_character_effect` y `remove_character_effect` con permisos de seguridad y publicación en Supabase Realtime.
+  - **Archivos:** `scripts/sql/03_character_sheet_enhancements.sql`.
+  - **Criterio de Aceptación:** Script compatible con DataGrip y Supabase.
+
+- [ ] **SUBTASK-05.5: Script CLI de Volcado (`pnpm sync:pull`)**
   - **Objetivo:** Script que consulte el estado actual de los personajes en PostgreSQL y actualice las notas locales de Obsidian preservando el formato y frontmatter.
   - **Archivos:** `scripts/sync-characters-pull.mjs`.
   - **Criterio de Aceptación:** Actualización limpia de `content/wiki/Personajes_Jugadores/*.md` sin perder notas previas.
@@ -43,3 +48,4 @@ Definir las tablas `players`, `campaigns`, `characters`, `campaign_characters`, 
 | 2026-11-05 | backend-engineer | SUBTASK-05.2 | Creadas políticas RLS para todas las tablas con función de seguridad `is_dm()` compatible con DataGrip. |
 | 2026-11-05 | backend-engineer | SUBTASK-05.3 | Creado y ejecutado `scripts/sync-characters-push.mjs`. Parseados los 5 personajes reales de Obsidian (`Alizar`, `Eru`, `Honiel`, `Solaria`, `Zuma`), registrada la campaña `SEG-001`, baúl común y vínculos N:M creados en Supabase. |
 | 2026-11-05 | backend-engineer | SUBTASK-05.3 | Creado y ejecutado `scripts/sync-demo-characters.mjs` (`pnpm sync:demo`). Ingestadas las 12 plantillas de clase de `personaje_de_prueba/` en `public.demo_characters` de Supabase. |
+| 2026-11-06 | backend-engineer | SUBTASK-05.4 | Creado script SQL `03_character_sheet_enhancements.sql` con soporte para las 7 vistas (A a G), `active_effects` unificado, death saves, lore, funciones RPC seguras y Supabase Realtime. |
