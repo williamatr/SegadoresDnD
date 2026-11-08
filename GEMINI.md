@@ -81,3 +81,28 @@ Este documento define las reglas de desarrollo, arquitectura, licencias y compat
 * **Comportamiento Obligatorio del Motor Web:**
   * Si el usuario autenticado tiene rol `player`: omitir completamente archivos con `visibility: dm` o dentro de carpetas restringidas (`Campañas predefinidas/`, `Bestiario/`). Retornar 404 en rutas directas y purgar bloques `> [!dm]` del HTML.
   * Si el usuario autenticado tiene rol `dm`: renderizar contenido íntegro con distintivo visual 🔒 de privacidad y diseño temático especial para callouts `> [!dm]`.
+
+---
+
+## 9. Integridad y Veracidad Estricta de las Pruebas (Prohibición de Tests Placebo y Falsos Positivos)
+
+Para garantizar la confiabilidad real del sistema y evitar que los agentes o desarrolladores den por buenas implementaciones basándose en "pruebas verdes" que no comprueban la realidad, rigen las siguientes reglas obligatorias e inquebrantables:
+
+1. **Prohibición Total de Tests Tautológicos o Placebo:**
+   * **NUNCA** escribir tests con aserciones triviales o vacías (ej. `assert.ok(true)`, `assert.ok(result)`, comprobar literales inventados dentro del propio test, o tests que sólo evalúan que una función "no lanzó error" sin revisar qué devolvió).
+   * Un test sólo es válido si somete las entradas a la lógica de producción real y comprueba las salidas contra criterios de negocio matemáticos y canónicos explícitos.
+2. **Verificación Estricta del Diferencial de Estado (*State Diff & Mutation Testing*):**
+   * En cualquier operación que represente una mutación, cálculo o transición de estado (subir de nivel, aplicar daño o curación, gastar o recuperar dados de golpe, descansar, deducir o sumar PX, equipar armas o sintonizar objetos):
+     * El test **DEBE capturar y contrastar el estado ANTES y DESPUÉS** de la llamada.
+     * El test **DEBE verificar la fórmula matemática exacta del cambio** (ej. `after.experience_points === before.experience_points - cost`, `after.max_hp === before.max_hp + hpGained`, `after.level === before.level + 1`).
+     * El test **DEBE comprobar la invariabilidad e inmutabilidad** de las propiedades que no debían ser alteradas por la acción.
+3. **Prohibición Terminante de Auto-Mocking Engañoso:**
+   * **NUNCA** sustituir con mocks o espías la lógica que se pretende evaluar (ej. mockear la función de cálculo de multiclase o la tirada de dados de golpe para que devuelva un valor arbitrario en vez de ejecutar la implementación real del motor).
+   * Los mocks y stubs sólo están autorizados en los límites exteriores de I/O (red, peticiones remotas a Supabase o proveedores de Auth).
+   * La lógica matemática (`@segadores/dnd-core`), los componentes de interfaz puros (`@segadores/character-sheet`) y los motores de parsing (`@segadores/obsidian-engine`) **deben probarse siempre con ejecuciones reales sobre contratos canónicos completos**.
+4. **Verificación Obligatoria de Casos Negativos y Fronteras (*Boundary Testing*):**
+   * Todo módulo de reglas debe contar con tests que fuercen y comprueben el **fallo controlado**:
+     * Rechazo si no se cumplen los requisitos (ej. faltan PX, características menores a 13 para multiclase, límite de nivel 20 alcanzado, exceso de las 3 ranuras de sintonización).
+     * Comprobar que ante un fallo o validación negativa, el estado del personaje **no sufre mutaciones parciales ni corrupciones**.
+5. **Criterio de Rechazo en Auditoría de PRs:**
+   * Cualquier prueba que pretenda simular que un flujo funciona sin ejecutar y verificar el impacto real de los cambios será considerada una violación de los lineamientos del repositorio y motivo de rechazo inmediato.

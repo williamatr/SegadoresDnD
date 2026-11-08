@@ -12,6 +12,7 @@ out/
 build/
 dist/
 .turbo/
+*.tsbuildinfo
 
 # Environment variables
 .env

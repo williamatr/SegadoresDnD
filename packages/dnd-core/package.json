@@ -1,9 +1,11 @@
 {
   "name": "@segadores/dnd-core",
   "version": "0.1.0",
+  "type": "module",
   "main": "./index.ts",
   "types": "./index.ts",
   "scripts": {
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "test": "node --test src/tests/rules.test.ts src/tests/level-up.test.ts"
   }
 }

@@ -67,6 +67,7 @@ CREATE TABLE IF NOT EXISTS public.characters (
   character_class VARCHAR(100) NOT NULL,
   level INT NOT NULL DEFAULT 1 CHECK (level >= 1 AND level <= 20),
   race VARCHAR(100) NOT NULL,
+  background VARCHAR(100) NOT NULL DEFAULT '',
   alignment VARCHAR(255) DEFAULT 'Neutral',
   experience_points INT NOT NULL DEFAULT 0,
 

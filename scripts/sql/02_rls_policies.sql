@@ -16,6 +16,7 @@ CREATE OR REPLACE FUNCTION public.is_dm()
 RETURNS BOOLEAN
 LANGUAGE sql
 SECURITY DEFINER
+SET search_path = public
 STABLE
 AS '
   SELECT EXISTS (
@@ -33,11 +34,26 @@ ON public.players FOR SELECT
 TO authenticated
 USING (true);
 
+-- Bloquea escalada de privilegios: un jugador no puede cambiar su propio rol a 'dm'
 DROP POLICY IF EXISTS "Actualizar propio perfil o DM" ON public.players;
 CREATE POLICY "Actualizar propio perfil o DM"
 ON public.players FOR UPDATE
 TO authenticated
-USING (auth_user_id = auth.uid() OR public.is_dm());
+USING (auth_user_id = auth.uid() OR public.is_dm())
+WITH CHECK (
+  public.is_dm() OR (
+    auth_user_id = auth.uid()
+    AND role = (SELECT p.role FROM public.players p WHERE p.id = players.id)
+    AND email = (SELECT p.email FROM public.players p WHERE p.id = players.id)
+  )
+);
+
+DROP POLICY IF EXISTS "Solo el DM inserta o elimina jugadores" ON public.players;
+CREATE POLICY "Solo el DM inserta o elimina jugadores"
+ON public.players FOR ALL
+TO authenticated
+USING (public.is_dm())
+WITH CHECK (public.is_dm());
 
 -- ==============================================================================
 -- Políticas para: public.campaigns
@@ -70,6 +86,10 @@ TO authenticated
 USING (
   player_id IN (SELECT id FROM public.players WHERE auth_user_id = auth.uid())
   OR public.is_dm()
+)
+WITH CHECK (
+  player_id IN (SELECT id FROM public.players WHERE auth_user_id = auth.uid())
+  OR public.is_dm()
 );
 
 DROP POLICY IF EXISTS "Creación de personajes: dueño o DM" ON public.characters;
@@ -80,6 +100,12 @@ WITH CHECK (
   player_id IN (SELECT id FROM public.players WHERE auth_user_id = auth.uid())
   OR public.is_dm()
 );
+
+DROP POLICY IF EXISTS "Eliminación de personajes: solo DM" ON public.characters;
+CREATE POLICY "Eliminación de personajes: solo DM"
+ON public.characters FOR DELETE
+TO authenticated
+USING (public.is_dm());
 
 -- ==============================================================================
 -- Políticas para: public.campaign_characters

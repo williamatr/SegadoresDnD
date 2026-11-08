@@ -34,8 +34,34 @@ if (!existsSync(demoDir)) {
   process.exit(1);
 }
 
-const files = readdirSync(demoDir).filter(f => f.endsWith('.md'));
+const files = readdirSync(demoDir).filter(f => f.endsWith('.md')).sort();
 console.log(`📁 Encontradas ${files.length} plantillas de clase de prueba:\n`);
+
+const HIT_DIE_BY_CLASS = {
+  barbaro: 'd12',
+  guerrero: 'd10',
+  paladin: 'd10',
+  explorador: 'd10',
+  bardo: 'd8',
+  clerigo: 'd8',
+  druida: 'd8',
+  monje: 'd8',
+  picaro: 'd8',
+  brujo: 'd8',
+  hechicero: 'd6',
+  mago: 'd6'
+};
+
+const SPELL_ABILITY_BY_CLASS = {
+  bardo: 'CAR',
+  brujo: 'CAR',
+  hechicero: 'CAR',
+  paladin: 'CAR',
+  clerigo: 'SAB',
+  druida: 'SAB',
+  explorador: 'SAB',
+  mago: 'INT'
+};
 
 const parsedDemoCharacters = [];
 
@@ -44,14 +70,12 @@ for (const file of files) {
   const rawContent = readFileSync(filePath, 'utf8');
 
   const classNameRaw = basename(file, '.md');
-  const className = classNameRaw.charAt(0).toUpperCase() + classNameRaw.slice(1);
+  const headerMatch = rawContent.match(/^#\s+([^-–\n\r]+?)\s*[-–]\s*Nivel\s+(\d+)/m);
+  const className = headerMatch ? headerMatch[1].trim() : classNameRaw.charAt(0).toUpperCase() + classNameRaw.slice(1);
+  const level = headerMatch ? parseInt(headerMatch[2], 10) : 8;
   const slug = `demo-${classNameRaw}`;
 
-  // 1. Extraer Nivel del encabezado # Clase - Nivel X
-  const levelMatch = rawContent.match(/#\s+.*Nivel\s+(\d+)/i);
-  const level = levelMatch ? parseInt(levelMatch[1], 10) : 8;
-
-  // 2. Extraer Atributos
+  // 1. Extraer Atributos
   const parseAttr = (code) => {
     const match = rawContent.match(new RegExp(`\\*?\\*?.*\\(${code}\\):\\*?\\*?\\s*(\\d+)`, 'i'));
     return match ? parseInt(match[1], 10) : 10;
@@ -66,25 +90,61 @@ for (const file of files) {
     cha: parseAttr('CAR')
   };
 
-  // 3. Extraer CA
+  const mod = (score) => Math.floor((score - 10) / 2);
+
+  // 2. Extraer CA, HP, Velocidad, Iniciativa y Bono de Competencia
   const acMatch = rawContent.match(/Clase de Armadura\s*\(CA\):\*?\*?\s*(\d+)/i);
   const armorClass = acMatch ? parseInt(acMatch[1], 10) : 10;
 
-  // 4. Extraer HP
   const hpMatch = rawContent.match(/Puntos de Golpe\s*\((?:PG|HP)\):\*?\*?\s*(\d+)/i);
   const maxHp = hpMatch ? parseInt(hpMatch[1], 10) : 10;
 
-  // 5. Extraer Velocidad
   const speedMatch = rawContent.match(/Velocidad:\*?\*?\s*(\d+)/i);
   const speed = speedMatch ? parseInt(speedMatch[1], 10) : 30;
 
-  // 6. Extraer Bono de Competencia
+  const initMatch = rawContent.match(/Iniciativa:\*?\*?\s*\+?(-?\d+)/i);
+  const initiativeModifier = initMatch ? parseInt(initMatch[1], 10) : mod(abilityScores.dex);
+
   const profMatch = rawContent.match(/Bono de Competencia:\*?\*?\s*\+?(\d+)/i);
   const profBonus = profMatch ? parseInt(profMatch[1], 10) : 3;
 
-  // 7. Extraer Espacios de Conjuro si existen
+  // 3. Extraer Salvaciones y Habilidades Sugeridas
+  const savesProf = [];
+  const savesLine = rawContent.match(/Tiradas de Salvaci[oó]n:\*?\*?\s*([^\n\r]+)/i);
+  if (savesLine) {
+    const sText = savesLine[1];
+    if (/Fuerza/i.test(sText)) savesProf.push('FUE');
+    if (/Destreza/i.test(sText)) savesProf.push('DES');
+    if (/Constituci[oó]n/i.test(sText)) savesProf.push('CON');
+    if (/Inteligencia/i.test(sText)) savesProf.push('INT');
+    if (/Sabidur[ií]a/i.test(sText)) savesProf.push('SAB');
+    if (/Carisma/i.test(sText)) savesProf.push('CAR');
+  }
+
+  const skills = {};
+  const skillsLine = rawContent.match(/Habilidades Sugeridas:\*?\*?\s*([^\n\r]+)/i);
+  if (skillsLine) {
+    const attrKeyMap = { FUE: 'str', DES: 'dex', CON: 'con', INT: 'int', SAB: 'wis', CAR: 'cha' };
+    const entries = skillsLine[1].split(',');
+    for (const entry of entries) {
+      const m = entry.trim().match(/^([^(]+)\(([A-Z]{3})\)/i);
+      if (m) {
+        const sName = m[1].trim();
+        const aCode = m[2].toUpperCase();
+        const aScore = abilityScores[attrKeyMap[aCode] || 'int'] || 10;
+        const sBonus = mod(aScore) + profBonus;
+        skills[sName] = { bonus: sBonus, base_bonus: sBonus, proficiency: 'proficient' };
+      }
+    }
+  }
+
+  // 4. Extraer Subclase del encabezado ## Rasgos de Clase (...)
+  const subclassMatch = rawContent.match(/##\s+Rasgos de Clase\s*\(([^)]+)\)/i);
+  const subclass = subclassMatch ? subclassMatch[1].trim() : undefined;
+
+  // 5. Extraer Espacios de Conjuro y Hechizos
   const spellSlots = {};
-  const slotsMatch = rawContent.match(/Espacios:\s*([^\n\r]+)/i);
+  const slotsMatch = rawContent.match(/Espacios:\*?\*?\s*([^\n\r]+)/i);
   if (slotsMatch) {
     const slotsLine = slotsMatch[1];
     const slotPairs = slotsLine.matchAll(/Nivel\s+(\d+)\s*\((\d+)\)/gi);
@@ -93,55 +153,116 @@ for (const file of files) {
     }
   }
 
-  // 8. Extraer Hechizos sugeridos si existen
-  let preparedSpells = [];
-  const spellsMatch = rawContent.match(/Sugeridos:\s*([^\n\r]+)/i);
-  if (spellsMatch) {
-    preparedSpells = spellsMatch[1].split(',').map(s => s.trim().replace(/\.$/, ''));
+  const cantrips = [];
+  const cantripsMatch = rawContent.match(/Trucos(?:\s*\(\d+\))?:\*?\*?\s*([^\n\r]+)/i);
+  if (cantripsMatch) {
+    for (const c of cantripsMatch[1].split(',')) {
+      const cleaned = c.trim().replace(/\.$/, '');
+      if (cleaned) cantrips.push(cleaned);
+    }
   }
+
+  const preparedSpells = [];
+  const spellsMatch = rawContent.match(/(?:Sugeridos|Conjuros de Dominio|Conjuros de Juramento|Conocidos Sugeridos):\*?\*?\s*([^\n\r]+)/i);
+  if (spellsMatch) {
+    for (const s of spellsMatch[1].split(',')) {
+      const cleaned = s.trim().replace(/\.$/, '');
+      if (cleaned) preparedSpells.push(cleaned);
+    }
+  }
+
+  const knownSpells = [...cantrips, ...preparedSpells];
+
+  // 6. Aptitud Mágica si aplica
+  const spellAbil = SPELL_ABILITY_BY_CLASS[classNameRaw] || null;
+  const attrKeyForSpell = spellAbil === 'INT' ? 'int' : spellAbil === 'SAB' ? 'wis' : spellAbil === 'CAR' ? 'cha' : null;
+  const spellMod = attrKeyForSpell ? mod(abilityScores[attrKeyForSpell]) : 0;
+  const spellSaveDc = spellAbil ? 8 + profBonus + spellMod : null;
+  const spellAttackBonus = spellAbil ? profBonus + spellMod : null;
+  const spellcastingStats = spellAbil
+    ? [{
+        source: className,
+        ability: spellAbil,
+        ability_en: spellAbil === 'SAB' ? 'WIS' : spellAbil === 'CAR' ? 'CHA' : 'INT',
+        save_dc: spellSaveDc,
+        attack_bonus: spellAttackBonus
+      }]
+    : [];
+
+  // 7. Trasfondo sugerido
+  const bgMatch = rawContent.match(/\*\*Trasfondo:\*\*.*ej\.\s*([^\]\n\r]+)/i);
+  const background = bgMatch ? bgMatch[1].trim() : 'Aventurero';
+
+  const hitDie = HIT_DIE_BY_CLASS[classNameRaw] || 'd8';
+  const hasPerceptionProf = Object.keys(skills).some(k => /Percepci[oó]n/i.test(k));
+  const passivePerception = 10 + mod(abilityScores.wis) + (hasPerceptionProf ? profBonus : 0);
 
   const demoChar = {
     name: `${className} (Nivel ${level})`,
     slug,
-    character_class: className,
+    character_class: subclass ? `${className} (${subclass})` : className,
     level,
-    race: 'Humano / Estándar',
+    race: 'Humano (Estándar SRD)',
+    background,
+    alignment: 'Neutral Bueno',
+    experience_points: 34000,
     max_hp: maxHp,
     current_hp: maxHp,
+    temp_hp: 0,
+    hit_dice_total: `${level}${hitDie}`,
+    hit_dice_current: level,
     armor_class: armorClass,
     speed,
     proficiency_bonus: profBonus,
+    passive_perception: passivePerception,
+    initiative_modifier: initiativeModifier,
+    spellcasting_ability: spellAbil,
+    spell_save_dc: spellSaveDc,
+    spell_attack_bonus: spellAttackBonus,
+    spellcasting_stats: spellcastingStats,
     ability_scores: abilityScores,
     spell_slots: spellSlots,
     prepared_spells: preparedSpells,
+    known_spells: knownSpells,
     inventory: [
-      { name: 'Mochila de aventurero', qty: 1 },
-      { name: 'Raciones (días)', qty: 5 }
+      { slug: 'mochila-de-aventurero', name: 'Mochila de aventurero', category: 'gear', qty: 1, equipped: true, requires_attunement: false, attuned: false, notes: 'Equipo estándar de exploración' },
+      { slug: 'pocion-de-curacion', name: 'Poción de curación (2d4+2)', category: 'magic_item', qty: 2, equipped: false, requires_attunement: false, attuned: false, notes: 'Acción adicional para beber' },
+      { slug: 'raciones-de-viaje', name: 'Raciones de viaje (días)', category: 'gear', qty: 5, equipped: false, requires_attunement: false, attuned: false, notes: '' }
     ],
+    currency: { cp: 0, sp: 25, ep: 0, gp: 150, pp: 0 },
     active_effects: [],
-    personality: { traits: '', ideals: '', bonds: '', flaws: '' },
-    backstory: 'Plantilla canónica de clase del SRD para pruebas públicas.',
+    class_resources: [],
+    personality: {
+      traits: 'Siempre listo para probar mis habilidades ante cualquier desafío.',
+      ideals: 'Honor y compañerismo en la aventura.',
+      bonds: 'Proteger a mi grupo en las tierras salvajes.',
+      flaws: 'A veces subestimo el peligro de una mazmorra desconocida.'
+    },
+    appearance: `Aventurero arquetípico de clase ${className} equipado para la exploración.`,
+    backstory: 'Plantilla canónica de clase del SRD 5.1/5.2 para pruebas interactivas en la Demo Pública.',
+     player_notes: '',
     death_saves: { successes: 0, failures: 0 },
     inspiration: false,
-    skills: {},
-    saving_throws_prof: [],
-    multiclass: [],
-    attunement_slots: 3,
-    known_spells: []
+    exhaustion: 0,
+    concentrating_on: null,
+    skills,
+    saving_throws_prof: savesProf,
+    multiclass: [{ class: className, ...(subclass ? { subclass } : {}), level }],
+    attunement_slots: 3
   };
 
   parsedDemoCharacters.push(demoChar);
-  console.log(`✅ [${demoChar.slug}] ${demoChar.name}`);
-  console.log(`   CA: ${demoChar.armor_class} | HP: ${demoChar.max_hp} | Vel: ${demoChar.speed}ft | Prof: +${demoChar.proficiency_bonus}`);
-  console.log(`   Atributos: FUE ${abilityScores.str}, DES ${abilityScores.dex}, CON ${abilityScores.con}, INT ${abilityScores.int}, SAB ${abilityScores.wis}, CAR ${abilityScores.cha}`);
-  if (Object.keys(spellSlots).length) {
-    console.log(`   Ranuras: ${JSON.stringify(spellSlots)}`);
+  console.log(`✅ [${demoChar.slug}] ${demoChar.name} — ${demoChar.character_class}`);
+  console.log(`   CA: ${demoChar.armor_class} | HP: ${demoChar.max_hp} (${demoChar.hit_dice_total}) | Vel: ${demoChar.speed}ft | Prof: +${demoChar.proficiency_bonus}`);
+  console.log(`   Salvaciones: [${demoChar.saving_throws_prof.join(', ')}] | Habilidades: ${Object.keys(demoChar.skills).join(', ')}`);
+  if (Object.keys(spellSlots).length || knownSpells.length) {
+    console.log(`   Magia (${spellAbil || '-'}): ${knownSpells.length} conjuros | Ranuras: ${JSON.stringify(spellSlots)}`);
   }
   console.log('');
 }
 
-// 9. Enviar a Supabase REST API si hay credenciales
-if (supabaseUrl && supabaseKey) {
+// Enviar a Supabase REST API si hay credenciales
+if (supabaseUrl && supabaseKey && !process.argv.includes('--dry-run')) {
   const baseUrl = supabaseUrl.replace(/\/$/, '');
   const headers = {
     'Content-Type': 'application/json',
@@ -163,8 +284,12 @@ if (supabaseUrl && supabaseKey) {
       console.log(`🎉 ¡Éxito! ${inserted.length} personajes demo guardados en la tabla public.demo_characters.`);
     } else {
       console.warn(`⚠️ Error al enviar a Supabase (${res.status}): ${await res.text()}`);
+      process.exitCode = 1;
     }
   } catch (err) {
     console.error('❌ Error de red:', err.message);
+    process.exitCode = 1;
   }
+} else if (process.argv.includes('--dry-run')) {
+  console.log('🧪 [Dry Run] Validación de las 12 plantillas demo completada sin conexión a red.');
 }
