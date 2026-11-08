@@ -12,6 +12,7 @@ out/
 build/
 dist/
 .turbo/
+*.tsbuildinfo
 
 # Environment variables
 .env
@@ -28,8 +29,15 @@ pnpm-debug.log*
 .DS_Store
 Thumbs.db
 
-# Local system and hardware specs
+# Local system, hardware specs and personal reports
 SYSTEM_SPECS.md
+*system_specs*
+*specs_report*
+*.personal*
+*.private*
+*.local
+.bash_history
+.zsh_history
 
 # Local symlinks & absolute vault links (avoids broken links on Vercel CI)
 ObsidianDnD
