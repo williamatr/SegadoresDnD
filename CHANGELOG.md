@@ -9,6 +9,10 @@ y este proyecto se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ## [Unreleased]
 
+### Corregido
+* **CI/CD en Vercel y Resolución de Dependencias:**
+  * Sincronizado `pnpm-lock.yaml` para incluir la especificación de `lucide-react@^0.460.0` bajo el paquete `@segadores/character-sheet`, resolviendo el error `[ERR_PNPM_OUTDATED_LOCKFILE]` al desplegar en Vercel con `--frozen-lockfile`.
+
 ### Añadido
 * **Soporte Universal para Tiradas Físicas en Mesa de Juego (Juego Híbrido Mesa / Digital):**
   * **Subida de Nivel (`LevelUpModal.tsx` en `@segadores/character-sheet` y `level-up.ts` en `@segadores/dnd-core`):**
@@ -148,29 +152,6 @@ y este proyecto se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
     * Auditoría anti-metajuego y fugas de lore (`#dm-only`, `visibility: dm`, `> [!dm]`) en mocks públicos (`content/mocks/`).
 * **Framework Multi-Agente y Backlog Estructurado:** Especificación de roles especialistas en `.agents/` y backlog de tareas en `docs/tasks/` (`task-00` a `task-06`).
 * **Arquitectura de Visibilidad de Lore y Anti-Metajuego (Player vs DM):** Especificación en `PROJECT_SPEC.md` (Sección 4.4) y `GEMINI.md` (Regla 8) para el filtrado estricto por roles (`player` vs `dm`) mediante frontmatter (`visibility: 'player' | 'dm'`), tags (`#player-facing`, `#dm-only`) y callouts secretos (`> [!dm]`) procesados por `@segadores/obsidian-engine`.
-
-## [Unreleased]
-
-### Añadido
-* **Soporte Universal para Tiradas Físicas en Mesa de Juego (Juego Híbrido Mesa / Digital):**
-  * **Subida de Nivel (`LevelUpModal.tsx` en `@segadores/character-sheet` y `level-up.ts` en `@segadores/dnd-core`):**
-    * Selector de 3 vías en el Paso 3 para el incremento de PG Máximos: *Media Fija Oficial*, *Dado Digital Interactivo* y *Tiré en Mesa 🎲 (Físico)*.
-    * Teclado numérico rápido (1 al valor del dado de clase, ej. d6, d8, d10, d12) con cálculo reactivo inmediato: `Dado físico + Mod. CON = +X PG Máximos`.
-    * Soporte para `hpMethod: 'manual'` en el motor matemático de reglas (`packages/dnd-core/src/rules/level-up.ts`) con acotación canónica de límites de frontera (1 a valor del dado de clase).
-  * **Dados de Golpe y Curación en Descansos Cortos (`HitDiceTracker.tsx` en `@segadores/character-sheet`):**
-    * Botones duales independientes: `🎲 Tirar Digital` y `🎲 Tiré en Mesa (Físico)`.
-    * Panel desplegable con teclado numérico (1 a valor del dado de golpe), adición automática del modificador de Constitución y botón de aplicación de curación física con distinción en notificaciones.
-  * **Heridas Persistentes y Traumatismos (`ConditionsAndEffectsView.tsx` en `@segadores/character-sheet`):**
-    * Botonera dual para Tabla A (Heridas Menores) y Tabla B (Heridas Graves): `Tirar 1d20 Digital` y `🎲 Tiré en Mesa (1d20 Físico)`.
-    * Selector interactivo de 1 a 20 para buscar y aplicar de inmediato a la ficha la lesión exacta obtenida con el dado físico en la mesa.
-  * **Salvaciones contra la Muerte (`DeathSavesTracker.tsx` en `@segadores/character-sheet`):**
-    * Incorporación de botones `🎲 Tirar Digital` y `🎲 Tiré en Mesa (1d20)` con selector rápido de 1 al 20 y aplicación canónica de reglas de 5e (pifia 1: +2 fallos, 2-9: +1 fallo, 10-19: +1 éxito, 20: estabilización / crítico natural) junto con mensaje de historial.
-  * **Consola de Combate y Tirador Táctico Libre (`CombatConsoleView.tsx` en `@segadores/character-sheet`):**
-    * Cada arma equipada cuenta ahora con selector dual: `🎲 Tirar Digital` y `🎲 Tiré en Mesa`.
-    * Panel desplegable de tirada física por arma con botonera rápida para el d20 (1 al 20, botones directos de pifia 1 y crítico 20), desglose en tiempo real `d20 + mod. ataque = total al impacto`, campo numérico para daño físico total sacado en la mesa, y registro con distintivo visual en vivo `🎲 Tirado en Mesa`.
-    * **Tirador Táctico Libre para Bufos y Reglas de Campaña:** Widget interactivo integrado para cualquier dado de juego (`d4`, `d6`, `d8`, `d10`, `d12`, `d20`) con selector de tirada digital o registro físico en mesa, modificador ajustable y campo de motivo (Inspiración Bárdica, Bendición, Salvación, Daño adicional, Resonancia Rúnica, etc.).
-* **Pruebas de Estado y Mutación (State Diff & Mutation Testing):**
-  * Nueva prueba unitaria en `packages/dnd-core/src/tests/level-up.test.ts` verificando el cálculo exacto de PG con tirada manual en mesa (`hpMethod = manual`), comprobación del diferencial de estado antes vs después, invariabilidad de propiedades no alteradas y pruebas de límites de frontera (Boundary Testing). Total: 45 pruebas unitarias pasando al 100%.
 
 ## [0.0.1] - 2026-10-23
 
