@@ -22,6 +22,7 @@ interface LastRoll {
   healing: number;
   dieSides: number;
   timestamp: number;
+  isPhysical?: boolean;
 }
 
 export function HitDiceTracker({
@@ -46,7 +47,11 @@ export function HitDiceTracker({
   const match = hitDiceTotal.match(/d(\d+)/i);
   const dieSides = match ? parseInt(match[1], 10) : 8;
 
-  // Acción: Lanzar Dado de Golpe para curarse en descanso corto
+  // Estado para tirada física en mesa
+  const [showPhysicalInput, setShowPhysicalInput] = useState<boolean>(false);
+  const [physicalRollValue, setPhysicalRollValue] = useState<number>(Math.ceil(dieSides / 2));
+
+  // Acción: Lanzar Dado de Golpe digital para curarse en descanso corto
   const handleRollHitDie = () => {
     if (readOnly || current <= 0) return;
 
@@ -65,8 +70,30 @@ export function HitDiceTracker({
       conMod: conModifier,
       healing,
       dieSides,
-      timestamp: Date.now()
+      timestamp: Date.now(),
+      isPhysical: false
     });
+  };
+
+  // Acción: Aplicar Dado de Golpe tirado físicamente en la mesa
+  const handleApplyPhysicalHitDie = () => {
+    if (readOnly || current <= 0) return;
+    const roll = Math.max(1, Math.min(dieSides, physicalRollValue));
+    const healing = Math.max(1, roll + conModifier);
+    const newHp = Math.min(maxHp, currentHp + healing);
+
+    onUpdateHitDice?.(current - 1);
+    onUpdateHp?.(newHp, tempHp);
+
+    setLastRoll({
+      roll,
+      conMod: conModifier,
+      healing,
+      dieSides,
+      timestamp: Date.now(),
+      isPhysical: true
+    });
+    setShowPhysicalInput(false);
   };
 
   const triggerShortRest = () => {
@@ -95,25 +122,91 @@ export function HitDiceTracker({
         </span>
       </div>
 
-      {/* Botón de Tirar Dado de Golpe con curación en vivo */}
+      {/* Botones de Tirar Dado de Golpe (Digital o Físico en Mesa) con curación en vivo */}
       {!readOnly && (
         <div className="space-y-2">
-          <button
-            type="button"
-            disabled={current <= 0 || currentHp >= maxHp}
-            onClick={handleRollHitDie}
-            className="w-full py-2 px-3 rounded-xl bg-gradient-to-r from-amber-950/80 via-slate-900 to-amber-950/80 hover:from-amber-900 hover:to-amber-900 border border-amber-600/60 text-xs font-fantasy font-bold text-amber-200 disabled:opacity-40 disabled:cursor-not-allowed transition shadow-sm flex items-center justify-center gap-2 group"
-            title={
-              current <= 0
-                ? 'No te quedan dados de golpe (recuperarás la mitad tras un descanso largo)'
-                : currentHp >= maxHp
-                ? 'Tus puntos de golpe ya están al máximo'
-                : `Gasta 1 dado de golpe: Tira 1d${dieSides} + ${conModifier} (CON) y cura tus PG en vivo`
-            }
-          >
-            <Dices className="w-4 h-4 text-dnd-gold group-hover:rotate-180 transition-transform duration-300" />
-            <span>Tirar Dado de Golpe (1d{dieSides}{conModifier >= 0 ? `+${conModifier}` : conModifier} CON)</span>
-          </button>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            {/* Opción A: Tirada digital automática */}
+            <button
+              type="button"
+              disabled={current <= 0 || currentHp >= maxHp}
+              onClick={handleRollHitDie}
+              className="py-2 px-2.5 rounded-xl bg-gradient-to-r from-amber-950/80 via-slate-900 to-amber-950/80 hover:from-amber-900 hover:to-amber-900 border border-amber-600/60 text-xs font-fantasy font-bold text-amber-200 disabled:opacity-40 disabled:cursor-not-allowed transition shadow-sm flex items-center justify-center gap-1.5 group"
+              title={
+                current <= 0
+                  ? 'No te quedan dados de golpe'
+                  : currentHp >= maxHp
+                  ? 'Tus PG ya están al máximo'
+                  : `Tirada digital: 1d${dieSides} + ${conModifier} (CON)`
+              }
+            >
+              <Dices className="w-3.5 h-3.5 text-dnd-gold group-hover:rotate-180 transition-transform duration-300" />
+              <span>Tirar Digital (1d{dieSides})</span>
+            </button>
+
+            {/* Opción B: Tirada física en mesa */}
+            <button
+              type="button"
+              disabled={current <= 0 || currentHp >= maxHp}
+              onClick={() => setShowPhysicalInput(!showPhysicalInput)}
+              className={`py-2 px-2.5 rounded-xl border text-xs font-fantasy font-bold transition shadow-sm flex items-center justify-center gap-1.5 ${
+                showPhysicalInput
+                  ? 'bg-emerald-950 border-emerald-500 text-emerald-200 shadow-md ring-1 ring-emerald-400'
+                  : 'bg-slate-900 hover:bg-slate-800 border-slate-700 text-slate-300 hover:text-emerald-300'
+              } disabled:opacity-40 disabled:cursor-not-allowed`}
+              title="Abre el selector para introducir el número que sacaste en tu dado físico en la mesa"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Tiré en Mesa 🎲</span>
+            </button>
+          </div>
+
+          {/* Panel para ingresar resultado de dado físico en la mesa */}
+          {showPhysicalInput && !readOnly && current > 0 && currentHp < maxHp && (
+            <div className="p-3 rounded-xl bg-slate-950 border border-emerald-700/60 space-y-2.5 animate-in fade-in">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold text-emerald-300 uppercase tracking-wide flex items-center gap-1">
+                  <Sparkles className="w-3 h-3 text-emerald-400" />
+                  Dado físico en mesa (1d{dieSides})
+                </span>
+                <span className="text-[10px] text-slate-400">
+                  Mod. CON: <strong className="text-slate-200">{conModifier >= 0 ? `+${conModifier}` : conModifier}</strong>
+                </span>
+              </div>
+
+              {/* Selector de número sacado en la mesa */}
+              <div className="flex items-center gap-1 flex-wrap">
+                {Array.from({ length: dieSides }, (_, i) => i + 1).map(num => (
+                  <button
+                    key={num}
+                    type="button"
+                    onClick={() => setPhysicalRollValue(num)}
+                    className={`w-7 h-7 rounded-lg text-xs font-mono font-bold transition flex items-center justify-center ${
+                      physicalRollValue === num
+                        ? 'bg-emerald-500 text-slate-950 shadow-md ring-2 ring-emerald-400'
+                        : 'bg-slate-900 border border-slate-700 text-slate-300 hover:border-emerald-600 hover:text-white'
+                    }`}
+                  >
+                    {num}
+                  </button>
+                ))}
+              </div>
+
+              <div className="flex items-center justify-between pt-1 border-t border-slate-800 text-xs">
+                <span className="text-slate-300 text-[11px]">
+                  Cura calculada: <strong className="text-emerald-400 font-mono">+{Math.max(1, physicalRollValue + conModifier)} PG</strong>
+                </span>
+                <button
+                  type="button"
+                  onClick={handleApplyPhysicalHitDie}
+                  className="px-3 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold text-[11px] transition shadow flex items-center gap-1"
+                >
+                  <CheckCircle2 className="w-3 h-3" />
+                  Aplicar Curación en Mesa
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* Notificación de Última Tirada de Curación */}
           {lastRoll && (
@@ -121,7 +214,7 @@ export function HitDiceTracker({
               <div className="flex items-center gap-2">
                 <Heart className="w-3.5 h-3.5 text-emerald-400 fill-emerald-400" />
                 <span>
-                  ¡Tiraste <strong>1d{lastRoll.dieSides} ({lastRoll.roll})</strong> {lastRoll.conMod >= 0 ? `+${lastRoll.conMod}` : lastRoll.conMod} CON = <strong className="text-emerald-300 font-bold">+{lastRoll.healing} PG</strong>!
+                  {lastRoll.isPhysical ? '🎲 En la mesa:' : '🎲 Digital:'} sacaste <strong>1d{lastRoll.dieSides} ({lastRoll.roll})</strong> {lastRoll.conMod >= 0 ? `+${lastRoll.conMod}` : lastRoll.conMod} CON = <strong className="text-emerald-300 font-bold">+{lastRoll.healing} PG</strong>
                 </span>
               </div>
               <span className="font-mono text-[10px] text-emerald-400 font-bold">
