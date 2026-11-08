@@ -1,9 +1,16 @@
 /**
  * @segadores/dnd-core
- * Lógica matemática pura y reglas D&D (cálculo de modificadores, tiradas de dados, reglas SRD).
- * 100% independiente de UI y base de datos.
+ * Motor matemático puro, contratos de tipos y evaluador de estados D&D 5.5e (SRD 5.2.1 + Reglas de Mesa).
+ * 100% agnóstico de UI, red y base de datos.
  */
 
-export const calculateAbilityModifier = (score: number): number => {
-  return Math.floor((score - 10) / 2);
-};
+export * from './src/types/effects.ts';
+export * from './src/types/spells.ts';
+export * from './src/types/character.ts';
+
+export * from './src/rules/abilities.ts';
+export * from './src/rules/combat-calculator.ts';
+export * from './src/rules/lingering-injuries.ts';
+export * from './src/rules/multiclass.ts';
+export * from './src/rules/state-evaluator.ts';
+export * from './src/rules/level-up.ts';
