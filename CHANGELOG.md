@@ -9,6 +9,13 @@ y este proyecto se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ## [Unreleased]
 
+### Añadido
+* **Backlog de Inmersión Visual D&D 5e (Sprint 2):**
+  * Creadas las épicas de diseño y refactor visual: `TASK-09` (Sistema de Diseño Editorial D&D 5e: tokens, paleta pergamino, heráldica y tipografía), `TASK-10` (Refactor de la Hoja de Personaje D&D 5e: escudo medieval CA, cajas notched y tarjetas de conjuro) y `TASK-11` (Inmersión Visual del Portal, Wiki y Bitácora del DM).
+  * Reorganizado el tablero `docs/tasks/README.md` priorizando la experiencia y juego en mesa de los aventureros antes de las tareas de tooling interno (`TASK-07` y `TASK-08`).
+
+## [0.1.2]
+
 ### Corregido
 * **Seguridad y Control de Acceso en Producción:**
   * Bloqueado y purgado el panel y endpoints de inicio de sesión de desarrollo local (`/api/auth/dev-login` y cookie `segadores_dev_session`) fuera del entorno `NODE_ENV === 'development'`, impidiendo que sea visible en la UI o ejecutable en producción (`www.segadoresdnd.com`).

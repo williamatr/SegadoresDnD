@@ -89,8 +89,11 @@ Una espada rúnica de hoja afilada y oscura envuelta en ráfagas de viento.`;
   });
 
   it('carga compendio completo desde la wiki local sin errores', async () => {
-    const wikiDir = path.resolve('content/wiki');
-    const mockDir = path.resolve('content/mocks');
+    const rootDir = process.cwd().includes('packages/obsidian-engine')
+      ? path.resolve(process.cwd(), '../..')
+      : process.cwd();
+    const wikiDir = path.resolve(rootDir, 'content/wiki');
+    const mockDir = path.resolve(rootDir, 'content/mocks');
     const compendium = await loadCompendium(wikiDir, mockDir);
 
     assert.ok(compendium.totalSpells > 0);
