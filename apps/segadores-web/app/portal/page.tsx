@@ -2,8 +2,10 @@ import { getCurrentPlayer } from '@/lib/auth/get-current-player';
 import { PortalDashboard } from '@/components/portal/portal-dashboard';
 import { createAdminClient } from '@/lib/supabase/admin';
 import type { AdminPlayerItem } from '@/app/api/admin/invitations/route';
+import type { Character } from '@segadores/dnd-core';
 
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export const metadata = {
   title: 'Portal de Campaña | Segadores de Orcos',
@@ -14,9 +16,24 @@ export default async function PortalPage() {
   const { user, player } = await getCurrentPlayer();
 
   let initialPlayers: AdminPlayerItem[] = [];
-  if (player?.role === 'dm') {
-    try {
-      const admin = createAdminClient();
+  let initialCharacters: Record<string, Character> | undefined;
+
+  try {
+    const admin = createAdminClient();
+
+    // 1. Precargar personajes oficiales desde Supabase
+    const { data: dbChars, error: charsError } = await admin.from('characters').select('*');
+    if (dbChars && !charsError && dbChars.length > 0) {
+      initialCharacters = {};
+      for (const c of dbChars) {
+        if (c.slug) {
+          initialCharacters[c.slug] = c as unknown as Character;
+        }
+      }
+    }
+
+    // 2. Si es DM, precargar lista de jugadores para la consola de invitaciones
+    if (player?.role === 'dm') {
       const { data, error } = await admin
         .from('players')
         .select('id, auth_user_id, email, display_name, role, assigned_character_slug, invited_by, created_at, updated_at')
@@ -43,9 +60,9 @@ export default async function PortalPage() {
           }));
         }
       }
-    } catch (err) {
-      console.warn('[PortalPage] Aviso al precargar aventureros para la consola del DM:', err);
     }
+  } catch (err) {
+    console.warn('[PortalPage] Aviso al precargar datos de Supabase:', err);
   }
 
   return (
@@ -53,6 +70,7 @@ export default async function PortalPage() {
       userEmail={user?.email || null}
       player={player}
       initialPlayers={initialPlayers}
+      initialCharacters={initialCharacters}
     />
   );
 }

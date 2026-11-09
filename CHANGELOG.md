@@ -10,6 +10,11 @@ y este proyecto se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 ## [Unreleased]
 
 ### Añadido
+* **Sincronización en Vivo de Personajes desde Supabase en el Portal (`/portal`):**
+  * Actualizado `apps/segadores-web/app/portal/page.tsx` con `revalidate = 0` para consultar directamente la tabla `public.characters` de Supabase en cada visita e inyectar `initialCharacters` al dashboard.
+  * Actualizado `PortalDashboard` (`apps/segadores-web/components/portal/portal-dashboard.tsx`) para priorizar los datos frescos de la base de datos sobre la caché previa de `localStorage` y conectar las 5 tarjetas superiores de selección de héroes al estado vivo (`charactersMap`).
+  * Sincronizados los datos canónicos de los 5 personajes en Supabase y en el fallback local (`apps/segadores-web/lib/campaign/characters.ts` y `characters.test.mjs`) con la bóveda de Obsidian (incluyendo el ascenso de Honiel Spellbinder a Nivel 9: Mago 7 / Monje 2, 58 PG, 48.000 PX, INT 20, PB +4, Puntos de Ki y Metabolismo Prodigioso).
+
 * **Motor Dinámico de 4 Temas por Tokens CSS y Arquitectura Zero-FOUC:**
   * Implementado soporte nativo para 4 temas canónicos completos a través de variables CSS semánticas en `apps/segadores-web/app/globals.css`:
     * `parchment-royal`: Pergamino Real 5.5e (modo claro oficial por defecto / alias `'light'`).
