@@ -72,6 +72,8 @@ export interface MulticlassXpCostResult {
  */
 export interface CharacterXpProgress {
   currentXp: number;
+  currentAvailableXp: number;
+  totalAccumulatedXp: number;
   currentLevel: number;
   nextLevel: number;
   currentLevelThreshold: number;
@@ -84,7 +86,10 @@ export interface CharacterXpProgress {
 
 /**
  * Calcula el progreso de experiencia (PX) de un personaje respecto al umbral oficial de su nivel actual y el siguiente.
- * Admite tanto PX acumulados totales (ej. 26.600 PX) como PX en progreso dentro del nivel (ej. 3.600 PX hacia nivel 8).
+ * Separa de forma precisa los PX disponibles/en progreso dentro del nivel actual de los PX acumulados históricos totales.
+ *
+ * @param level Nivel total actual del personaje (1 a 20).
+ * @param experiencePoints PX poseídos por el personaje (en banco/disponibles o acumulados totales).
  */
 export function getCharacterXpProgress(level: number, experiencePoints: number): CharacterXpProgress {
   const currentLevel = Math.max(1, Math.min(20, Math.floor(level || 1)));
@@ -93,24 +98,30 @@ export function getCharacterXpProgress(level: number, experiencePoints: number):
 
   const currentLevelThreshold = XP_THRESHOLDS_BY_LEVEL[currentLevel] ?? 0;
   const nextLevelThreshold = XP_THRESHOLDS_BY_LEVEL[nextLevel] ?? currentLevelThreshold;
-
-  // Si los PX son menores que el umbral del nivel actual, se interpretan como progreso dentro del nivel
-  // (ej. 3.600 PX en un personaje de nivel 7 con umbral 23.000 -> 26.600 PX acumulados)
-  const totalAccumulatedXp = experiencePoints < currentLevelThreshold
-    ? currentLevelThreshold + Math.max(0, experiencePoints)
-    : Math.max(0, experiencePoints);
-
   const xpNeededForNextLevel = isMaxLevel ? 0 : Math.max(0, nextLevelThreshold - currentLevelThreshold);
-  const xpIntoCurrentLevel = Math.max(0, totalAccumulatedXp - currentLevelThreshold);
-  const remainingXp = isMaxLevel ? 0 : Math.max(0, nextLevelThreshold - totalAccumulatedXp);
+
+  const rawXp = Math.max(0, experiencePoints || 0);
+  const isTotalCumulative = rawXp >= currentLevelThreshold;
+
+  const currentAvailableXp = isTotalCumulative
+    ? rawXp - currentLevelThreshold
+    : rawXp;
+
+  const totalAccumulatedXp = isTotalCumulative
+    ? rawXp
+    : currentLevelThreshold + rawXp;
+
+  const remainingXp = isMaxLevel ? 0 : Math.max(0, xpNeededForNextLevel - currentAvailableXp);
   const progressPercent = isMaxLevel
     ? 100
     : xpNeededForNextLevel > 0
-      ? Math.min(100, Math.max(0, Math.round((xpIntoCurrentLevel / xpNeededForNextLevel) * 100)))
+      ? Math.min(100, Math.max(0, Math.round((currentAvailableXp / xpNeededForNextLevel) * 100)))
       : 100;
 
   return {
     currentXp: totalAccumulatedXp,
+    currentAvailableXp,
+    totalAccumulatedXp,
     currentLevel,
     nextLevel,
     currentLevelThreshold,
@@ -130,11 +141,13 @@ export function getCharacterXpProgress(level: number, experiencePoints: number):
  * - El coste en PX se basa estrictamente en el NIVEL TOTAL DEL PERSONAJE, no en la clase concreta.
  * - Subir de Nivel Total N a N+1 cuesta exactamente INCREMENTAL_XP_COST_BY_LEVEL[N+1], sin importar qué clase se suba.
  *
- * REGLA DE CAMPAÑA CORREGIDA (CATCH-UP AL 50% BASADO EN EL ESCALÓN DE PERSONAJE):
- * - Si la clase secundaria está por debajo del nivel de la clase primaria (targetCurrent < primaryLevel),
- *   subir de nivel esa clase secundaria cuesta el 50% del escalón del siguiente nivel de personaje.
- * - Si la clase secundaria ya igualó a la primaria (targetCurrent >= primaryLevel),
- *   o si se sube la clase primaria, cuesta el 100% del escalón del siguiente nivel de personaje.
+ * REGLA DE CAMPAÑA ACTUALIZADA (DESBLOQUEO A NIVEL 7 Y CATCH-UP AL 50% HASTA NIVEL 7):
+ * 1. La regla personalizada SOLO se desbloquea si la clase principal ya alcanzó Nivel 7 (primaryClassLevel >= 7).
+ * 2. Aplica EXCLUSIVAMENTE a clases secundarias (multiclase). La clase principal siempre sube al 100% normal.
+ * 3. La multiclase solo se adquiere bajo las reglas oficiales (requisito 13+ en características).
+ * 4. Mientras la clase secundaria esté por debajo de Nivel 7 (targetCurrent < 7), subirla cuesta el 50% del escalón de personaje.
+ * 5. La regla personalizada DEJA DE SER VÁLIDA al alcanzar Nivel 7 en la multiclase (targetCurrent >= 7):
+ *    subir de Nivel 7 a 8 o superior en la multiclase cuesta el 100% del coste normal.
  *
  * @param targetClassNextLevel Nivel objetivo al que se desea subir la clase (ej. 2 para pasar de Monje 1 a 2)
  * @param primaryClassLevel Nivel de la clase principal del personaje (ej. 7 de Mago)
@@ -159,9 +172,15 @@ export function calculateMulticlassLevelUpCost(
   // El coste oficial de saltar al siguiente nivel total de personaje
   const officialRawCost = INCREMENTAL_XP_COST_BY_LEVEL[nextTotal] ?? 0;
 
-  // Regla de campaña: si la clase objetivo actual es estrictamente menor que la clase principal,
-  // aplica el 50% de descuento sobre el escalón del personaje.
-  const isCatchUpHalfCost = clampedPrimary > 0 && targetCurrent < clampedPrimary;
+  // Regla de campaña:
+  // - Desbloqueo estricto: clase principal debe ser al menos Nivel 7.
+  // - Solo aplica a clases secundarias (targetCurrent < clampedPrimary).
+  // - Expira al alcanzar Nivel 7 en la multiclase (targetCurrent < 7).
+  const isUnlocked = clampedPrimary >= 7;
+  const isSecondaryClass = targetCurrent < clampedPrimary;
+  const isUnderLevel7 = targetCurrent < 7;
+  const isCatchUpHalfCost = isUnlocked && isSecondaryClass && isUnderLevel7;
+
   const xpCost = isCatchUpHalfCost ? Math.floor(officialRawCost * 0.5) : officialRawCost;
   const savings = isCatchUpHalfCost ? officialRawCost - xpCost : 0;
 
