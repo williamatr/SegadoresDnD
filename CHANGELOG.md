@@ -10,6 +10,21 @@ y este proyecto se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 ## [Unreleased]
 
 ### Añadido
+* **Catálogo Canónico y Filtrado Contextual de Buffs de la Compañía (`@segadores/dnd-core`, `ConditionsAndEffectsView.tsx`, `CharacterSheet.tsx`):**
+  * Definido el catálogo de buffs canónicos de la compañía en `@segadores/dnd-core` (`canonical-buffs.ts`) con más de 20 habilidades, conjuros y elixires para los 5 héroes (`alizar`, `eru`, `honiel`, `solaria`, `zuma`), con scopes de objetivo tipados (`self`, `allies`, `both`) y modificadores mecánicos precisos (bonificadores de CA, dados de ataque/salvación `1d4`, velocidad, etc.).
+  * Motor de filtrado canónico contextual (`filterAvailableBuffs`):
+    * **Jugador viendo su propia ficha:** Muestra exclusivamente los buffs propios que puede aplicarse a sí mismo (`self` o `both`).
+    * **Jugador viendo la ficha de un compañero:** Muestra únicamente los buffs que su héroe activo (`viewerCharacterSlug`) puede conceder a aliados (`allies` o `both`). Los botones se mantienen interactivos incluso cuando el resto de la ficha está en solo lectura (`readOnly`), permitiendo inyectar soporte táctico y retirar los efectos aplicados.
+    * **Master DM (`userRole === 'dm'`):** Despliega todas las posibilidades (buffs propios del personaje y buffs de soporte de todos los aliados), incorporando distintivos visuales explícitos con el nombre del héroe propietario (`Propio · [Nombre]` o `[Nombre del Aliado]`) y asignando `applied_by: buff.ownerName` al registrar el `ActiveEffect`.
+  * Suite de pruebas unitarias reales y completas en `packages/dnd-core/src/tests/buffs.test.ts` (7 pruebas rigurosas, comprobando integridad del catálogo, filtros de jugador propio/aliado, vista DM completa, creación de `ActiveEffect` e impacto matemático en `evaluateCharacterState`).
+
+### Corregido
+* **Layout de Economía de Acciones en la Consola de Combate (`CombatConsoleView.tsx`):**
+  * Subsanado el error estructural de anidamiento de rejillas en `CombatConsoleView.tsx` eliminando la etiqueta de grid duplicada en la cabecera y la Columna 4 (`Interacción Entorno`) duplicada al final del archivo.
+  * Restablecido el contenedor principal de 4 columnas simétricas con `grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 items-start w-full` y protegidas las tarjetas internas contra desbordamientos con `min-w-0` y `break-words`.
+* **Contraste y Legibilidad en la Consola de Pruebas DM (`portal-dashboard.tsx`):**
+  * Corregida la invisibilidad de texto en Modo Claro sobre la barra fija de cuero oscuro (`bg-dnd-leather-dark`), sustituyendo las clases de tinta oscura (`text-dnd-ink`, `text-dnd-ink-muted`) por tokens de alto contraste invariantes (`text-[#f7f1e6]`, `text-[#d8ccb8]`, `text-amber-300`, `bg-[#2b1b13]`, `border-[#5a4232]`).
+  * Conectado el slug del héroe activo hacia la suite de la ficha pasando `viewerCharacterSlug={effectiveAssignedSlug}` a `<CharacterSheet ... />`.
 * **Consola de Combate Reactiva y Evaluador de Estado Dinámico (`@segadores/dnd-core`, `CombatConsoleView.tsx`):**
   * Implementada la reactividad en tiempo real de la Consola de Combate y el evaluador de reglas (`state-evaluator.ts`) ante el equipamiento de armaduras, escudos y armas.
   * Lógica canónica de interacción marcial para Monje (Honiel Spellbinder):
