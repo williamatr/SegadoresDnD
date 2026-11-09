@@ -749,7 +749,7 @@ export function validateLevelUp(character: Character, rawTargetClass: string): L
 }
 
 export interface LevelUpOptions {
-  hpMethod?: 'average' | 'roll';
+  hpMethod?: 'average' | 'roll' | 'manual';
   rolledHp?: number;
 }
 
@@ -757,7 +757,7 @@ export interface LevelUpDiff {
   totalLevel: { before: number; after: number };
   classes: { before: string; after: string };
   targetClassLevel: { className: string; before: number; after: number };
-  maxHp: { before: number; after: number; increase: number; method: 'average' | 'roll'; baseRoll: number; conMod: number };
+  maxHp: { before: number; after: number; increase: number; method: 'average' | 'roll' | 'manual'; baseRoll: number; conMod: number };
   hitDice: { before: string; after: string };
   experiencePoints: { before: number; after: number; cost: number };
   proficiencyBonus: { before: number; after: number; increased: boolean };
@@ -800,7 +800,7 @@ export function previewLevelUp(
 
   // Cálculo de Puntos de Golpe (PG)
   const hpMethod = options.hpMethod ?? 'average';
-  const baseRoll = hpMethod === 'roll' && options.rolledHp !== undefined
+  const baseRoll = (hpMethod === 'roll' || hpMethod === 'manual') && options.rolledHp !== undefined
     ? Math.max(1, Math.min(hitDieInfo.dieValue, Math.floor(options.rolledHp)))
     : hitDieInfo.avgHp;
 

@@ -14,7 +14,7 @@ Sitio web privado para campaña de Dungeons & Dragons con wiki integrada desde O
 * **Frontend & Backend:** Next.js (App Router) + TypeScript
 * **Estilos:** Tailwind CSS + shadcn/ui
 * **Base de Datos & Auth:** Supabase (PostgreSQL + Google OAuth + Realtime)
-* **Despliegue & Hosting:** Vercel (Hobby Tier)
+* **Despliegue & Hosting:** Vercel (Hobby Tier) + Vercel CLI global
 * **Dominio:** Namecheap DNS
 * **Fuente de Lore:** Bóveda de Obsidian (Markdown)
 

@@ -56,9 +56,10 @@ export function LevelUpModal({
   const [isNewClassMode, setIsNewClassMode] = useState<boolean>(false);
   const [newClassName, setNewClassName] = useState<string>('Guerrero');
 
-  // Método de Puntos de Golpe
-  const [hpMethod, setHpMethod] = useState<'average' | 'roll'>('average');
+  // Método de Puntos de Golpe: 'average' | 'roll' | 'manual'
+  const [hpMethod, setHpMethod] = useState<'average' | 'roll' | 'manual'>('average');
   const [rolledValue, setRolledValue] = useState<number>(5);
+  const [manualTableDice, setManualTableDice] = useState<number>(5);
   const [isRolling, setIsRolling] = useState<boolean>(false);
   const [isApplying, setIsApplying] = useState<boolean>(false);
   const [applySuccess, setApplySuccess] = useState<boolean>(false);
@@ -75,7 +76,7 @@ export function LevelUpModal({
   // Generar preview en caliente
   const preview: LevelUpPreviewResult = previewLevelUp(character, effectiveTargetClass, {
     hpMethod,
-    rolledHp: hpMethod === 'roll' ? rolledValue : undefined
+    rolledHp: hpMethod === 'roll' ? rolledValue : hpMethod === 'manual' ? manualTableDice : undefined
   });
 
   const { validation, diff, newFeatures } = preview;
@@ -365,59 +366,95 @@ export function LevelUpModal({
               Paso 3: Incremento de Puntos de Golpe ({effectiveTargetClass} usa dado {hitDieInfo.die})
             </span>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               {/* Opción 1: Media fija */}
               <button
                 type="button"
                 onClick={() => setHpMethod('average')}
-                className={`p-3.5 rounded-2xl border text-left transition flex items-center justify-between ${
+                className={`p-3 rounded-2xl border text-left transition flex flex-col justify-between ${
                   hpMethod === 'average'
                     ? 'bg-amber-950/30 border-dnd-gold shadow-md ring-1 ring-dnd-gold/50'
                     : 'bg-dnd-card/70 border-dnd-border hover:bg-slate-800'
                 }`}
               >
-                <div>
-                  <div className="flex items-center gap-1.5 font-bold text-slate-100">
-                    <span>Media Fija Oficial</span>
-                    <span className="text-[10px] px-1.5 py-0.2 rounded bg-amber-900/70 text-amber-300 font-mono">
-                      Recomendado
-                    </span>
-                  </div>
-                  <p className="text-xs text-slate-400 mt-1">
-                    {hitDieInfo.avgHp} (Media) + {conMod} (Mod. CON) ={' '}
-                    <strong className="text-emerald-400">+{Math.max(1, hitDieInfo.avgHp + conMod)} PG Máximos</strong>
-                  </p>
+                <div className="flex items-center justify-between w-full">
+                  <span className="font-bold text-slate-100 text-xs">Media Fija</span>
+                  <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-900/70 text-amber-300 font-mono">
+                    Recomendado
+                  </span>
                 </div>
-                <div className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 ${
-                  hpMethod === 'average' ? 'border-dnd-gold bg-dnd-gold text-slate-950' : 'border-slate-600'
-                }`}>
-                  {hpMethod === 'average' && <Check className="w-3.5 h-3.5 stroke-[3]" />}
+                <p className="text-[11px] text-slate-400 mt-1">
+                  {hitDieInfo.avgHp} + CON ({conMod}) ={' '}
+                  <strong className="text-emerald-400">+{Math.max(1, hitDieInfo.avgHp + conMod)} PG</strong>
+                </p>
+                <div className="flex justify-end mt-2">
+                  <div className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${
+                    hpMethod === 'average' ? 'border-dnd-gold bg-dnd-gold text-slate-950' : 'border-slate-600'
+                  }`}>
+                    {hpMethod === 'average' && <Check className="w-3 h-3 stroke-[3]" />}
+                  </div>
                 </div>
               </button>
 
-              {/* Opción 2: Tirar Dado */}
+              {/* Opción 2: Tirar Dado Digital */}
               <button
                 type="button"
                 onClick={() => setHpMethod('roll')}
-                className={`p-3.5 rounded-2xl border text-left transition flex items-center justify-between ${
+                className={`p-3 rounded-2xl border text-left transition flex flex-col justify-between ${
                   hpMethod === 'roll'
                     ? 'bg-amber-950/30 border-dnd-gold shadow-md ring-1 ring-dnd-gold/50'
                     : 'bg-dnd-card/70 border-dnd-border hover:bg-slate-800'
                 }`}
               >
-                <div>
-                  <div className="flex items-center gap-1.5 font-bold text-slate-100">
-                    <Dices className="w-4 h-4 text-amber-400" />
-                    <span>Tirar Dado ({hitDieInfo.die})</span>
-                  </div>
-                  <p className="text-xs text-slate-400 mt-1">
-                    Tirada manual o interactiva + Mod. CON ({conMod})
-                  </p>
+                <div className="flex items-center justify-between w-full">
+                  <span className="font-bold text-slate-100 text-xs flex items-center gap-1">
+                    <Dices className="w-3.5 h-3.5 text-amber-400" />
+                    Dado Digital
+                  </span>
+                  <span className="text-[9px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 font-mono">
+                    {hitDieInfo.die}
+                  </span>
                 </div>
-                <div className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 ${
-                  hpMethod === 'roll' ? 'border-dnd-gold bg-dnd-gold text-slate-950' : 'border-slate-600'
-                }`}>
-                  {hpMethod === 'roll' && <Check className="w-3.5 h-3.5 stroke-[3]" />}
+                <p className="text-[11px] text-slate-400 mt-1">
+                  Tirada virtual en app + CON ({conMod})
+                </p>
+                <div className="flex justify-end mt-2">
+                  <div className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${
+                    hpMethod === 'roll' ? 'border-dnd-gold bg-dnd-gold text-slate-950' : 'border-slate-600'
+                  }`}>
+                    {hpMethod === 'roll' && <Check className="w-3 h-3 stroke-[3]" />}
+                  </div>
+                </div>
+              </button>
+
+              {/* Opción 3: Tirada Física en Mesa */}
+              <button
+                type="button"
+                onClick={() => setHpMethod('manual')}
+                className={`p-3 rounded-2xl border text-left transition flex flex-col justify-between ${
+                  hpMethod === 'manual'
+                    ? 'bg-amber-950/30 border-dnd-gold shadow-md ring-1 ring-dnd-gold/50'
+                    : 'bg-dnd-card/70 border-dnd-border hover:bg-slate-800'
+                }`}
+              >
+                <div className="flex items-center justify-between w-full">
+                  <span className="font-bold text-slate-100 text-xs flex items-center gap-1">
+                    <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+                    Tiré en Mesa 🎲
+                  </span>
+                  <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-950 border border-emerald-700/50 text-emerald-300 font-mono">
+                    Físico
+                  </span>
+                </div>
+                <p className="text-[11px] text-slate-400 mt-1">
+                  Introduce el valor de tu dado físico
+                </p>
+                <div className="flex justify-end mt-2">
+                  <div className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${
+                    hpMethod === 'manual' ? 'border-dnd-gold bg-dnd-gold text-slate-950' : 'border-slate-600'
+                  }`}>
+                    {hpMethod === 'manual' && <Check className="w-3 h-3 stroke-[3]" />}
+                  </div>
                 </div>
               </button>
             </div>
@@ -451,6 +488,53 @@ export function LevelUpModal({
                       +{Math.max(1, rolledValue + conMod)} PG
                     </strong>{' '}
                     ({rolledValue} + CON {conMod})
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {/* Panel de tirada física en mesa si eligió 'manual' */}
+            {hpMethod === 'manual' && (
+              <div className="p-4 rounded-2xl bg-slate-950 border border-emerald-700/50 space-y-3 animate-in fade-in">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div>
+                    <span className="font-fantasy font-bold text-xs text-emerald-300 uppercase tracking-wide flex items-center gap-1.5">
+                      <Sparkles className="w-3.5 h-3.5" />
+                      Tirada Física en Mesa (Dado {hitDieInfo.die})
+                    </span>
+                    <p className="text-[11px] text-slate-400 mt-0.5">
+                      Tira tu dado físico en la mesa y selecciona o escribe el número obtenido:
+                    </p>
+                  </div>
+
+                  {/* Selector rápido / botones numéricos */}
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    {Array.from({ length: hitDieInfo.dieValue }, (_, i) => i + 1).map(num => (
+                      <button
+                        key={num}
+                        type="button"
+                        onClick={() => setManualTableDice(num)}
+                        className={`w-7 h-7 rounded-lg text-xs font-mono font-bold transition flex items-center justify-center ${
+                          manualTableDice === num
+                            ? 'bg-emerald-500 text-slate-950 shadow-md ring-2 ring-emerald-400'
+                            : 'bg-slate-900 border border-slate-700 text-slate-300 hover:border-emerald-600 hover:text-white'
+                        }`}
+                      >
+                        {num}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between text-xs">
+                  <span className="text-slate-300">
+                    Dado en mesa: <strong className="text-emerald-400 font-mono">{manualTableDice}</strong> + Mod. CON: <strong className="text-slate-200 font-mono">{conMod}</strong>
+                  </span>
+                  <span className="text-xs text-slate-200">
+                    Total PG Ganados:{' '}
+                    <strong className="text-emerald-400 font-mono text-sm">
+                      +{Math.max(1, manualTableDice + conMod)} PG Máximos
+                    </strong>
                   </span>
                 </div>
               </div>

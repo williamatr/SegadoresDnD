@@ -1,5 +1,5 @@
-import React from 'react';
-import { Skull, CheckCircle2, RotateCcw } from 'lucide-react';
+import React, { useState } from 'react';
+import { Skull, CheckCircle2, RotateCcw, Dices, Sparkles } from 'lucide-react';
 import type { DeathSaves } from '@segadores/dnd-core';
 
 interface DeathSavesTrackerProps {
@@ -15,6 +15,49 @@ export function DeathSavesTracker({
 }: DeathSavesTrackerProps) {
   const successes = Math.min(3, Math.max(0, deathSaves.successes || 0));
   const failures = Math.min(3, Math.max(0, deathSaves.failures || 0));
+  const [showPhysicalEntry, setShowPhysicalEntry] = useState(false);
+  const [selectedPhysicalD20, setSelectedPhysicalD20] = useState<number | null>(null);
+  const [lastRollMessage, setLastRollMessage] = useState<string | null>(null);
+
+  const applyRollResult = (val: number, isPhysical: boolean) => {
+    if (readOnly) return;
+    if (val === 1) {
+      onUpdateDeathSaves?.({
+        ...deathSaves,
+        failures: Math.min(3, failures + 2)
+      });
+      setLastRollMessage(`d20: ${val} (💀 Pifia: +2 fallos)${isPhysical ? ' · Mesa' : ' · Digital'}`);
+    } else if (val >= 2 && val <= 9) {
+      onUpdateDeathSaves?.({
+        ...deathSaves,
+        failures: Math.min(3, failures + 1)
+      });
+      setLastRollMessage(`d20: ${val} (❌ Fallo: +1 fallo)${isPhysical ? ' · Mesa' : ' · Digital'}`);
+    } else if (val >= 10 && val <= 19) {
+      onUpdateDeathSaves?.({
+        ...deathSaves,
+        successes: Math.min(3, successes + 1)
+      });
+      setLastRollMessage(`d20: ${val} (✅ Éxito: +1 éxito)${isPhysical ? ' · Mesa' : ' · Digital'}`);
+    } else if (val === 20) {
+      onUpdateDeathSaves?.({
+        ...deathSaves,
+        successes: 3
+      });
+      setLastRollMessage(`d20: 20 (✨ ¡Crítico! Estabilizado)${isPhysical ? ' · Mesa' : ' · Digital'}`);
+    }
+  };
+
+  const handleRollDigital = () => {
+    const val = Math.floor(Math.random() * 20) + 1;
+    applyRollResult(val, false);
+  };
+
+  const handleApplyPhysical = (val: number) => {
+    setSelectedPhysicalD20(val);
+    applyRollResult(val, true);
+    setShowPhysicalEntry(false);
+  };
 
   const handleToggleSuccess = (index: number) => {
     if (readOnly) return;
@@ -36,6 +79,8 @@ export function DeathSavesTracker({
 
   const handleReset = () => {
     if (readOnly) return;
+    setLastRollMessage(null);
+    setSelectedPhysicalD20(null);
     onUpdateDeathSaves?.({
       successes: 0,
       failures: 0
@@ -74,6 +119,71 @@ export function DeathSavesTracker({
       {isStabilized && !isDead && (
         <div className="p-2.5 rounded-xl bg-emerald-950/80 border border-emerald-700 text-emerald-200 text-xs font-bold text-center">
           ✨ ¡3 Éxitos! El personaje está estabilizado (0 PG inconsciente).
+        </div>
+      )}
+
+      {/* Selector de Dados (Digital o Tirado en Mesa Físico) */}
+      {!readOnly && !isDead && !isStabilized && (
+        <div className="space-y-2 pt-1 border-t border-dnd-border/50">
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              type="button"
+              onClick={handleRollDigital}
+              className="py-1 px-2 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 text-[11px] font-semibold flex items-center justify-center gap-1.5 transition"
+              title="Tirar 1d20 digital"
+            >
+              <Dices className="w-3 h-3 text-dnd-gold" />
+              <span>Tirar Digital</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setShowPhysicalEntry(!showPhysicalEntry)}
+              className={`py-1 px-2 rounded-lg border text-[11px] font-semibold flex items-center justify-center gap-1.5 transition ${
+                showPhysicalEntry
+                  ? 'bg-amber-950/80 border-amber-500 text-amber-200 shadow-md ring-1 ring-amber-500'
+                  : 'bg-amber-950/30 hover:bg-amber-950/60 border-amber-800/40 text-amber-300'
+              }`}
+              title="Registrar tirada física en mesa"
+            >
+              <span>🎲 Tiré en Mesa</span>
+            </button>
+          </div>
+
+          {/* Botonera de 1 al 20 para el d20 físico tirado en la mesa */}
+          {showPhysicalEntry && (
+            <div className="p-2.5 rounded-xl bg-slate-950/90 border border-amber-600/60 space-y-1.5 animate-in fade-in">
+              <span className="text-[10px] font-bold text-amber-300 uppercase tracking-wide block">
+                Selecciona tu d20 físico de la mesa:
+              </span>
+              <div className="grid grid-cols-5 sm:grid-cols-10 gap-1">
+                {Array.from({ length: 20 }, (_, i) => i + 1).map(num => (
+                  <button
+                    key={num}
+                    type="button"
+                    onClick={() => handleApplyPhysical(num)}
+                    className={`py-1 rounded text-xs font-mono font-bold transition ${
+                      num === 20
+                        ? 'bg-amber-500 text-slate-950 hover:bg-amber-400'
+                        : num === 1
+                          ? 'bg-red-700 text-white hover:bg-red-600'
+                          : num >= 10
+                            ? 'bg-emerald-950/60 border border-emerald-700/60 text-emerald-300 hover:bg-emerald-900'
+                            : 'bg-slate-900 border border-slate-700 text-slate-300 hover:border-amber-600'
+                    }`}
+                  >
+                    {num}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {lastRollMessage && (
+            <div className="text-[10px] font-mono text-center text-slate-300 bg-slate-900/60 py-1 px-2 rounded-lg border border-slate-800">
+              {lastRollMessage}
+            </div>
+          )}
         </div>
       )}
 
