@@ -116,17 +116,29 @@ export function CoreStatsView({
           <div className="flex flex-col sm:items-end gap-2">
             <div className="text-left sm:text-right">
               <div className="flex items-baseline sm:justify-end gap-1.5">
-                <span className="text-xl sm:text-2xl font-dnd-title font-black text-dnd-crimson">
-                  {xpProgress.currentXp.toLocaleString()}
+                <span
+                  className="text-xl sm:text-2xl font-dnd-title font-black text-dnd-crimson"
+                  title={`Puntos de Experiencia disponibles: ${xpProgress.currentAvailableXp.toLocaleString()} PX`}
+                >
+                  {xpProgress.currentAvailableXp.toLocaleString()}
                 </span>
                 <span className="text-xs font-dnd-body text-dnd-ink-muted">
-                  / {xpProgress.isMaxLevel ? 'MAX' : `${xpProgress.nextLevelThreshold.toLocaleString()} PX`}
+                  / {xpProgress.isMaxLevel ? 'MAX' : `${xpProgress.xpNeededForNextLevel.toLocaleString()} PX del nivel`}
                 </span>
               </div>
               {!xpProgress.isMaxLevel && (
-                <span className="text-xs text-dnd-terracotta font-dnd-body italic block">
-                  Faltan {xpProgress.remainingXp.toLocaleString()} PX para subir de nivel
-                </span>
+                <div className="space-y-0.5">
+                  <span className="text-xs text-dnd-terracotta font-dnd-body font-semibold block">
+                    {xpProgress.remainingXp === 0 ? (
+                      <span className="text-emerald-700 font-bold">¡PX suficientes para subir a Nivel {xpProgress.nextLevel}!</span>
+                    ) : (
+                      `Faltan ${xpProgress.remainingXp.toLocaleString()} PX para Nivel ${xpProgress.nextLevel}`
+                    )}
+                  </span>
+                  <span className="text-[11px] text-dnd-ink-muted font-dnd-body block">
+                    ({xpProgress.totalAccumulatedXp.toLocaleString()} / {xpProgress.nextLevelThreshold.toLocaleString()} PX acumulados totales)
+                  </span>
+                </div>
               )}
             </div>
 

@@ -144,7 +144,7 @@ export function ContextualRulesView({ character }: BaseViewProps) {
         </div>
 
         <p className="text-xs text-dnd-ink-muted font-dnd-body leading-relaxed">
-          En D&D oficial (SRD 5.2.1 pág. 27), la experiencia se unifica por <strong>Nivel Total de Personaje</strong>: subir cualquier clase secundaria cuesta exactamente lo mismo que subir la principal. Para evitar personajes estancados sin romper el balance con costes triviales (como 300 PX), la regla de campaña aplica el <strong>50% sobre el escalón de nivel del personaje</strong>.
+          En D&D oficial (SRD 5.2.1 pág. 27), la experiencia se unifica por <strong>Nivel Total de Personaje</strong>: subir cualquier clase secundaria cuesta exactamente lo mismo que subir la principal. Para evitar personajes estancados sin romper el balance con costes triviales (como 300 PX), la regla de campaña desbloquea a Nivel 7 de la clase principal un <strong>50% de descuento sobre el escalón del personaje</strong> para clases secundarias hasta alcanzar Nivel 7.
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
@@ -222,14 +222,21 @@ export function ContextualRulesView({ character }: BaseViewProps) {
                   </div>
                 ) : (
                   <span className="text-[10px] text-dnd-terracotta mt-0.5 block font-dnd-body">
-                    Clases igualadas: aplica coste completo del escalón.
+                    {calcPrimaryLevel < 7
+                      ? 'Regla bloqueada: la clase principal debe alcanzar Nivel 7 para desbloquear el descuento.'
+                      : calcSecondaryCurrent >= 7
+                        ? 'Regla de casa expirada: a partir de Nivel 7 en la multiclase aplica el 100% del coste normal.'
+                        : 'Aplica coste completo del escalón.'}
                   </span>
                 )}
               </div>
             </div>
 
             <div className="p-2.5 rounded-sm bg-dnd-parchment-contrast border border-dnd-border-antique text-[10px] text-dnd-ink-muted font-dnd-body leading-relaxed">
-              <strong className="text-dnd-crimson font-dnd-title">Veredicto de Reglas:</strong> Subir Monje {calcSecondaryTarget} cuesta la mitad ({catchUpResult.xpCost.toLocaleString()} PX) de lo que costaría subir al Nivel {catchUpResult.nextCharacterTotalLevel} del héroe ({catchUpResult.officialRawCost.toLocaleString()} PX), protegiendo la matemática de D&D.
+              <strong className="text-dnd-crimson font-dnd-title">Veredicto de Reglas:</strong>{' '}
+              {catchUpResult.isCatchUpHalfCost
+                ? `Subir la clase secundaria a Nivel ${calcSecondaryTarget} cuesta la mitad (${catchUpResult.xpCost.toLocaleString()} PX) de lo que costaría subir al Nivel ${catchUpResult.nextCharacterTotalLevel} del héroe (${catchUpResult.officialRawCost.toLocaleString()} PX).`
+                : `Paga el 100% normal (${catchUpResult.xpCost.toLocaleString()} PX) para el escalón de Nivel Total ${catchUpResult.nextCharacterTotalLevel}.`}
             </div>
           </div>
         </div>
