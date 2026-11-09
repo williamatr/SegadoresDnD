@@ -10,6 +10,43 @@ y este proyecto se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 ## [Unreleased]
 
 ### Añadido
+* **Consola de Combate Reactiva y Evaluador de Estado Dinámico (`@segadores/dnd-core`, `CombatConsoleView.tsx`):**
+  * Implementada la reactividad en tiempo real de la Consola de Combate y el evaluador de reglas (`state-evaluator.ts`) ante el equipamiento de armaduras, escudos y armas.
+  * Lógica canónica de interacción marcial para Monje (Honiel Spellbinder):
+    * Con *Cota de Malla de Mithral* equipada: CA 16 fija, velocidad 30 pies, *Artes Marciales* (dado d6 y ataque desarmado como acción adicional) y *Movimiento sin Armadura* (+10 pies) quedan deshabilitados con aviso táctico claro en la consola; las acciones de Enfoque/Ki que no exigen ir desarmado (*Defensa Paciente*, *Paso del Viento*) se mantienen operativas.
+    * Al desequipar la armadura en Inventario: la CA conmuta inmediatamente a *Defensa sin Armadura* (10 + DES + SAB = 14), la velocidad asciende a 40 pies y se habilitan el *Ataque Desarmado (Artes Marciales 1d6+DES)* y la acción adicional de *Artes Marciales / Ráfaga de Golpes*.
+  * Integración reactiva de la Economía de Acciones (1 Acción, 1 Acción Adicional, 1 Reacción):
+    * Muestra tarjetas tácticas de los **conjuros actualmente preparados** y trucos conocidos categorizados por su tiempo de lanzamiento, con bonificador de ataque, CD, concentración y tiradas de daño.
+    * Bloque de Acción Adicional dinámico con poderes de clase/Ki (*Ráfaga de Golpes*, *Defensa Paciente*, *Paso del Viento*, *Acción Astuta*, *Inspiración Bárdica*, *Nuevas Energías*, pociones).
+    * Bloque de Reacciones con conjuros preparados (*Escudo* [+5 CA], *Contrahechizo*, *Caída de pluma*) y rasgos de clase (*Destello de Genialidad*, *Halo de Esporas*, *Esquiva Asombrosa*).
+  * Posibilidad de equipar y desequipar armas, armaduras y escudos directamente en `InventoryView.tsx` con propagación reactiva al estado del personaje.
+
+* **Completitud Canónica de los 30 Hechizos de Honiel y Motor de Preparación Canónico:**
+  * Creado el motor de reglas canónicas de preparación de conjuros en `@segadores/dnd-core` (`getSpellPreparationRules`), calculando el límite máximo estricto según la clase y atributo clave:
+    * Mago (Honiel): Nivel de Mago 7 + INT 20 (+5) = **12 conjuros preparados máximo** de nivel 1 o superior. Los trucos (nivel 0) no consumen cupo y los rituales pueden lanzarse directamente desde el grimorio.
+    * Druida (Solaria): Nivel de Druida 7 + SAB 20 (+5) = 12 conjuros preparados máximo; los 7 conjuros del *Círculo de las Esporas* están siempre preparados y son gratuitos.
+    * Artificiero (Alizar): $\lfloor 7 \div 2 \rfloor + \text{INT } 4 = 7$ conjuros preparados máximo; los conjuros de *Alquimista* están siempre preparados.
+  * Actualizado `apps/segadores-web/lib/campaign/characters.ts` y la base de datos Supabase con los **30 conjuros completos** del grimorio de `Honiel.md` (5 trucos, 12 de nivel 1, 6 de nivel 2, 5 de nivel 3 y 2 de nivel 4) y sus 12 conjuros preparados tácticos.
+
+* **Arquitectura de 4 Sub-Pestañas en la Vista de Hechizos y Habilidades (`SpellsAndAbilitiesView.tsx`):**
+  * **Sub-pestaña 1 (Grimorio y Conjuros Adquiridos):** Barra visual de progreso de preparación (`X / Max preparados`), alternancia interactiva con botón `Preparado ✓` / `+ Preparar` que se deshabilita con tooltip de aviso al alcanzar el límite canónico, y distintivos para trucos y conjuros de subclase.
+  * **Sub-pestaña 2 (Conjuros por Aprender - Catálogo de Clase):** Catálogo enriquecido extraído de `CANONICAL_SPELLS_CATALOG` filtrable por nivel, escuela y búsqueda de texto; distintivos de estado (`Ya en tu Grimorio`, `Disponible para Aprender`, `Requiere Nivel Superior`) y cálculo de reglas de coste y tiempo de transcripción (con descuento del 50% para la Escuela de Evocación de Honiel).
+  * **Sub-pestañas Dinámicas por Clase (`Clase: [Nombre]`):** Generadas automáticamente para cada clase de multiclase (`character.multiclass`), desplegando el catálogo completo de rasgos (Niveles 1 a 20) de `@segadores/dnd-core` (`getClassFeatures`), estado de desbloqueo, restricciones de armadura y costes de recursos.
+  * **Sub-pestaña 4 (Árbol de Aprendizaje & Progresión):** Hitos tácticos de subida de nivel (Niveles 8, 9 y 10) y panel explicativo de la regla de mesa de **Alcance de Multiclase al 50% de PX**.
+
+* **Visibilidad Condicional del Baúl de la Compañía (`portal-dashboard.tsx`):**
+  * La sección "Baúl de la Compañía (Pertenencias Comunes)" ahora solo se renderiza cuando el usuario se encuentra en la pestaña de Inventario (`activeSheetTab === 'inventory'`), liberando espacio visual en las demás vistas.
+
+* **Guía Maestra de Sincronización y Gobernanza de Datos (`docs/DATABASE_SYNC_GUIDE.md`):**
+  * Creado documento maestro con diagramas Mermaid (`flowchart LR` y `sequenceDiagram`) documentando el flujo de 3 eslabones (`Bóveda Obsidian -> GitHub SegadoresDnD-Private -> content/wiki/ -> Scripts de Ingesta -> Supabase DB + Paquetes -> Vercel Prod`).
+  * Actualizado `GEMINI.md` estableciendo la prohibición terminante para agentes y scripts de leer rutas locales del host fuera del repositorio.
+  * Sincronizados con éxito los 5 héroes oficiales a la base de datos de producción en Supabase mediante `pnpm sync:push`.
+
+* **Sincronización en Vivo de Personajes desde Supabase en el Portal (`/portal`):**
+  * Actualizado `apps/segadores-web/app/portal/page.tsx` con `revalidate = 0` para consultar directamente la tabla `public.characters` de Supabase en cada visita e inyectar `initialCharacters` al dashboard.
+  * Actualizado `PortalDashboard` (`apps/segadores-web/components/portal/portal-dashboard.tsx`) para priorizar los datos frescos de la base de datos sobre la caché previa de `localStorage` y conectar las 5 tarjetas superiores de selección de héroes al estado vivo (`charactersMap`).
+  * Sincronizados los datos canónicos de los 5 personajes en Supabase y en el fallback local (`apps/segadores-web/lib/campaign/characters.ts` y `characters.test.mjs`) con la bóveda de Obsidian (incluyendo el ascenso de Honiel Spellbinder a Nivel 9: Mago 7 / Monje 2, 58 PG, 48.000 PX, INT 20, PB +4, Puntos de Ki y Metabolismo Prodigioso).
+
 * **Motor Dinámico de 4 Temas por Tokens CSS y Arquitectura Zero-FOUC:**
   * Implementado soporte nativo para 4 temas canónicos completos a través de variables CSS semánticas en `apps/segadores-web/app/globals.css`:
     * `parchment-royal`: Pergamino Real 5.5e (modo claro oficial por defecto / alias `'light'`).
@@ -34,6 +71,10 @@ y este proyecto se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
   * Modernizadas las 7 vistas de la hoja de personaje (`packages/character-sheet/src/views/*`) y sus componentes complementarios (`HpTracker`, `HitDiceTracker`, `DeathSavesTracker`, `ExhaustionSelector`, `AttunementTracker`, `LevelUpModal`).
 
 ### Corregido
+* **Corrección de Merge Duplicado en `SpellsAndAbilitiesView.tsx`, Passthrough de Variables en `turbo.json` y Backport Automático (`main` -> `develop`):**
+  * Resuelta la colisión de merge de Git en la rama `develop` (`502faef`) donde `renderSlotTracker` se había duplicado al fusionar `main` hacia `develop`.
+  * Añadidas a `turbo.json` (`tasks.build.env`) las variables de entorno de servidor de Vercel (`SUPABASE_*`, `POSTGRES_*`, `ADMIN_EMAILS`, `ALLOWED_EMAILS`) para evitar que Turborepo 2.x las filtre en modo estricto durante el build.
+  * Creado el workflow de GitHub Actions `.github/workflows/sync-main-to-develop.yml` para ejecutar automáticamente el backport de `main` hacia `develop` en cada push a `main`, manteniendo ambas ramas alineadas en historial de commits.
 * **Contraste y Legibilidad en Elementos Interactivos Carmesí (`bg-dnd-crimson`):**
   * Desacopladas las variables `--dnd-crimson-btn` (fondo de botón interactivo de alto impacto) y `--dnd-crimson-fg` / `--dnd-on-crimson` (`#FFFFFF`), resolviendo el problema de texto lavado o ilegible en temas oscuros.
   * Corregidos todos los botones primarios, selectores y badges con fondo carmesí a lo largo de `apps/segadores-web` (`header.tsx`, `portal-dashboard.tsx`, `dm-invitations-console.tsx`, `login/page.tsx`, `acceso-denegado/page.tsx`, `demo/page.tsx`, `hero-action-buttons.tsx`) y `packages/character-sheet`.

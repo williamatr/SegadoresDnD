@@ -14,11 +14,11 @@ describe('Sistema de Héroes Reales de Campaña (Segadores de Orcos)', () => {
     const slugs = CAMPAIGN_CHARACTERS.map(c => c.slug);
     assert.deepEqual(slugs, ['alizar', 'eru', 'honiel', 'solaria', 'zuma']);
 
-    // Validar niveles reales (Niveles 7 y 8)
+    // Validar niveles reales (Niveles 7, 8 y 9)
     const expectedLevels = {
       alizar: 7,
       eru: 8,
-      honiel: 8,
+      honiel: 9,
       solaria: 7,
       zuma: 8
     };
@@ -54,7 +54,7 @@ describe('Sistema de Héroes Reales de Campaña (Segadores de Orcos)', () => {
     assert.ok(fullHoniel);
     assert.equal(fullHoniel.name, 'Honiel Spellbinder');
     assert.equal(fullHoniel.multiclass.length, 2);
-    assert.equal(fullHoniel.ability_scores.int, 18);
+    assert.equal(fullHoniel.ability_scores.int, 20);
   });
 
   it('valida reglas de asignación e invitaciones del DM', () => {
@@ -121,6 +121,12 @@ describe('Sistema de Héroes Reales de Campaña (Segadores de Orcos)', () => {
     const { CAMPAIGN_FULL_CHARACTERS } = await import('./characters.ts');
     const honiel = {
       ...CAMPAIGN_FULL_CHARACTERS['honiel'],
+      level: 8,
+      character_class: 'Mago 7 / Monje 1',
+      multiclass: [
+        { class: 'Mago', subclass: 'Evocación', level: 7 },
+        { class: 'Monje', level: 1 }
+      ],
       experience_points: 10000 // Otorgamos PX suficientes para la prueba
     };
 

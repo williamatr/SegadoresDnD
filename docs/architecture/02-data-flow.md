@@ -58,7 +58,10 @@ sequenceDiagram
 
 ---
 
-## 3. Matriz de Decisión de Persistencia
+## 4. Guía Maestra de Sincronización
+
+Para consultar los diagramas completos del pipeline de 3 eslabones (`Bóveda -> GitHub -> content/wiki/ -> Supabase -> Vercel`), la estructura exacta de tablas y la prohibición estricta de rutas locales externas, consulta **[Guía Canónica de Sincronización de Base de Datos y Lore](../DATABASE_SYNC_GUIDE.md)**.
+
 
 ```text
 ┌──────────────────────┬──────────────────────┬─────────────────────────────────────┐

@@ -404,6 +404,17 @@ export default function DemoPage() {
                   inventory: (c.inventory || []).map(it => it.slug === slug ? { ...it, equipped: !it.equipped } : it)
                 }))
               }
+              onTogglePreparedSpell={spellName =>
+                updateCurrentHero(c => {
+                  const current = c.prepared_spells || [];
+                  return {
+                    ...c,
+                    prepared_spells: current.includes(spellName)
+                      ? current.filter(s => s !== spellName)
+                      : [...current, spellName]
+                  };
+                })
+              }
               onApplyEffect={eff =>
                 updateCurrentHero(c => ({
                   ...c,

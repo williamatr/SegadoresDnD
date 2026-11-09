@@ -44,9 +44,15 @@ export interface PortalDashboardProps {
     invited_by?: string | null;
   } | null;
   initialPlayers?: AdminPlayerItem[];
+  initialCharacters?: Record<string, Character>;
 }
 
-export function PortalDashboard({ userEmail, player, initialPlayers = [] }: PortalDashboardProps) {
+export function PortalDashboard({
+  userEmail,
+  player,
+  initialPlayers = [],
+  initialCharacters
+}: PortalDashboardProps) {
   const isDm = player?.role === 'dm';
 
   // Si el usuario es DM, puede alternar para previsualizar cómo ve la mesa un jugador
@@ -62,21 +68,37 @@ export function PortalDashboard({ userEmail, player, initialPlayers = [] }: Port
 
   // Estado mutable local de las 5 fichas de personaje
   const [charactersMap, setCharactersMap] = useState<Record<string, Character>>(() => {
-    return { ...CAMPAIGN_FULL_CHARACTERS };
+    return { ...CAMPAIGN_FULL_CHARACTERS, ...(initialCharacters || {}) };
   });
 
-  // Cargar estado guardado en localStorage si existe para persistencia de sesión táctica
+  // Cargar estado guardado en localStorage si existe, pero priorizando siempre
+  // los datos canónicos frescos que vienen desde Supabase (initialCharacters).
   useEffect(() => {
     try {
+      if (initialCharacters && Object.keys(initialCharacters).length > 0) {
+        const merged = { ...CAMPAIGN_FULL_CHARACTERS, ...initialCharacters };
+        setCharactersMap(merged);
+        localStorage.setItem('segadores_portal_characters', JSON.stringify(merged));
+        return;
+      }
+
       const saved = localStorage.getItem('segadores_portal_characters');
       if (saved) {
         const parsed = JSON.parse(saved);
-        setCharactersMap(prev => ({ ...prev, ...parsed }));
+        setCharactersMap(prev => {
+          const next = { ...prev };
+          for (const [slug, char] of Object.entries(parsed as Record<string, Character>)) {
+            if (!next[slug] || (char.level || 0) >= (next[slug].level || 0)) {
+              next[slug] = { ...next[slug], ...char };
+            }
+          }
+          return next;
+        });
       }
     } catch {
       // Ignorar fallo de parseo
     }
-  }, []);
+  }, [initialCharacters]);
 
   const saveCharactersMap = (newMap: Record<string, Character>) => {
     setCharactersMap(newMap);
@@ -191,6 +213,19 @@ export function PortalDashboard({ userEmail, player, initialPlayers = [] }: Port
         it.slug === itemSlug ? { ...it, equipped: !it.equipped } : it
       )
     }));
+  };
+
+  const handleTogglePreparedSpell = (spellName: string) => {
+    updateCurrentCharacter(c => {
+      const current = c.prepared_spells || [];
+      const isAlreadyPrepared = current.includes(spellName);
+      return {
+        ...c,
+        prepared_spells: isAlreadyPrepared
+          ? current.filter(s => s !== spellName)
+          : [...current, spellName]
+      };
+    });
   };
 
   const handleApplyEffect = (effect: ActiveEffect) => {
@@ -475,7 +510,7 @@ export function PortalDashboard({ userEmail, player, initialPlayers = [] }: Port
             <div className="flex items-center justify-between">
               <h2 className="text-sm font-bold text-dnd-gold font-dnd-title uppercase tracking-wider flex items-center gap-2">
                 <Swords className="w-4 h-4 text-dnd-gold" />
-                Héroes Oficiales de la Compañía (Niveles 7 y 8)
+                Héroes Oficiales de la Compañía (Niveles 7 a 9)
               </h2>
               {isReadOnlyForUser && (
                 <span className="text-[11px] text-dnd-ink-muted font-dnd-title font-semibold">
@@ -490,6 +525,11 @@ export function PortalDashboard({ userEmail, player, initialPlayers = [] }: Port
             {CAMPAIGN_CHARACTERS.map(c => {
               const isSelected = c.slug === selectedSlug;
               const isUserAssigned = effectiveAssignedSlug === c.slug;
+              const liveChar = charactersMap[c.slug];
+              const cardName = liveChar?.name || c.name;
+              const cardLevel = liveChar?.level ?? c.level;
+              const cardHp = liveChar?.max_hp ?? c.maxHp;
+              const cardAc = liveChar?.armor_class ?? c.armorClass;
 
               return (
                 <button
@@ -513,10 +553,10 @@ export function PortalDashboard({ userEmail, player, initialPlayers = [] }: Port
                     )}
 
                     <div className="font-dnd-title font-bold text-sm text-dnd-crimson leading-snug break-words">
-                      {c.name}
+                      {cardName}
                     </div>
                     <span className="text-xs text-dnd-terracotta font-sans font-semibold block">
-                      Nv. {c.level} &bull; {c.characterClass}
+                      Nv. {cardLevel} &bull; {c.characterClass}
                     </span>
                     <span className="text-xs text-dnd-ink-muted font-dnd-body block truncate">
                       {c.subclass}
@@ -524,8 +564,8 @@ export function PortalDashboard({ userEmail, player, initialPlayers = [] }: Port
                   </div>
 
                   <div className="flex items-center justify-between text-xs pt-2 border-t border-dnd-border-antique/80 font-sans w-full">
-                    <span className="text-[#15803d] dark:text-[#4ade80] font-bold">{c.maxHp} PG</span>
-                    <span className="text-dnd-gold font-bold">{c.armorClass} CA</span>
+                    <span className="text-[#15803d] dark:text-[#4ade80] font-bold">{cardHp} PG</span>
+                    <span className="text-dnd-gold font-bold">{cardAc} CA</span>
                     <span className="text-dnd-ink-muted text-[11px] font-medium">{c.race.split(' ')[0]}</span>
                   </div>
                 </button>
@@ -552,6 +592,7 @@ export function PortalDashboard({ userEmail, player, initialPlayers = [] }: Port
             onToggleInspiration={handleToggleInspiration}
             onToggleAttunement={handleToggleAttunement}
             onToggleEquipped={handleToggleEquipped}
+            onTogglePreparedSpell={handleTogglePreparedSpell}
             onApplyEffect={handleApplyEffect}
             onRemoveEffect={handleRemoveEffect}
             onUpdatePersonalityField={handleUpdatePersonalityField}
@@ -562,53 +603,55 @@ export function PortalDashboard({ userEmail, player, initialPlayers = [] }: Port
           />
         </section>
 
-        {/* Baúl de la Compañía (Campaign Vault) */}
-        <section className="p-6 rounded-sm bg-dnd-parchment text-dnd-ink border-2 border-dnd-border-antique dnd-notched space-y-4 shadow-md">
-          <div className="space-y-1">
-            <div className="flex items-center justify-between pb-1">
-              <div className="flex items-center gap-2">
-                <Package className="w-5 h-5 text-dnd-gold" />
-                <h3 className="font-dnd-title font-bold text-base text-dnd-crimson uppercase tracking-wider">
-                  Baúl de la Compañía (Tesoro y Provisiones Compartidas)
-                </h3>
+        {/* Baúl de la Compañía (Campaign Vault) - Solo visible en la pestaña C: Inventario & Sintonización */}
+        {activeSheetTab === 'inventory' && (
+          <section className="p-6 rounded-sm bg-dnd-parchment text-dnd-ink border-2 border-dnd-border-antique dnd-notched space-y-4 shadow-md animate-in fade-in">
+            <div className="space-y-1">
+              <div className="flex items-center justify-between pb-1">
+                <div className="flex items-center gap-2">
+                  <Package className="w-5 h-5 text-dnd-gold" />
+                  <h3 className="font-dnd-title font-bold text-base text-dnd-crimson uppercase tracking-wider">
+                    Baúl de la Compañía (Tesoro y Provisiones Compartidas)
+                  </h3>
+                </div>
+                <DndBadge variant="parchment" size="sm">
+                  campaign_vault
+                </DndBadge>
               </div>
-              <DndBadge variant="parchment" size="sm">
-                campaign_vault
-              </DndBadge>
+              <TaperedRule variant="crimson" />
             </div>
-            <TaperedRule variant="crimson" />
-          </div>
 
-          {/* Monedas y Provisiones */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center text-xs">
-            <div className="p-3 rounded-sm bg-dnd-parchment-contrast border border-dnd-border-antique">
-              <span className="text-dnd-ink-muted font-dnd-title text-[10px] uppercase block">Piezas de Oro</span>
-              <span className="text-base font-dnd-title font-bold text-dnd-gold">1,420 po</span>
+            {/* Monedas y Provisiones */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center text-xs">
+              <div className="p-3 rounded-sm bg-dnd-parchment-contrast border border-dnd-border-antique">
+                <span className="text-dnd-ink-muted font-dnd-title text-[10px] uppercase block">Piezas de Oro</span>
+                <span className="text-base font-dnd-title font-bold text-dnd-gold">1,420 po</span>
+              </div>
+              <div className="p-3 rounded-sm bg-dnd-parchment-contrast border border-dnd-border-antique">
+                <span className="text-dnd-ink-muted font-dnd-title text-[10px] uppercase block">Piezas de Plata</span>
+                <span className="text-base font-dnd-title font-bold text-dnd-ink">380 pp</span>
+              </div>
+              <div className="p-3 rounded-sm bg-dnd-parchment-contrast border border-dnd-border-antique">
+                <span className="text-dnd-ink-muted font-dnd-title text-[10px] uppercase block">Pociones de Curación</span>
+                <span className="text-base font-dnd-title font-bold text-dnd-crimson">4 (Mayor)</span>
+              </div>
+              <div className="p-3 rounded-sm bg-dnd-parchment-contrast border border-dnd-border-antique">
+                <span className="text-dnd-ink-muted font-dnd-title text-[10px] uppercase block">Provisiones de Ración</span>
+                <span className="text-base font-dnd-title font-bold text-emerald-700 dark:text-emerald-400">18 Días</span>
+              </div>
             </div>
-            <div className="p-3 rounded-sm bg-dnd-parchment-contrast border border-dnd-border-antique">
-              <span className="text-dnd-ink-muted font-dnd-title text-[10px] uppercase block">Piezas de Plata</span>
-              <span className="text-base font-dnd-title font-bold text-dnd-ink">380 pp</span>
-            </div>
-            <div className="p-3 rounded-sm bg-dnd-parchment-contrast border border-dnd-border-antique">
-              <span className="text-dnd-ink-muted font-dnd-title text-[10px] uppercase block">Pociones de Curación</span>
-              <span className="text-base font-dnd-title font-bold text-dnd-crimson">4 (Mayor)</span>
-            </div>
-            <div className="p-3 rounded-sm bg-dnd-parchment-contrast border border-dnd-border-antique">
-              <span className="text-dnd-ink-muted font-dnd-title text-[10px] uppercase block">Provisiones de Ración</span>
-              <span className="text-base font-dnd-title font-bold text-emerald-700 dark:text-emerald-400">18 Días</span>
-            </div>
-          </div>
 
-          {activeRole === 'dm' && (
-            <div className="p-3 rounded-sm bg-dnd-crimson-surface border border-dnd-crimson text-dnd-crimson text-xs flex items-center justify-between animate-in fade-in font-dnd-body">
-              <span className="flex items-center gap-2">
-                <Lock className="w-3.5 h-3.5 text-dnd-crimson" />
-                <strong>Vista DM Activa:</strong> Acceso al libro secreto de reparto y objetos no identificados de Phandalin.
-              </span>
-              <span className="text-[10px] font-mono font-bold text-dnd-crimson">#dm-only</span>
-            </div>
-          )}
-        </section>
+            {activeRole === 'dm' && (
+              <div className="p-3 rounded-sm bg-dnd-crimson-surface border border-dnd-crimson text-dnd-crimson text-xs flex items-center justify-between animate-in fade-in font-dnd-body">
+                <span className="flex items-center gap-2">
+                  <Lock className="w-3.5 h-3.5 text-dnd-crimson" />
+                  <strong>Vista DM Activa:</strong> Acceso al libro secreto de reparto y objetos no identificados de Phandalin.
+                </span>
+                <span className="text-[10px] font-mono font-bold text-dnd-crimson">#dm-only</span>
+              </div>
+            )}
+          </section>
+        )}
       </main>
 
       <Footer />

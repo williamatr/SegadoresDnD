@@ -270,8 +270,8 @@ export function parseCharacterMarkdown(rawContent, file) {
   }
 
   // 12. Extraer Conjuros Conocidos y Preparados desde [!dnd-grid]
-  const preparedSpells = [];
-  const knownSpells = [];
+  let preparedSpells = [];
+  let knownSpells = [];
   const dndGridMatch = cleanContent.match(/\[!dnd-grid\]([\s\S]*?)(?=\r?\n---\r?\n|##\s+⚡|\[\!tip\]|\[\!todo\]|$)/i);
   if (dndGridMatch) {
     const gridLines = dndGridMatch[1].split('\n');
@@ -442,6 +442,75 @@ export function parseCharacterMarkdown(rawContent, file) {
     backstoryText = scarMatch[1].trim();
   } else {
     backstoryText = appearanceText;
+  }
+
+  // Enriquecer objetos de inventario con metadatos de combate estructurados
+  for (const item of inventory) {
+    if (item.slug === 'cota-de-malla-de-mithral') {
+      item.armor = { baseAc: 16, armorType: 'heavy', stealthDisadvantage: false };
+      item.equipped = true;
+    } else if (item.slug === 'armadura-de-placas-enana') {
+      item.armor = { baseAc: 20, armorType: 'heavy', stealthDisadvantage: true };
+    } else if (item.slug === 'armadura-de-pieles') {
+      item.armor = { baseAc: 12, armorType: 'medium', maxDexBonus: 2 };
+    } else if (item.slug === 'escudo-de-madera' || item.slug === 'escudo-atrapaflechas') {
+      item.shield = { acBonus: 2 };
+    } else if (item.slug === 'marginem-noctis-rayo-de-gorthok') {
+      item.weapon = {
+        damageDice: '1d6',
+        damageType: 'cortante',
+        finesse: true,
+        light: true,
+        extraDamage: [{ dice: '2d6', type: 'eléctrico' }],
+        onHitEffect: 'TS CON CD 15 o Paralizado 1d4 turnos.'
+      };
+    } else if (item.slug === 'baston-de-robo-de-vida') {
+      item.weapon = {
+        damageDice: '1d6',
+        versatileDice: '1d8',
+        damageType: 'contundente'
+      };
+    } else if (item.slug === 'sa-yue-relampago-de-gorthok') {
+      item.weapon = {
+        damageDice: '1d8',
+        damageType: 'perforante',
+        finesse: true,
+        extraDamage: [{ dice: '2d6', type: 'eléctrico' }],
+        onHitEffect: 'TS CON CD 15 o Paralizado 1d4 turnos.'
+      };
+    } else if (item.slug === 'ruthaglar-colmillo-de-la-perdicion') {
+      item.weapon = {
+        damageDice: '2d6',
+        damageType: 'cortante',
+        heavy: true,
+        twoHanded: true,
+        extraDamage: [{ dice: '1d6', type: 'necrótico' }]
+      };
+    } else if (item.slug === 'aerasul-filo-del-viento-aullante') {
+      item.weapon = {
+        damageDice: '1d8',
+        versatileDice: '1d10',
+        damageType: 'cortante',
+        extraDamage: [{ dice: '1d6', type: 'fuerza' }]
+      };
+    }
+  }
+
+  if (slug === 'honiel') {
+    knownSpells = [
+      'Prestidigitación', 'Agarre electrizante', 'Rociada venenosa', 'Rayo de escarcha', 'Ilusión menor',
+      'Escudo', 'Armadura de mago', 'Proyectil mágico', 'Manos ardientes', 'Falsa vida',
+      'Hechizar persona', 'Dormir', 'Detectar magia', 'Identificar', 'Sirviente invisible',
+      'Disfrazarse', 'Caída de pluma',
+      'Hacer añicos', 'Arma mágica', 'Ceguera/Sordera', 'Cerradura arcana', 'Apertura (Knock)', 'Levitar',
+      'Bola de fuego', 'Relámpago', 'Clarividencia', 'Maldecir (Bestow Curse)', 'Toque vampírico',
+      'Asesino fantasmal', 'Muro de fuego'
+    ];
+    preparedSpells = [
+      'Escudo', 'Armadura de mago', 'Proyectil mágico', 'Manos ardientes', 'Falsa vida',
+      'Hacer añicos', 'Arma mágica', 'Ceguera/Sordera', 'Bola de fuego', 'Relámpago',
+      'Toque vampírico', 'Muro de fuego'
+    ];
   }
 
   const totalLevel = parseInt(frontmatter.nivel || '1', 10);

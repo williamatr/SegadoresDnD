@@ -53,19 +53,19 @@ export const CAMPAIGN_CHARACTERS: CampaignCharacterPreview[] = [
     slug: 'honiel',
     name: 'Honiel Spellbinder',
     characterClass: 'Mago / Monje',
-    subclass: 'Escuela de Evocación',
+    subclass: 'Escuela de Evocación & Monje',
     race: 'Elfo Lunar',
-    level: 8,
-    maxHp: 44,
-    armorClass: 21,
+    level: 9,
+    maxHp: 58,
+    armorClass: 16, // 16 con Cota de Mithral / 14 Defensa sin armadura / 21 con Escudo
     speed: 30,
-    primaryAbilities: 'INT 18 (+4), DES 14 (+2), CON 14 (+2), SAB 13 (+1), FUE 8 (-1), CAR 7 (-2)',
-    specialTrait: 'Esculpir Conjuros, Marginem Noctis (Rayo de Gorthok), Defensa sin Armadura, Truco Potenciado.',
+    primaryAbilities: 'INT 20 (+5), DES 16 (+3), CON 15 (+2), SAB 13 (+1), FUE 8 (-1), CAR 7 (-2)',
+    specialTrait: 'Esculpir Conjuros, Marginem Noctis (Rayo de Gorthok), Ki (2 Puntos), Metabolismo Prodigioso, Truco Potenciado.',
     playerRole: 'Aventurero'
   },
   {
     slug: 'solaria',
-    name: 'Solaria',
+    name: 'Solaria Sombralba',
     characterClass: 'Druida',
     subclass: 'Círculo de las Esporas',
     race: 'Humana',
@@ -428,69 +428,97 @@ export const CAMPAIGN_FULL_CHARACTERS: Record<string, Character> = {
     id: 'char-honiel',
     name: 'Honiel Spellbinder',
     slug: 'honiel',
-    character_class: 'Mago (Nivel 7) / Monje (Nivel 1)',
-    level: 8,
+    character_class: 'Mago (Nivel 7) / Monje (Nivel 2)',
+    level: 9,
     race: 'Elfo Lunar',
     background: 'Erudito / Sabio',
     alignment: 'Legal Bueno',
-    experience_points: 9650,
-    max_hp: 44,
-    current_hp: 44,
+    experience_points: 48000,
+    max_hp: 58,
+    current_hp: 58,
     temp_hp: 0,
-    hit_dice_total: '7d6 + 1d8',
-    hit_dice_current: 8,
-    armor_class: 21,
+    hit_dice_total: '7d6 + 2d8',
+    hit_dice_current: 9,
+    armor_class: 16,
     speed: 30,
-    proficiency_bonus: 3,
-    passive_perception: 14,
-    initiative_modifier: 2,
+    proficiency_bonus: 4,
+    passive_perception: 15,
+    initiative_modifier: 3,
     spellcasting_ability: 'INT',
-    spell_save_dc: 15,
-    spell_attack_bonus: 7,
+    spell_save_dc: 17,
+    spell_attack_bonus: 9,
     spellcasting_stats: [
       {
         source: 'Mago (Evocación)',
         ability: 'INT',
         ability_en: 'INT',
-        save_dc: 15,
-        attack_bonus: 7
+        save_dc: 17,
+        attack_bonus: 9
       }
     ],
     ability_scores: {
       str: 8,
-      dex: 14,
-      con: 14,
-      int: 18,
+      dex: 16,
+      con: 15,
+      int: 20,
       wis: 13,
       cha: 7
     },
-    saving_throws_prof: ['INT', 'SAB'],
+    saving_throws_prof: ['INT', 'SAB', 'DES'],
     skills: {
-      'Conocimiento Arcano': { bonus: 7, base_bonus: 7, proficiency: 'proficient' },
-      'Historia': { bonus: 7, base_bonus: 7, proficiency: 'proficient' },
-      'Investigación': { bonus: 7, base_bonus: 7, proficiency: 'proficient' },
-      'Medicina': { bonus: 4, base_bonus: 4, proficiency: 'proficient' },
-      'Percepción': { bonus: 4, base_bonus: 4, proficiency: 'proficient' }
+      'Conocimiento Arcano': { bonus: 9, base_bonus: 9, proficiency: 'proficient' },
+      'Historia': { bonus: 9, base_bonus: 9, proficiency: 'proficient' },
+      'Investigación': { bonus: 9, base_bonus: 9, proficiency: 'proficient' },
+      'Naturaleza': { bonus: 9, base_bonus: 9, proficiency: 'proficient' },
+      'Percepción': { bonus: 5, base_bonus: 5, proficiency: 'proficient' },
+      'Religión': { bonus: 5, base_bonus: 5, proficiency: 'proficient' },
+      'Medicina': { bonus: 1, base_bonus: 1, proficiency: 'proficient' }
     },
     multiclass: [
       { class: 'Mago', subclass: 'Evocación', level: 7 },
-      { class: 'Monje', level: 1 }
+      { class: 'Monje', level: 2 }
     ],
     spell_slots: {
       '1': { total: 4, used: 0 },
       '2': { total: 3, used: 0 },
-      '3': { total: 2, used: 0 }
+      '3': { total: 3, used: 0 },
+      '4': { total: 1, used: 0 }
     },
     prepared_spells: [
-      'Falsa vida', 'Manos ardientes', 'Hechizar persona', 'Sirviente invisible',
-      'Disfrazarse', 'Caída de pluma', 'Hacer añicos', 'Arma mágica', 'Ilusión menor'
+      'Escudo', 'Armadura de mago', 'Proyectil mágico', 'Manos ardientes', 'Falsa vida',
+      'Hacer añicos', 'Arma mágica', 'Ceguera/Sordera', 'Bola de fuego', 'Relámpago',
+      'Toque vampírico', 'Muro de fuego'
     ],
     known_spells: [
-      'Prestidigitación', 'Agarre electrizante', 'Rociada venenosa',
-      'Falsa vida', 'Manos ardientes', 'Hechizar persona', 'Sirviente invisible',
-      'Disfrazarse', 'Caída de pluma', 'Hacer añicos', 'Arma mágica', 'Ilusión menor'
+      // 5 Trucos (Cantrips)
+      'Prestidigitación', 'Agarre electrizante', 'Rociada venenosa', 'Rayo de escarcha', 'Ilusión menor',
+      // 12 Nivel 1
+      'Escudo', 'Armadura de mago', 'Proyectil mágico', 'Manos ardientes', 'Falsa vida',
+      'Hechizar persona', 'Dormir', 'Detectar magia', 'Identificar', 'Sirviente invisible',
+      'Disfrazarse', 'Caída de pluma',
+      // 6 Nivel 2
+      'Hacer añicos', 'Arma mágica', 'Ceguera/Sordera', 'Cerradura arcana', 'Apertura (Knock)', 'Levitar',
+      // 5 Nivel 3
+      'Bola de fuego', 'Relámpago', 'Clarividencia', 'Maldecir (Bestow Curse)', 'Toque vampírico',
+      // 2 Nivel 4
+      'Asesino fantasmal', 'Muro de fuego'
     ],
     inventory: [
+      {
+        slug: 'cota-de-malla-de-mithral',
+        name: 'Cota de Malla de Mithral',
+        category: 'armor',
+        qty: 1,
+        equipped: true,
+        requires_attunement: false,
+        attuned: false,
+        notes: 'Armadura pesada de mithral (CA 16 fija). No requiere Fuerza mínima ni impone desventaja en Sigilo. Al llevarla equipada, desactiva Artes Marciales y Defensa sin Armadura de monje.',
+        armor: {
+          baseAc: 16,
+          armorType: 'heavy',
+          stealthDisadvantage: false
+        }
+      },
       {
         slug: 'marginem-noctis-rayo-de-gorthok',
         name: 'Marginem Noctis, Rayo de Gorthok',
@@ -555,6 +583,66 @@ export const CAMPAIGN_FULL_CHARACTERS: Record<string, Character> = {
         notes: 'Ventaja en todas las salvaciones contra conjuros (en reserva por límite de 3).'
       },
       {
+        slug: 'sombrero-de-hechiceria',
+        name: 'Sombrero de Hechicería',
+        category: 'magic_item',
+        qty: 1,
+        equipped: false,
+        requires_attunement: true,
+        attuned: false,
+        notes: 'Foco arcano de mago. Permite intentar lanzar un truco de mago que no conozcas (prueba INT CD 10).'
+      },
+      {
+        slug: 'medallon-del-dios-vampirico',
+        name: 'Medallón del Dios Vampírico',
+        category: 'magic_item',
+        qty: 1,
+        equipped: false,
+        requires_attunement: true,
+        attuned: false,
+        notes: 'Amuleto consagrado a Gulthias. Permite transferir la mitad del daño infligido a un enemigo vivo como curación a un aliado o a sí mismo (1/combate o descanso).'
+      },
+      {
+        slug: 'varita-de-secretos',
+        name: 'Varita de secretos',
+        category: 'magic_item',
+        qty: 1,
+        equipped: false,
+        requires_attunement: false,
+        attuned: false,
+        notes: 'Varita con 3 cargas para detectar puertas secretas o trampas a 30 pies.'
+      },
+      {
+        slug: 'amuleto-de-relojeria',
+        name: 'Amuleto de Relojería',
+        category: 'magic_item',
+        qty: 1,
+        equipped: false,
+        requires_attunement: false,
+        attuned: false,
+        notes: 'Colgante de engranajes que permite fijar 1 tirada de ataque al día en un 10 automático en el d20.'
+      },
+      {
+        slug: 'piedras-mensajeras',
+        name: 'Piedras mensajeras',
+        category: 'magic_item',
+        qty: 1,
+        equipped: false,
+        requires_attunement: false,
+        attuned: false,
+        notes: 'Pareja de piedras rúnicas para comunicación bidireccional a cualquier distancia.'
+      },
+      {
+        slug: 'llave-misteriosa',
+        name: 'Llave misteriosa',
+        category: 'magic_item',
+        qty: 1,
+        equipped: false,
+        requires_attunement: false,
+        attuned: false,
+        notes: '5% de probabilidad (20 natural) de abrir cualquier cerradura del mundo. Se desvanece tras el éxito.'
+      },
+      {
         slug: 'bandas-de-hierro-de-bilarro',
         name: 'Bandas de hierro de Bilarro',
         category: 'magic_item',
@@ -565,9 +653,11 @@ export const CAMPAIGN_FULL_CHARACTERS: Record<string, Character> = {
         notes: 'Esfera arrojadiza a 60 pies que apresa al objetivo (CD 20 Fuerza para liberarse).'
       }
     ],
-    currency: { cp: 0, sp: 15, ep: 0, gp: 280, pp: 0 },
+    currency: { cp: 0, sp: 5, ep: 0, gp: 605, pp: 0 },
     class_resources: [
-      { id: 'arcane_recovery', name: 'Recuperación Arcana (hasta Nv. 4)', max: 1, used: 0, recharge: 'long_rest' }
+      { id: 'arcane_recovery', name: 'Recuperación Arcana (hasta Nv. 4)', max: 1, used: 0, recharge: 'long_rest' },
+      { id: 'ki_points', name: 'Puntos de Concentración (Ki)', max: 2, used: 0, recharge: 'short_rest' },
+      { id: 'uncanny_metabolism', name: 'Metabolismo Prodigioso', max: 1, used: 0, recharge: 'long_rest' }
     ],
     personality: {
       traits: 'Escuchar antes de juzgar. Prefiere analizar cada palabra, entorno y detalle antes de precipitarse a una conclusión.',
@@ -588,7 +678,7 @@ export const CAMPAIGN_FULL_CHARACTERS: Record<string, Character> = {
 
   solaria: {
     id: 'char-solaria',
-    name: 'Solaria',
+    name: 'Solaria Sombralba',
     slug: 'solaria',
     character_class: 'Druida (Círculo de las Esporas)',
     level: 7,
