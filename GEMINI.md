@@ -106,3 +106,29 @@ Para garantizar la confiabilidad real del sistema y evitar que los agentes o des
      * Comprobar que ante un fallo o validación negativa, el estado del personaje **no sufre mutaciones parciales ni corrupciones**.
 5. **Criterio de Rechazo en Auditoría de PRs:**
    * Cualquier prueba que pretenda simular que un flujo funciona sin ejecutar y verificar el impacto real de los cambios será considerada una violación de los lineamientos del repositorio y motivo de rechazo inmediato.
+
+---
+
+## 10. Gobernanza de CI/CD, Despliegues en Vercel y Dependencias en Monorepos (pnpm Workspaces)
+
+Para garantizar despliegues limpios, reproducibles y sin fallos en Vercel, todos los agentes y desarrolladores deben seguir obligatoriamente estas reglas técnicas:
+
+1. **Sincronización Estricta del Lockfile (`--frozen-lockfile` en Vercel):**
+   * En los entornos de CI/CD de Vercel, `pnpm install` se ejecuta de forma predeterminada con el flag `--frozen-lockfile`.
+   * **REGLA OBLIGATORIA:** Cada vez que se agregue, actualice, cambie de versión o elimine una dependencia (en `dependencies`, `devDependencies` o `peerDependencies`) de **cualquier** `package.json` del monorepo (`apps/*` o `packages/*`), es **mandatorio ejecutar `pnpm install` localmente** para regenerar exhaustivamente `pnpm-lock.yaml`.
+   * **PROHIBICIÓN:** Está terminantemente prohibido commitear cambios en archivos `package.json` sin incluir en el mismo commit el archivo `pnpm-lock.yaml` actualizado.
+
+2. **Declaración Explícita de Tipos TypeScript (`@types/*`) por Paquete:**
+   * `pnpm` utiliza una estructura de almacenamiento virtual estricta y aislada (`.pnpm/`). Los paquetes en `packages/*` **no heredan** tipos TypeScript implícitamente de la raíz ni de `apps/segadores-web`.
+   * **REGLA OBLIGATORIA:** Todo paquete que contenga código JSX/TSX o importe React (`@segadores/character-sheet`, `@segadores/ui`, `@segadores/obsidian-engine`) **debe declarar explícitamente** `@types/react` y `@types/react-dom` en su sección `devDependencies`, manteniendo consistencia con las versiones del workspace.
+   * Nunca asumir que una biblioteca compila porque funciona en local; las cachés locales ocultan dependencias faltantes que CI hace fallar con `Type error: Could not find a declaration file for module 'react'`.
+
+3. **Verificación Previa a la Entrega (Checklist de CI Local):**
+   * Antes de proponer un commit o considerar concluida una tarea que toque dependencias o componentes, el agente debe verificar localmente:
+     1. `pnpm install --frozen-lockfile` $\rightarrow$ Comprueba que el lockfile está al 100% en sincronía con todos los paquetes.
+     2. `pnpm run build` (`turbo run build`) $\rightarrow$ Comprueba que el compilador de Next.js transpile paquetes, apruebe la validación de tipos (`tsc`) y genere todas las páginas estáticas y dinámicas.
+
+4. **Resiliencia ante Submódulos Git Privados:**
+   * `content/wiki` es un submódulo Git vinculado al repositorio privado de notas. Vercel emitirá `Warning: Failed to fetch one or more git submodules` si no tiene credenciales de lectura para dicho repositorio.
+   * La aplicación Next.js y los paquetes del monorepo **deben tolerar siempre la ausencia del submódulo privado**, conmutando limpiamente a los mocks canónicos de `content/mocks/` sin arrojar excepciones ni interrumpir la compilación en producción.
+
