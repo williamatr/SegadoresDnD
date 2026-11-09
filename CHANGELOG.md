@@ -7,7 +7,38 @@ y este proyecto se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ---
 
-## [Unreleased] (Sin Publicar)
+## [Unreleased]
+
+### Corregido
+* **CI/CD en Vercel y Resolución de Dependencias:**
+  * Sincronizado `pnpm-lock.yaml` para incluir la especificación de `lucide-react@^0.460.0` bajo el paquete `@segadores/character-sheet` y las 7 dependencias de `@segadores/obsidian-engine`, resolviendo el error `[ERR_PNPM_OUTDATED_LOCKFILE]` al desplegar en Vercel con `--frozen-lockfile`.
+  * Añadidas dependencias de desarrollo `@types/react` y `@types/react-dom` en `@segadores/character-sheet` y `@segadores/ui`, solucionando el error de compilación de TypeScript en Vercel por aislamiento de enlaces simbólicos en `node_modules`.
+
+### Añadido
+* **Integración de Vercel CLI Global en Entorno de Desarrollo:**
+  * Documentada la disponibilidad de `vercel` CLI global instalado vía `pnpm` en `SYSTEM_SPECS.md`, `PROJECT_SPEC.md`, `README.md` y cheatsheet central de Obsidian (`Comandos de Sistema.md`).
+  * Eliminado campo redundante `workspaces` de `package.json` de la raíz para respetar la especificación nativa de `pnpm-workspace.yaml` y silenciar advertencias de `pnpm`.
+* **Soporte Universal para Tiradas Físicas en Mesa de Juego (Juego Híbrido Mesa / Digital):**
+  * **Subida de Nivel (`LevelUpModal.tsx` en `@segadores/character-sheet` y `level-up.ts` en `@segadores/dnd-core`):**
+    * Selector de 3 vías en el Paso 3 para el incremento de PG Máximos: *Media Fija Oficial*, *Dado Digital Interactivo* y *Tiré en Mesa 🎲 (Físico)*.
+    * Teclado numérico rápido (1 al valor del dado de clase, ej. d6, d8, d10, d12) con cálculo reactivo inmediato: `Dado físico + Mod. CON = +X PG Máximos`.
+    * Soporte para `hpMethod: 'manual'` en el motor matemático de reglas (`packages/dnd-core/src/rules/level-up.ts`) con acotación canónica de límites de frontera (1 a valor del dado de clase).
+  * **Dados de Golpe y Curación en Descansos Cortos (`HitDiceTracker.tsx` en `@segadores/character-sheet`):**
+    * Botones duales independientes: `🎲 Tirar Digital` y `🎲 Tiré en Mesa (Físico)`.
+    * Panel desplegable con teclado numérico (1 a valor del dado de golpe), adición automática del modificador de Constitución y botón de aplicación de curación física con distinción en notificaciones.
+  * **Heridas Persistentes y Traumatismos (`ConditionsAndEffectsView.tsx` en `@segadores/character-sheet`):**
+    * Botonera dual para Tabla A (Heridas Menores) y Tabla B (Heridas Graves): `Tirar 1d20 Digital` y `🎲 Tiré en Mesa (1d20 Físico)`.
+    * Selector interactivo de 1 a 20 para buscar y aplicar de inmediato a la ficha la lesión exacta obtenida con el dado físico en la mesa.
+  * **Salvaciones contra la Muerte (`DeathSavesTracker.tsx` en `@segadores/character-sheet`):**
+    * Incorporación de botones `🎲 Tirar Digital` y `🎲 Tiré en Mesa (1d20)` con selector rápido de 1 al 20 y aplicación canónica de reglas de 5e (pifia 1: +2 fallos, 2-9: +1 fallo, 10-19: +1 éxito, 20: estabilización / crítico natural) junto con mensaje de historial.
+  * **Consola de Combate y Tirador Táctico Libre (`CombatConsoleView.tsx` en `@segadores/character-sheet`):**
+    * Cada arma equipada cuenta ahora con selector dual: `🎲 Tirar Digital` y `🎲 Tiré en Mesa`.
+    * Panel desplegable de tirada física por arma con botonera rápida para el d20 (1 al 20, botones directos de pifia 1 y crítico 20), desglose en tiempo real `d20 + mod. ataque = total al impacto`, campo numérico para daño físico total sacado en la mesa, y registro con distintivo visual en vivo `🎲 Tirado en Mesa`.
+    * **Tirador Táctico Libre para Bufos y Reglas de Campaña:** Widget interactivo integrado para cualquier dado de juego (`d4`, `d6`, `d8`, `d10`, `d12`, `d20`) con selector de tirada digital o registro físico en mesa, modificador ajustable y campo de motivo (Inspiración Bárdica, Bendición, Salvación, Daño adicional, Resonancia Rúnica, etc.).
+* **Pruebas de Estado y Mutación (State Diff & Mutation Testing):**
+  * Nueva prueba unitaria en `packages/dnd-core/src/tests/level-up.test.ts` verificando el cálculo exacto de PG con tirada manual en mesa (`hpMethod = manual`), comprobación del diferencial de estado antes vs después, invariabilidad de propiedades no alteradas y pruebas de límites de frontera (Boundary Testing). Total: 45 pruebas unitarias pasando al 100%.
+
+## [0.0.1]
 
 ### Añadido
 * **Regla Estricta de Repositorio sobre Integridad y Veracidad de Tests (`GEMINI.md` - Sección 9):**
@@ -129,6 +160,9 @@ y este proyecto se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 ## [0.0.1] - 2026-10-23
 
 ### Añadido
+* **Integración de Vercel CLI Global en Entorno de Desarrollo:**
+  * Documentada la disponibilidad de `vercel` CLI global instalado vía `pnpm` en `SYSTEM_SPECS.md`, `PROJECT_SPEC.md`, `README.md` y cheatsheet central de Obsidian (`Comandos de Sistema.md`).
+  * Eliminado campo redundante `workspaces` de `package.json` de la raíz para respetar la especificación nativa de `pnpm-workspace.yaml` y silenciar advertencias de `pnpm`.
 * **Arquitectura Monorepo:** Estructura modular basada en Turborepo y pnpm workspaces dividida en `apps/` y `packages/`.
 * **Componentes Agnósticos:** Especificación de diseño de contratos de datos (`Data Contracts`) para desacoplar componentes de UI (`packages/character-sheet`), lógica pura (`packages/dnd-core`) y motor de Markdown (`packages/obsidian-engine`).
 * **Estrategia de Dos Repositorios:** Separación entre el repositorio de código abierto/portafolio y el repositorio privado de notas de Obsidian (`content/wiki/` vía Git Submodule) para proteger material con derechos de autor de D&D.

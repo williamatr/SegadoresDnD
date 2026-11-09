@@ -61,6 +61,7 @@ export function ConditionsAndEffectsView({
   const [selectedTable, setSelectedTable] = useState<'A' | 'B'>('A');
   const [injuryRoll, setInjuryRoll] = useState<number | null>(null);
   const [isRolling, setIsRolling] = useState<boolean>(false);
+  const [showPhysicalEntry, setShowPhysicalEntry] = useState<boolean>(false);
 
   const handleRollInjury = () => {
     setIsRolling(true);
@@ -248,17 +249,62 @@ export function ConditionsAndEffectsView({
             : 'Tabla B: Se activa inmediatamente cuando el personaje cae a 0 PG o falla una salvación de muerte por 5 o más.'}
         </p>
 
-        {/* Botón de Tirada de Dado */}
-        <div className="flex items-center gap-3">
+        {/* Botones de Tirada: Digital o Físico en Mesa */}
+        <div className="flex flex-col sm:flex-row gap-2">
           <button
             disabled={isRolling || readOnly}
             onClick={handleRollInjury}
-            className="px-4 py-2 rounded-xl bg-gradient-to-r from-red-950 to-amber-950 hover:from-red-900 hover:to-amber-900 border border-red-700/60 text-slate-100 text-xs font-fantasy font-bold flex items-center gap-2 shadow-md transition"
+            className="px-4 py-2 rounded-xl bg-gradient-to-r from-red-950 to-amber-950 hover:from-red-900 hover:to-amber-900 border border-red-700/60 text-slate-100 text-xs font-fantasy font-bold flex items-center justify-center gap-2 shadow-md transition"
           >
             <Dices className={`w-4 h-4 text-dnd-gold ${isRolling ? 'animate-spin' : ''}`} />
-            Tirar 1d20 en Tabla {selectedTable}
+            Tirar 1d20 Digital (Tabla {selectedTable})
+          </button>
+
+          <button
+            disabled={readOnly}
+            onClick={() => setShowPhysicalEntry(!showPhysicalEntry)}
+            className={`px-4 py-2 rounded-xl border text-xs font-fantasy font-bold flex items-center justify-center gap-2 shadow-md transition ${
+              showPhysicalEntry
+                ? 'bg-amber-950 border-amber-500 text-amber-200 ring-1 ring-amber-400'
+                : 'bg-slate-900 hover:bg-slate-800 border-slate-700 text-slate-300'
+            }`}
+          >
+            <Sparkles className="w-4 h-4 text-amber-400" />
+            Tiré en Mesa (1d20 Físico) 🎲
           </button>
         </div>
+
+        {/* Panel para ingresar d20 físico tirado en la mesa */}
+        {showPhysicalEntry && !readOnly && (
+          <div className="p-3.5 rounded-xl bg-slate-950 border border-amber-700/60 space-y-2 animate-in fade-in">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-amber-300 uppercase tracking-wide flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5" />
+                Selecciona lo que sacaste en tu d20 físico en la mesa:
+              </span>
+              <span className="text-[10px] text-slate-400">
+                1 al 20
+              </span>
+            </div>
+
+            <div className="flex items-center gap-1.5 flex-wrap">
+              {Array.from({ length: 20 }, (_, i) => i + 1).map(num => (
+                <button
+                  key={num}
+                  type="button"
+                  onClick={() => setInjuryRoll(num)}
+                  className={`w-7 h-7 rounded-lg text-xs font-mono font-bold transition flex items-center justify-center ${
+                    injuryRoll === num
+                      ? 'bg-amber-500 text-slate-950 shadow-md ring-2 ring-amber-400'
+                      : 'bg-slate-900 border border-slate-700 text-slate-300 hover:border-amber-600 hover:text-white'
+                  }`}
+                >
+                  {num}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Resultado de la Tirada */}
         {injuryRoll !== null && currentRolledDef && (

@@ -215,6 +215,41 @@ describe('@segadores/dnd-core - Motor de Subida de Nivel (Level-Up Engine)', () 
     assert.equal(preview.diff.maxHp.baseRoll, 8);
   });
 
+  it('verifica soporte de tirada física en mesa (hpMethod = manual) con diff de estado y validación de fronteras', () => {
+    const beforeHero = createTestHero({ experience_points: 10000, max_hp: 44, current_hp: 40 });
+    const conMod = 2; // CON 15 -> mod +2
+    const manualTableRoll = 6; // El jugador tiró 6 en su d8 físico en la mesa
+
+    // Ejecución con tirada física
+    const preview = previewLevelUp(beforeHero, 'Monje', { hpMethod: 'manual', rolledHp: manualTableRoll });
+    const afterHero = preview.updatedCharacter;
+
+    // 1. Verificación del cálculo matemático exacto
+    const expectedHpGained = manualTableRoll + conMod;
+    assert.equal(afterHero.max_hp, beforeHero.max_hp + expectedHpGained);
+    assert.equal(afterHero.current_hp, beforeHero.current_hp + expectedHpGained);
+    assert.equal(preview.diff.maxHp.increase, expectedHpGained);
+    assert.equal(preview.diff.maxHp.method, 'manual');
+    assert.equal(preview.diff.maxHp.baseRoll, manualTableRoll);
+
+    // 2. Comprobación de invariabilidad de propiedades no afectadas
+    assert.equal(afterHero.slug, beforeHero.slug);
+    assert.equal(afterHero.name, beforeHero.name);
+    assert.equal(afterHero.armor_class, beforeHero.armor_class);
+    assert.deepEqual(afterHero.ability_scores, beforeHero.ability_scores);
+
+    // 3. Comprobación de límites de frontera (Boundary Testing)
+    // Caso frontera A: Si el valor físico ingresado excede el máximo del dado (ej. 15 en d8), se acota al límite físico (8)
+    const clampedMaxPreview = previewLevelUp(beforeHero, 'Monje', { hpMethod: 'manual', rolledHp: 99 });
+    assert.equal(clampedMaxPreview.diff.maxHp.baseRoll, 8);
+    assert.equal(clampedMaxPreview.diff.maxHp.increase, 8 + conMod);
+
+    // Caso frontera B: Si el valor físico ingresado es 0 o negativo, se acota a 1
+    const clampedMinPreview = previewLevelUp(beforeHero, 'Monje', { hpMethod: 'manual', rolledHp: 0 });
+    assert.equal(clampedMinPreview.diff.maxHp.baseRoll, 1);
+    assert.equal(clampedMinPreview.diff.maxHp.increase, 1 + conMod);
+  });
+
   it('aplica subida formal con applyLevelUp y lanza excepción si faltan PX', () => {
     const richHero = createTestHero({ experience_points: 10000 });
     const applied = applyLevelUp(richHero, 'Monje');

@@ -27,7 +27,7 @@
 | **Lenguaje** | **TypeScript** | Contratos de interfaces estrictos (`Data Contracts`) que definen cómo los componentes agnósticos reciben datos. |
 | **Base de Datos & Auth** | **Supabase (PostgreSQL + Auth + Realtime)** | Base de datos relacional con `jsonb`, autenticación con Google y WebSockets en tiempo real. |
 | **Estilos & UI** | **Tailwind CSS + Radix/shadcn** | Componentes estilizados, accesibles y temáticos (fantasía/pergamino/moderno). |
-| **Hosting & CI/CD** | **Vercel (Hobby Tier)** | Despliegue continuo con soporte nativo de Turborepo y Next.js. |
+| **Hosting & CI/CD** | **Vercel (Hobby Tier) + Vercel CLI** | Despliegue continuo con soporte nativo de Turborepo y Next.js; CLI instalado localmente para inspección, preview y gestión de dominio. |
 | **Gestión de Dominio** | **Namecheap (DNS)** | Solo registro de dominio; CNAME/A configurados hacia Vercel. |
 | **Gestión de Contenido** | **Obsidian (Markdown / Wikilinks)** | Fuente de verdad para notas de lore y sesiones. |
 
