@@ -28,48 +28,50 @@ export async function getCurrentPlayer(): Promise<SessionResult> {
     } = await supabase.auth.getUser();
 
     if (userError || !user || !user.email) {
-      // Sesión de desarrollo local (sin necesidad de Google OAuth en localhost)
-      const devSession = cookies().get('segadores_dev_session')?.value;
-      if (devSession) {
-        if (devSession === 'dm') {
+      // Sesión de desarrollo local (exclusivo para localhost / NODE_ENV === 'development')
+      if (process.env.NODE_ENV === 'development') {
+        const devSession = cookies().get('segadores_dev_session')?.value;
+        if (devSession) {
+          if (devSession === 'dm') {
+            return {
+              user: {
+                id: 'dev-dm-id',
+                email: 'dm@ejemplo.com',
+                user_metadata: { full_name: 'William (Dungeon Master)' },
+              } as unknown as User,
+              player: {
+                id: 'dev-dm-id',
+                email: 'dm@ejemplo.com',
+                display_name: 'William (Dungeon Master)',
+                role: 'dm',
+                assigned_character_slug: 'zuma',
+              },
+            };
+          }
+
+          const charNames: Record<string, string> = {
+            alizar: 'Alizar Thorne',
+            eru: 'Eru Lion',
+            honiel: 'Honiel Spellbinder',
+            solaria: 'Solaria',
+            zuma: 'Zuma Kobold',
+          };
+          const charName = charNames[devSession] || 'Aventurero';
           return {
             user: {
-              id: 'dev-dm-id',
-              email: 'dm@ejemplo.com',
-              user_metadata: { full_name: 'William (Dungeon Master)' },
+              id: `dev-${devSession}-id`,
+              email: `${devSession}@segadores.local`,
+              user_metadata: { full_name: charName },
             } as unknown as User,
             player: {
-              id: 'dev-dm-id',
-              email: 'dm@ejemplo.com',
-              display_name: 'William (Dungeon Master)',
-              role: 'dm',
-              assigned_character_slug: 'zuma',
+              id: `dev-${devSession}-id`,
+              email: `${devSession}@segadores.local`,
+              display_name: charName,
+              role: 'player',
+              assigned_character_slug: devSession,
             },
           };
         }
-
-        const charNames: Record<string, string> = {
-          alizar: 'Alizar Thorne',
-          eru: 'Eru Lion',
-          honiel: 'Honiel Spellbinder',
-          solaria: 'Solaria',
-          zuma: 'Zuma Kobold',
-        };
-        const charName = charNames[devSession] || 'Aventurero';
-        return {
-          user: {
-            id: `dev-${devSession}-id`,
-            email: `${devSession}@segadores.local`,
-            user_metadata: { full_name: charName },
-          } as unknown as User,
-          player: {
-            id: `dev-${devSession}-id`,
-            email: `${devSession}@segadores.local`,
-            display_name: charName,
-            role: 'player',
-            assigned_character_slug: devSession,
-          },
-        };
       }
 
       return { user: null, player: null };

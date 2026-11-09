@@ -23,10 +23,12 @@ export async function middleware(request: NextRequest) {
     return supabaseResponse;
   }
 
-  // Soporte para sesión de desarrollo local (sin requerir Google OAuth en localhost)
-  const devSession = request.cookies.get('segadores_dev_session')?.value;
-  if (devSession) {
-    return supabaseResponse;
+  // Soporte para sesión de desarrollo local (exclusivo para localhost / NODE_ENV === 'development')
+  if (process.env.NODE_ENV === 'development') {
+    const devSession = request.cookies.get('segadores_dev_session')?.value;
+    if (devSession) {
+      return supabaseResponse;
+    }
   }
 
   // 3. Usuario no autenticado -> Redirigir a /login conservando la URL de destino (?next=...)
