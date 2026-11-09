@@ -45,6 +45,7 @@ export function CharacterSheet({
   onToggleInspiration,
   onToggleAttunement,
   onToggleEquipped,
+  onTogglePreparedSpell,
   onApplyEffect,
   onRemoveEffect,
   onUpdatePersonalityField,
@@ -384,6 +385,8 @@ export function CharacterSheet({
             readOnly={readOnly}
             userRole={userRole}
             evaluatedState={evaluatedState}
+            onUpdateSpellSlot={onUpdateSpellSlot}
+            onTogglePreparedSpell={onTogglePreparedSpell}
           />
         )}
 

@@ -485,15 +485,40 @@ export const CAMPAIGN_FULL_CHARACTERS: Record<string, Character> = {
       '4': { total: 1, used: 0 }
     },
     prepared_spells: [
-      'Falsa vida', 'Manos ardientes', 'Hechizar persona', 'Sirviente invisible',
-      'Disfrazarse', 'Caída de pluma', 'Hacer añicos', 'Arma mágica', 'Ilusión menor'
+      'Escudo', 'Armadura de mago', 'Proyectil mágico', 'Manos ardientes', 'Falsa vida',
+      'Hacer añicos', 'Arma mágica', 'Ceguera/Sordera', 'Bola de fuego', 'Relámpago',
+      'Toque vampírico', 'Muro de fuego'
     ],
     known_spells: [
-      'Prestidigitación', 'Agarre electrizante', 'Rociada venenosa',
-      'Falsa vida', 'Manos ardientes', 'Hechizar persona', 'Sirviente invisible',
-      'Disfrazarse', 'Caída de pluma', 'Hacer añicos', 'Arma mágica', 'Ilusión menor'
+      // 5 Trucos (Cantrips)
+      'Prestidigitación', 'Agarre electrizante', 'Rociada venenosa', 'Rayo de escarcha', 'Ilusión menor',
+      // 12 Nivel 1
+      'Escudo', 'Armadura de mago', 'Proyectil mágico', 'Manos ardientes', 'Falsa vida',
+      'Hechizar persona', 'Dormir', 'Detectar magia', 'Identificar', 'Sirviente invisible',
+      'Disfrazarse', 'Caída de pluma',
+      // 6 Nivel 2
+      'Hacer añicos', 'Arma mágica', 'Ceguera/Sordera', 'Cerradura arcana', 'Apertura (Knock)', 'Levitar',
+      // 5 Nivel 3
+      'Bola de fuego', 'Relámpago', 'Clarividencia', 'Maldecir (Bestow Curse)', 'Toque vampírico',
+      // 2 Nivel 4
+      'Asesino fantasmal', 'Muro de fuego'
     ],
     inventory: [
+      {
+        slug: 'cota-de-malla-de-mithral',
+        name: 'Cota de Malla de Mithral',
+        category: 'armor',
+        qty: 1,
+        equipped: true,
+        requires_attunement: false,
+        attuned: false,
+        notes: 'Armadura pesada de mithral (CA 16 fija). No requiere Fuerza mínima ni impone desventaja en Sigilo. Al llevarla equipada, desactiva Artes Marciales y Defensa sin Armadura de monje.',
+        armor: {
+          baseAc: 16,
+          armorType: 'heavy',
+          stealthDisadvantage: false
+        }
+      },
       {
         slug: 'marginem-noctis-rayo-de-gorthok',
         name: 'Marginem Noctis, Rayo de Gorthok',
@@ -556,6 +581,66 @@ export const CAMPAIGN_FULL_CHARACTERS: Record<string, Character> = {
         requires_attunement: true,
         attuned: false,
         notes: 'Ventaja en todas las salvaciones contra conjuros (en reserva por límite de 3).'
+      },
+      {
+        slug: 'sombrero-de-hechiceria',
+        name: 'Sombrero de Hechicería',
+        category: 'magic_item',
+        qty: 1,
+        equipped: false,
+        requires_attunement: true,
+        attuned: false,
+        notes: 'Foco arcano de mago. Permite intentar lanzar un truco de mago que no conozcas (prueba INT CD 10).'
+      },
+      {
+        slug: 'medallon-del-dios-vampirico',
+        name: 'Medallón del Dios Vampírico',
+        category: 'magic_item',
+        qty: 1,
+        equipped: false,
+        requires_attunement: true,
+        attuned: false,
+        notes: 'Amuleto consagrado a Gulthias. Permite transferir la mitad del daño infligido a un enemigo vivo como curación a un aliado o a sí mismo (1/combate o descanso).'
+      },
+      {
+        slug: 'varita-de-secretos',
+        name: 'Varita de secretos',
+        category: 'magic_item',
+        qty: 1,
+        equipped: false,
+        requires_attunement: false,
+        attuned: false,
+        notes: 'Varita con 3 cargas para detectar puertas secretas o trampas a 30 pies.'
+      },
+      {
+        slug: 'amuleto-de-relojeria',
+        name: 'Amuleto de Relojería',
+        category: 'magic_item',
+        qty: 1,
+        equipped: false,
+        requires_attunement: false,
+        attuned: false,
+        notes: 'Colgante de engranajes que permite fijar 1 tirada de ataque al día en un 10 automático en el d20.'
+      },
+      {
+        slug: 'piedras-mensajeras',
+        name: 'Piedras mensajeras',
+        category: 'magic_item',
+        qty: 1,
+        equipped: false,
+        requires_attunement: false,
+        attuned: false,
+        notes: 'Pareja de piedras rúnicas para comunicación bidireccional a cualquier distancia.'
+      },
+      {
+        slug: 'llave-misteriosa',
+        name: 'Llave misteriosa',
+        category: 'magic_item',
+        qty: 1,
+        equipped: false,
+        requires_attunement: false,
+        attuned: false,
+        notes: '5% de probabilidad (20 natural) de abrir cualquier cerradura del mundo. Se desvanece tras el éxito.'
       },
       {
         slug: 'bandas-de-hierro-de-bilarro',

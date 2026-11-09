@@ -215,6 +215,19 @@ export function PortalDashboard({
     }));
   };
 
+  const handleTogglePreparedSpell = (spellName: string) => {
+    updateCurrentCharacter(c => {
+      const current = c.prepared_spells || [];
+      const isAlreadyPrepared = current.includes(spellName);
+      return {
+        ...c,
+        prepared_spells: isAlreadyPrepared
+          ? current.filter(s => s !== spellName)
+          : [...current, spellName]
+      };
+    });
+  };
+
   const handleApplyEffect = (effect: ActiveEffect) => {
     updateCurrentCharacter(c => ({
       ...c,
@@ -579,6 +592,7 @@ export function PortalDashboard({
             onToggleInspiration={handleToggleInspiration}
             onToggleAttunement={handleToggleAttunement}
             onToggleEquipped={handleToggleEquipped}
+            onTogglePreparedSpell={handleTogglePreparedSpell}
             onApplyEffect={handleApplyEffect}
             onRemoveEffect={handleRemoveEffect}
             onUpdatePersonalityField={handleUpdatePersonalityField}
@@ -589,53 +603,55 @@ export function PortalDashboard({
           />
         </section>
 
-        {/* Baúl de la Compañía (Campaign Vault) */}
-        <section className="p-6 rounded-sm bg-dnd-parchment text-dnd-ink border-2 border-dnd-border-antique dnd-notched space-y-4 shadow-md">
-          <div className="space-y-1">
-            <div className="flex items-center justify-between pb-1">
-              <div className="flex items-center gap-2">
-                <Package className="w-5 h-5 text-dnd-gold" />
-                <h3 className="font-dnd-title font-bold text-base text-dnd-crimson uppercase tracking-wider">
-                  Baúl de la Compañía (Tesoro y Provisiones Compartidas)
-                </h3>
+        {/* Baúl de la Compañía (Campaign Vault) - Solo visible en la pestaña C: Inventario & Sintonización */}
+        {activeSheetTab === 'inventory' && (
+          <section className="p-6 rounded-sm bg-dnd-parchment text-dnd-ink border-2 border-dnd-border-antique dnd-notched space-y-4 shadow-md animate-in fade-in">
+            <div className="space-y-1">
+              <div className="flex items-center justify-between pb-1">
+                <div className="flex items-center gap-2">
+                  <Package className="w-5 h-5 text-dnd-gold" />
+                  <h3 className="font-dnd-title font-bold text-base text-dnd-crimson uppercase tracking-wider">
+                    Baúl de la Compañía (Tesoro y Provisiones Compartidas)
+                  </h3>
+                </div>
+                <DndBadge variant="parchment" size="sm">
+                  campaign_vault
+                </DndBadge>
               </div>
-              <DndBadge variant="parchment" size="sm">
-                campaign_vault
-              </DndBadge>
+              <TaperedRule variant="crimson" />
             </div>
-            <TaperedRule variant="crimson" />
-          </div>
 
-          {/* Monedas y Provisiones */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center text-xs">
-            <div className="p-3 rounded-sm bg-dnd-parchment-contrast border border-dnd-border-antique">
-              <span className="text-dnd-ink-muted font-dnd-title text-[10px] uppercase block">Piezas de Oro</span>
-              <span className="text-base font-dnd-title font-bold text-dnd-gold">1,420 po</span>
+            {/* Monedas y Provisiones */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center text-xs">
+              <div className="p-3 rounded-sm bg-dnd-parchment-contrast border border-dnd-border-antique">
+                <span className="text-dnd-ink-muted font-dnd-title text-[10px] uppercase block">Piezas de Oro</span>
+                <span className="text-base font-dnd-title font-bold text-dnd-gold">1,420 po</span>
+              </div>
+              <div className="p-3 rounded-sm bg-dnd-parchment-contrast border border-dnd-border-antique">
+                <span className="text-dnd-ink-muted font-dnd-title text-[10px] uppercase block">Piezas de Plata</span>
+                <span className="text-base font-dnd-title font-bold text-dnd-ink">380 pp</span>
+              </div>
+              <div className="p-3 rounded-sm bg-dnd-parchment-contrast border border-dnd-border-antique">
+                <span className="text-dnd-ink-muted font-dnd-title text-[10px] uppercase block">Pociones de Curación</span>
+                <span className="text-base font-dnd-title font-bold text-dnd-crimson">4 (Mayor)</span>
+              </div>
+              <div className="p-3 rounded-sm bg-dnd-parchment-contrast border border-dnd-border-antique">
+                <span className="text-dnd-ink-muted font-dnd-title text-[10px] uppercase block">Provisiones de Ración</span>
+                <span className="text-base font-dnd-title font-bold text-emerald-700 dark:text-emerald-400">18 Días</span>
+              </div>
             </div>
-            <div className="p-3 rounded-sm bg-dnd-parchment-contrast border border-dnd-border-antique">
-              <span className="text-dnd-ink-muted font-dnd-title text-[10px] uppercase block">Piezas de Plata</span>
-              <span className="text-base font-dnd-title font-bold text-dnd-ink">380 pp</span>
-            </div>
-            <div className="p-3 rounded-sm bg-dnd-parchment-contrast border border-dnd-border-antique">
-              <span className="text-dnd-ink-muted font-dnd-title text-[10px] uppercase block">Pociones de Curación</span>
-              <span className="text-base font-dnd-title font-bold text-dnd-crimson">4 (Mayor)</span>
-            </div>
-            <div className="p-3 rounded-sm bg-dnd-parchment-contrast border border-dnd-border-antique">
-              <span className="text-dnd-ink-muted font-dnd-title text-[10px] uppercase block">Provisiones de Ración</span>
-              <span className="text-base font-dnd-title font-bold text-emerald-700 dark:text-emerald-400">18 Días</span>
-            </div>
-          </div>
 
-          {activeRole === 'dm' && (
-            <div className="p-3 rounded-sm bg-dnd-crimson-surface border border-dnd-crimson text-dnd-crimson text-xs flex items-center justify-between animate-in fade-in font-dnd-body">
-              <span className="flex items-center gap-2">
-                <Lock className="w-3.5 h-3.5 text-dnd-crimson" />
-                <strong>Vista DM Activa:</strong> Acceso al libro secreto de reparto y objetos no identificados de Phandalin.
-              </span>
-              <span className="text-[10px] font-mono font-bold text-dnd-crimson">#dm-only</span>
-            </div>
-          )}
-        </section>
+            {activeRole === 'dm' && (
+              <div className="p-3 rounded-sm bg-dnd-crimson-surface border border-dnd-crimson text-dnd-crimson text-xs flex items-center justify-between animate-in fade-in font-dnd-body">
+                <span className="flex items-center gap-2">
+                  <Lock className="w-3.5 h-3.5 text-dnd-crimson" />
+                  <strong>Vista DM Activa:</strong> Acceso al libro secreto de reparto y objetos no identificados de Phandalin.
+                </span>
+                <span className="text-[10px] font-mono font-bold text-dnd-crimson">#dm-only</span>
+              </div>
+            )}
+          </section>
+        )}
       </main>
 
       <Footer />
