@@ -10,11 +10,15 @@ y este proyecto se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 ## [Unreleased]
 
 ### Corregido
+* **Seguridad y Control de Acceso en Producción:**
+  * Bloqueado y purgado el panel y endpoints de inicio de sesión de desarrollo local (`/api/auth/dev-login` y cookie `segadores_dev_session`) fuera del entorno `NODE_ENV === 'development'`, impidiendo que sea visible en la UI o ejecutable en producción (`www.segadoresdnd.com`).
 * **CI/CD en Vercel y Resolución de Dependencias:**
   * Sincronizado `pnpm-lock.yaml` para incluir la especificación de `lucide-react@^0.460.0` bajo el paquete `@segadores/character-sheet` y las 7 dependencias de `@segadores/obsidian-engine`, resolviendo el error `[ERR_PNPM_OUTDATED_LOCKFILE]` al desplegar en Vercel con `--frozen-lockfile`.
   * Añadidas dependencias de desarrollo `@types/react` y `@types/react-dom` en `@segadores/character-sheet` y `@segadores/ui`, solucionando el error de compilación de TypeScript en Vercel por aislamiento de enlaces simbólicos en `node_modules`.
 
 ### Añadido
+* **Gobernanza de CI/CD y Despliegues en Vercel (`GEMINI.md` - Sección 10 y `PROJECT_SPEC.md`):**
+  * Especificación obligatoria para agentes y desarrolladores sobre integridad estricta del lockfile (`--frozen-lockfile`), prohibición de commitear `package.json` sin su correspondiente `pnpm-lock.yaml`, declaración mandatoria de `@types/react` y `@types/react-dom` en cada paquete con JSX/TSX del workspace para superar el aislamiento de pnpm, checklist de validación local previa (`pnpm install --frozen-lockfile` y `turbo run build`) y tolerancia a fallos en submódulos privados.
 * **Integración de Vercel CLI Global en Entorno de Desarrollo:**
   * Documentada la disponibilidad de `vercel` CLI global instalado vía `pnpm` en `SYSTEM_SPECS.md`, `PROJECT_SPEC.md`, `README.md` y cheatsheet central de Obsidian (`Comandos de Sistema.md`).
   * Eliminado campo redundante `workspaces` de `package.json` de la raíz para respetar la especificación nativa de `pnpm-workspace.yaml` y silenciar advertencias de `pnpm`.

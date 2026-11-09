@@ -94,6 +94,8 @@ Para garantizar la protección de derechos de autor (WotC) y permitir que el có
    * **Sincronización:** El DM realiza los commits y push **manualmente vía Git** (tanto desde la terminal en Arch Linux como desde el móvil), sin necesidad de plugins automáticos adicionales.
 3. **Compilación en Vercel:**
    * Vercel clona el repositorio principal e inicializa el submódulo privado (`git submodule update --init --recursive`) mediante permisos de GitHub Deploy Keys o acceso de cuenta.
+   * **Degradación Elegante:** Si el submódulo privado no está disponible en Vercel, el sistema conmuta automáticamente a los mocks públicos en `content/mocks/` sin interrumpir el despliegue.
+   * **Aislamiento pnpm y Tipado Estricto:** Vercel ejecuta `pnpm install --frozen-lockfile` contra su almacenamiento virtual aislado. Todo paquete del workspace (`packages/*`) con código JSX/TSX debe declarar explícitamente sus dependencias de tipos (`@types/react`, `@types/react-dom`) en `devDependencies` y mantener `pnpm-lock.yaml` 100% sincronizado.
 
 ### 3.3. Estructura del Repositorio (Monorepo)
 ```text

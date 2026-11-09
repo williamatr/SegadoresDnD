@@ -6,6 +6,11 @@ import { NextResponse, type NextRequest } from 'next/server';
  * sin necesidad de configurar credenciales de Google OAuth en la nube durante el desarrollo.
  */
 export async function GET(request: NextRequest) {
+  // Prohibir terminantemente el bypass de desarrollo en entornos de producción
+  if (process.env.NODE_ENV !== 'development') {
+    return new NextResponse('Not Found', { status: 404 });
+  }
+
   const role = request.nextUrl.searchParams.get('role') || 'dm';
   const next = request.nextUrl.searchParams.get('next') || '/portal';
   const origin = request.nextUrl.origin;
