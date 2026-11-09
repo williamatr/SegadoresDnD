@@ -11,7 +11,8 @@ y este proyecto se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ### Corregido
 * **CI/CD en Vercel y Resolución de Dependencias:**
-  * Sincronizado `pnpm-lock.yaml` para incluir la especificación de `lucide-react@^0.460.0` bajo el paquete `@segadores/character-sheet`, resolviendo el error `[ERR_PNPM_OUTDATED_LOCKFILE]` al desplegar en Vercel con `--frozen-lockfile`.
+  * Sincronizado `pnpm-lock.yaml` para incluir la especificación de `lucide-react@^0.460.0` bajo el paquete `@segadores/character-sheet` y las 7 dependencias de `@segadores/obsidian-engine`, resolviendo el error `[ERR_PNPM_OUTDATED_LOCKFILE]` al desplegar en Vercel con `--frozen-lockfile`.
+  * Añadidas dependencias de desarrollo `@types/react` y `@types/react-dom` en `@segadores/character-sheet` y `@segadores/ui`, solucionando el error de compilación de TypeScript en Vercel por aislamiento de enlaces simbólicos en `node_modules`.
 
 ### Añadido
 * **Integración de Vercel CLI Global en Entorno de Desarrollo:**
