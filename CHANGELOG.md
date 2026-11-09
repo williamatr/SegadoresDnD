@@ -164,6 +164,9 @@ y este proyecto se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 ## [0.0.1] - 2026-10-23
 
 ### Añadido
+* **Integración de Vercel CLI Global en Entorno de Desarrollo:**
+  * Documentada la disponibilidad de `vercel` CLI global instalado vía `pnpm` en `SYSTEM_SPECS.md`, `PROJECT_SPEC.md`, `README.md` y cheatsheet central de Obsidian (`Comandos de Sistema.md`).
+  * Eliminado campo redundante `workspaces` de `package.json` de la raíz para respetar la especificación nativa de `pnpm-workspace.yaml` y silenciar advertencias de `pnpm`.
 * **Arquitectura Monorepo:** Estructura modular basada en Turborepo y pnpm workspaces dividida en `apps/` y `packages/`.
 * **Componentes Agnósticos:** Especificación de diseño de contratos de datos (`Data Contracts`) para desacoplar componentes de UI (`packages/character-sheet`), lógica pura (`packages/dnd-core`) y motor de Markdown (`packages/obsidian-engine`).
 * **Estrategia de Dos Repositorios:** Separación entre el repositorio de código abierto/portafolio y el repositorio privado de notas de Obsidian (`content/wiki/` vía Git Submodule) para proteger material con derechos de autor de D&D.
