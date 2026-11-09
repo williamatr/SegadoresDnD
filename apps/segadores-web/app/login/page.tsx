@@ -3,10 +3,11 @@
 import React, { useState, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { Shield, AlertTriangle, ArrowLeft, Sparkles } from 'lucide-react';
+import { Shield, AlertTriangle, ArrowLeft, Sparkles, Lock } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
+import { TaperedRule, DndBadge } from '@segadores/ui';
 
 function LoginForm() {
   const searchParams = useSearchParams();
@@ -61,40 +62,43 @@ function LoginForm() {
   };
 
   return (
-    <div className="w-full max-w-md p-6 sm:p-10 rounded-2xl bg-dnd-card border border-dnd-border shadow-2xl text-center space-y-6">
-      <div className="mx-auto w-14 h-14 rounded-2xl bg-gradient-to-br from-dnd-gold to-amber-700 flex items-center justify-center text-slate-950 shadow-md shadow-amber-950/40">
+    <div className="w-full max-w-md p-6 sm:p-10 rounded-sm bg-[#fdf6ea] text-[#242528] border-2 border-[#d4c2a5] dnd-notched shadow-2xl text-center space-y-6">
+      <div className="mx-auto w-14 h-14 rounded-sm bg-[#58180D] border-2 border-[#c29b38] flex items-center justify-center text-[#c29b38] shadow-md shadow-black/30">
         <Shield className="w-7 h-7" />
       </div>
 
       <div className="space-y-2">
-        <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-100 font-fantasy">
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-wider text-[#58180D] font-dnd-title uppercase">
           Portal de Campaña
         </h1>
-        <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
-          Inicia sesión con tu cuenta autorizada de Google para ingresar a las crónicas y fichas de <strong className="text-slate-200">Segadores de Orcos</strong>.
+        <p className="text-xs sm:text-sm text-[#58544d] font-dnd-body leading-relaxed">
+          Inicia sesión con tu cuenta autorizada de Google para ingresar a las crónicas y fichas de <strong className="text-[#58180D] font-dnd-title">Segadores de Orcos</strong>.
         </p>
+        <TaperedRule variant="crimson" />
       </div>
 
       {/* Banner de Invitación de Mesa */}
       {searchParams.get('invited') === 'true' && (
-        <div className="p-4 rounded-xl bg-gradient-to-r from-amber-950/60 via-slate-900 to-amber-950/40 border border-amber-600/50 text-left space-y-1.5 shadow-lg animate-in fade-in">
-          <div className="flex items-center gap-2 text-dnd-gold font-bold text-xs">
-            <Sparkles className="w-4 h-4 text-dnd-gold" />
+        <div className="p-4 rounded-sm bg-[#ede2cb] border border-[#c29b38] text-left space-y-1.5 shadow-sm animate-in fade-in">
+          <div className="flex items-center gap-2 text-[#58180D] font-dnd-title font-bold text-xs uppercase tracking-wider">
+            <Sparkles className="w-4 h-4 text-[#b45309]" />
             ¡Has sido convocado a la mesa de juego!
           </div>
-          <p className="text-xs text-slate-300 leading-relaxed">
-            El Dungeon Master te ha autorizado el acceso a <strong className="text-slate-100">Segadores de Orcos</strong>. Continúa con tu cuenta de Google autorizada para acceder a tu hoja de personaje y a las crónicas.
+          <p className="text-xs text-[#242528]/90 font-dnd-body leading-relaxed">
+            El Dungeon Master te ha autorizado el acceso a <strong className="text-[#58180D] font-dnd-title">Segadores de Orcos</strong>. Continúa con tu cuenta de Google autorizada para acceder a tu hoja de personaje y a las crónicas.
           </p>
         </div>
       )}
 
       {/* Alerta de error si viene en URL o en cliente */}
       {(errorParam || clientError) && (
-        <div className="p-3.5 rounded-xl bg-red-950/60 border border-red-800/60 text-red-200 text-xs text-left flex items-start gap-2.5">
-          <AlertTriangle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
+        <div className="p-3.5 rounded-sm bg-[#fbeeed] border border-[#7a2021] text-[#58180D] text-xs text-left flex items-start gap-2.5">
+          <AlertTriangle className="w-4 h-4 text-[#7a2021] shrink-0 mt-0.5" />
           <div className="space-y-1">
-            <span className="font-semibold block text-red-300">Fallo de Autenticación</span>
-            <p className="text-slate-300">
+            <span className="font-dnd-title font-bold block uppercase tracking-wider text-[11px]">
+              Fallo de Autenticación
+            </span>
+            <p className="text-xs font-dnd-body">
               {clientError || (errorParam === 'no_email'
                 ? 'La cuenta de Google no proporcionó un correo electrónico válido.'
                 : errorParam === 'auth_exchange_failed'
@@ -107,16 +111,16 @@ function LoginForm() {
         </div>
       )}
 
-      {/* Botón de Google OAuth */}
+      {/* Botón de Google OAuth Estilo Sello */}
       <div className="space-y-3 pt-2">
         <button
           onClick={handleGoogleLogin}
           disabled={isLoading}
-          className="w-full inline-flex items-center justify-center gap-3 px-5 py-3.5 rounded-xl bg-slate-100 text-slate-900 font-semibold hover:bg-white hover:shadow-lg transition disabled:opacity-50 disabled:cursor-not-allowed text-sm shadow-md"
+          className="w-full inline-flex items-center justify-center gap-3 px-5 py-3.5 rounded-sm bg-[#58180D] hover:bg-[#7a2021] text-[#fdf6ea] border-2 border-[#c29b38] font-dnd-title uppercase tracking-wider font-bold transition disabled:opacity-50 disabled:cursor-not-allowed text-xs shadow-md"
         >
           {isLoading ? (
             <span className="inline-flex items-center gap-2">
-              <span className="w-4 h-4 border-2 border-slate-900 border-t-transparent rounded-full animate-spin" />
+              <span className="w-4 h-4 border-2 border-[#fdf6ea] border-t-transparent rounded-full animate-spin" />
               Invocando portal...
             </span>
           ) : (
@@ -150,31 +154,31 @@ function LoginForm() {
           <>
             <div className="relative my-3">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-dnd-border" />
+                <div className="w-full border-t border-[#d4c2a5]" />
               </div>
               <div className="relative flex justify-center text-[10px] uppercase">
-                <span className="bg-dnd-card px-2 text-slate-500 font-mono">o en desarrollo local</span>
+                <span className="bg-[#fdf6ea] px-2 text-[#58544d] font-dnd-title">o en desarrollo local</span>
               </div>
             </div>
 
-            <div className="p-4 rounded-xl bg-gradient-to-br from-amber-950/40 via-dnd-surface to-slate-900 border border-dnd-gold/30 text-left space-y-2.5 shadow-lg">
+            <div className="p-4 rounded-sm bg-[#ede2cb] border border-[#d4c2a5] text-left space-y-2.5 shadow-sm">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-1.5 text-dnd-gold font-fantasy font-bold text-xs uppercase tracking-wide">
-                  <Sparkles className="w-3.5 h-3.5 text-dnd-gold" />
+                <div className="flex items-center gap-1.5 text-[#58180D] font-dnd-title font-bold text-xs uppercase tracking-wide">
+                  <Sparkles className="w-3.5 h-3.5 text-[#b45309]" />
                   Acceso Rápido en Local
                 </div>
-                <span className="text-[10px] text-emerald-400 font-mono bg-emerald-950/60 border border-emerald-800/40 px-2 py-0.5 rounded-full">
+                <DndBadge variant="parchment" size="sm">
                   Sin Google OAuth
-                </span>
+                </DndBadge>
               </div>
-              <p className="text-[11px] text-slate-400 leading-relaxed">
+              <p className="text-[11px] text-[#58544d] font-dnd-body leading-relaxed">
                 Para probar en tu máquina local sin necesidad de configurar credenciales en Supabase / Google Cloud:
               </p>
 
               <div className="space-y-1.5 pt-1">
                 <a
                   href={`/api/auth/dev-login?role=dm&next=${encodeURIComponent(sanitizeNextPath(nextParam))}`}
-                  className="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl bg-red-950/90 hover:bg-red-900 border border-red-700/60 text-red-200 text-xs font-bold transition shadow-md"
+                  className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-sm bg-[#58180D] hover:bg-[#7a2021] border border-[#7a2021] text-[#fdf6ea] text-xs font-dnd-title font-bold uppercase tracking-wider transition shadow-xs"
                 >
                   👑 Entrar como Dungeon Master (William)
                 </a>
@@ -182,25 +186,25 @@ function LoginForm() {
                 <div className="grid grid-cols-2 gap-1.5 pt-1">
                   <a
                     href={`/api/auth/dev-login?role=honiel&next=${encodeURIComponent(sanitizeNextPath(nextParam))}`}
-                    className="flex items-center justify-center gap-1 p-2 rounded-lg bg-dnd-card hover:bg-dnd-surface border border-dnd-border text-slate-300 hover:text-slate-100 text-[11px] transition"
+                    className="flex items-center justify-center gap-1 p-2 rounded-sm bg-[#fdf6ea] hover:bg-[#f4ebe1] border border-[#d4c2a5] text-[#242528] text-[11px] font-dnd-body transition font-semibold"
                   >
                     🧙 Honiel (Jugador)
                   </a>
                   <a
                     href={`/api/auth/dev-login?role=eru&next=${encodeURIComponent(sanitizeNextPath(nextParam))}`}
-                    className="flex items-center justify-center gap-1 p-2 rounded-lg bg-dnd-card hover:bg-dnd-surface border border-dnd-border text-slate-300 hover:text-slate-100 text-[11px] transition"
+                    className="flex items-center justify-center gap-1 p-2 rounded-sm bg-[#fdf6ea] hover:bg-[#f4ebe1] border border-[#d4c2a5] text-[#242528] text-[11px] font-dnd-body transition font-semibold"
                   >
                     ⚔️ Eru (Jugador)
                   </a>
                   <a
                     href={`/api/auth/dev-login?role=alizar&next=${encodeURIComponent(sanitizeNextPath(nextParam))}`}
-                    className="flex items-center justify-center gap-1 p-2 rounded-lg bg-dnd-card hover:bg-dnd-surface border border-dnd-border text-slate-300 hover:text-slate-100 text-[11px] transition"
+                    className="flex items-center justify-center gap-1 p-2 rounded-sm bg-[#fdf6ea] hover:bg-[#f4ebe1] border border-[#d4c2a5] text-[#242528] text-[11px] font-dnd-body transition font-semibold"
                   >
                     🛠️ Alizar (Jugador)
                   </a>
                   <a
                     href={`/api/auth/dev-login?role=solaria&next=${encodeURIComponent(sanitizeNextPath(nextParam))}`}
-                    className="flex items-center justify-center gap-1 p-2 rounded-lg bg-dnd-card hover:bg-dnd-surface border border-dnd-border text-slate-300 hover:text-slate-100 text-[11px] transition"
+                    className="flex items-center justify-center gap-1 p-2 rounded-sm bg-[#fdf6ea] hover:bg-[#f4ebe1] border border-[#d4c2a5] text-[#242528] text-[11px] font-dnd-body transition font-semibold"
                   >
                     🌿 Solaria (Jugadora)
                   </a>
@@ -210,15 +214,15 @@ function LoginForm() {
           </>
         )}
 
-        <p className="text-[11px] text-slate-500 leading-relaxed pt-1">
+        <p className="text-[11px] text-[#8a7f72] font-dnd-body leading-relaxed pt-1">
           El acceso con Google en producción está restringido a jugadores registrados en la lista blanca de la campaña.
         </p>
       </div>
 
-      <div className="pt-4 border-t border-dnd-border/80">
+      <div className="pt-4 border-t border-[#d4c2a5]">
         <Link
           href="/"
-          className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-dnd-gold transition"
+          className="inline-flex items-center gap-1.5 text-xs text-[#58544d] hover:text-[#58180D] font-dnd-title uppercase tracking-wider transition"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
           Volver a la página principal

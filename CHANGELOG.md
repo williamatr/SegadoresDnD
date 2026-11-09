@@ -9,7 +9,33 @@ y este proyecto se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ## [Unreleased]
 
+### Corregido
+* **Resolución de Rutas y Modo Fallback en `@segadores/obsidian-engine`:**
+  * Corregida la resolución de rutas de `content/wiki` y `content/mocks` para que se resuelvan dinámicamente con respecto a la raíz del monorepo, haciendo que las pruebas unitarias pasen sin importar desde qué directorio se ejecuten.
+  * Creado el directorio `content/mocks/Objetos/` con fixtures canónicos SRD 5.2.1 amparados bajo CC-BY-4.0 (`Pocion_de_Curacion.md` y `Espada_Larga.md`), garantizando que el modo de contingencia cargue tanto hechizos como objetos sin dependencias de la wiki privada.
+  * Añadida prueba de contingencia automática (`carga compendio en modo fallback usando mocks SRD cuando la wiki privada no existe`).
+* **Arquitectura de Monorepo y Desacoplamiento de `@segadores/character-sheet` (Regla 3 de `GEMINI.md`):**
+  * Eliminada la importación invertida de `CAMPAIGN_FULL_CHARACTERS` desde `apps/segadores-web` hacia `packages/character-sheet`.
+  * La suite de `@segadores/character-sheet` ahora utiliza fixtures agnósticos canónicos de SRD 5.2.1 (`mockSrdFighter`) garantizando que los paquetes agnósticos de `packages/*` no dependan de la aplicación web.
+  * Los tests de los 5 personajes reales de campaña se consolidaron en `apps/segadores-web/lib/campaign/characters.test.mjs`.
+  * Añadido `"type": "module"` en `packages/character-sheet/package.json`, eliminando advertencias `MODULE_TYPELESS_PACKAGE_JSON` de Node.js.
+* **Pipeline Unificado de Tests y Linter en el Workspace (`turbo test` y `turbo lint`):**
+  * Añadida la tarea `"test"` en `turbo.json` y el comando `"test": "turbo run test"` en el `package.json` raíz.
+  * Conectados los scripts de test en `@segadores/character-sheet` y `apps/segadores-web`. La suite ejecuta ahora los 57 tests del monorepo de forma centralizada con 100% de éxito.
+  * Removido script huérfano `"lint": "eslint ."` de `@segadores/dnd-core` y enlazado `"lint": "tsc --noEmit"` en `apps/segadores-web`, logrando que `pnpm run lint` valide tipos y sintaxis en todo el monorepo sin bloqueos ni prompts interactivos.
+* **Enmascaramiento Canónico y Manejo de Sesión en Producción (`apps/segadores-web`):**
+  * Redirección HTTP 308 automática desde cualquier subdominio `*.vercel.app` hacia `www.segadoresdnd.com` en el middleware de producción.
+  * Salvaguarda en middleware para interceptar callbacks de OAuth con `/?code=...` y reenviarlos directamente a `/auth/callback`, evitando caídas en la página de inicio y llevando al usuario de inmediato al portal.
+  * Forzado el dominio canónico `www.segadoresdnd.com` en los enlaces de invitación generados por la consola del DM y en el parámetro `redirectTo` de inicio de sesión con Google.
+
 ### Añadido
+* **Inmersión Visual del Portal del Jugador, Wiki y Bitácora del DM (TASK-11):**
+  * **Barra de Navegación Global (`Header.tsx`):** Shell de tomo encuadernado en cuero repujado (`#1c130e`) con doble filete dorado (`#c29b38`), logotipo "Segadores" en `Cinzel`, escudo heráldico con dagas grabadas y botón "Portal de Campaña" en carmesí oficial y oro.
+  * **Colofón Editorial (`Footer.tsx`):** Rematado con la línea cónica `TaperedRule` dorada, atribución canónica a Wizards of the Coast (SRD 5.1 / 5.2.1 CC-BY-4.0) y tipografía de imprenta antigua.
+  * **Portada de Acceso (`/login`):** Marco biselado de pergamino `dnd-notched`, medalla de cera carmesí, título en `Cinzel` (`#58180D`) y botón de Google OAuth integrado en estética medieval.
+  * **Portal de Campaña (`/portal`):** Tarjetas de los 5 personajes con marcos de pergamino biselados `dnd-notched-sm`, insignias de estado (PG verde, CA oro viejo), y baúl de campaña con provisiones y divisas.
+  * **Bitácora Secreta del DM (`dm-invitations-console.tsx`):** Consola del máster transformada en un libro de registro de pergamino, formulario con campos en crema de manual y tarjetas de aventureros con sellos de estado.
+  * **Callouts Temáticos y Statblocks Canónicos (`@segadores/obsidian-engine`):** Renderizado de `[!statblock]` en pergamino amarillento (`#fdf1dc`) con bordes dobles carmesí estilo *Monster Manual*, bloque `[!dm]` con cera roja suave (`#fbeeed`) y candado medieval dorado 🔒, y notas temáticas con tipografía editorial `Spectral`.
 * **Refactor Visual Integral de la Hoja de Personaje D&D 5e (`@segadores/character-sheet`) (TASK-10):**
   * **Cabecera y Pestañas:** Marco superior de pergamino envejecido (`#fdf6ea`), bordes biselados `dnd-notched`, cintillas en `Cinzel` (`#58180D`), insignias para clase, nivel y especie, y pestañas de libro encuadernado en cuero repujado (`#2c1e18`).
   * **Escudo Heráldico de CA y Tríada de Combate:** Silueta de escudo medieval clásico (`HeraldicShield`) para la Clase de Armadura (CA), cajas biseladas `dnd-notched` para Iniciativa y Velocidad.

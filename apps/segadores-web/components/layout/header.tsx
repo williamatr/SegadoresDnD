@@ -18,25 +18,25 @@ export function Header() {
 
   return (
     <>
-      <header className="border-b border-dnd-border bg-dnd-dark/80 backdrop-blur-md sticky top-0 z-40">
+      <header className="border-b-2 border-[#c29b38]/60 bg-[#1c130e] text-[#fdf6ea] sticky top-0 z-40 shadow-xl">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-          {/* Logo y Nombre */}
+          {/* Logo Heráldico de Campaña */}
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-dnd-gold to-amber-700 flex items-center justify-center shadow-md shadow-amber-950/30 group-hover:scale-105 transition-transform">
-              <Swords className="w-5 h-5 text-slate-950" />
+            <div className="w-9 h-9 rounded-sm bg-[#58180D] border border-[#c29b38] flex items-center justify-center shadow-md shadow-black/40 group-hover:scale-105 transition-transform">
+              <Swords className="w-5 h-5 text-[#c29b38]" />
             </div>
             <div>
-              <span className="text-lg font-bold tracking-wide text-slate-100 font-fantasy block leading-tight">
+              <span className="text-base font-bold tracking-wider text-[#fdf6ea] font-dnd-title block leading-tight">
                 Segadores
               </span>
-              <span className="text-[10px] text-dnd-gold-light uppercase tracking-wider block">
+              <span className="text-[9px] text-[#c29b38] font-dnd-title uppercase tracking-widest block">
                 D&D 5.5e Companion
               </span>
             </div>
           </Link>
 
-          {/* Navegación Desktop */}
-          <nav className="hidden md:flex items-center gap-1">
+          {/* Navegación Desktop con Cinta de Manual */}
+          <nav className="hidden md:flex items-center gap-1.5">
             {navLinks.map(link => {
               const Icon = link.icon;
               const isActive = pathname === link.href;
@@ -44,13 +44,13 @@ export function Header() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-medium transition ${
+                  className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-sm text-xs font-dnd-title font-semibold uppercase tracking-wider transition ${
                     isActive
-                      ? 'bg-dnd-surface text-dnd-gold border border-dnd-gold/30'
-                      : 'text-slate-300 hover:text-slate-100 hover:bg-dnd-surface/60'
+                      ? 'bg-[#58180D] text-[#fdf6ea] border border-[#c29b38]/60 shadow-sm'
+                      : 'text-[#d4c2a5] hover:text-[#fdf6ea] hover:bg-[#2c1e18]'
                   }`}
                 >
-                  <Icon className="w-3.5 h-3.5" />
+                  <Icon className="w-3.5 h-3.5 text-[#c29b38]" />
                   {link.label}
                 </Link>
               );
@@ -58,20 +58,20 @@ export function Header() {
 
             <button
               onClick={() => setIsAboutOpen(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-300 hover:text-slate-100 hover:bg-dnd-surface/60 transition"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-sm text-xs font-dnd-title font-semibold uppercase tracking-wider text-[#d4c2a5] hover:text-[#fdf6ea] hover:bg-[#2c1e18] transition"
             >
-              <Info className="w-3.5 h-3.5" />
+              <Info className="w-3.5 h-3.5 text-[#c29b38]" />
               Acerca de
             </button>
           </nav>
 
-          {/* Botón CTA Portal */}
+          {/* Botón Sello Portal de Campaña */}
           <div className="hidden sm:flex items-center gap-3">
             <Link
               href="/portal"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-dnd-gold to-amber-600 text-slate-950 text-xs font-bold hover:brightness-110 shadow-md shadow-amber-950/20 transition"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-sm bg-[#58180D] hover:bg-[#7a2021] text-[#fdf6ea] border-2 border-[#c29b38] text-xs font-dnd-title font-bold uppercase tracking-wider shadow-md hover:shadow-lg transition"
             >
-              <Shield className="w-3.5 h-3.5" />
+              <Shield className="w-3.5 h-3.5 text-[#c29b38]" />
               Portal de Campaña
             </Link>
           </div>
@@ -79,7 +79,7 @@ export function Header() {
           {/* Botón Mobile Menu */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 rounded-lg text-slate-400 hover:text-slate-100 hover:bg-dnd-surface transition"
+            className="md:hidden p-2 rounded-sm text-[#d4c2a5] hover:text-[#fdf6ea] hover:bg-[#2c1e18] transition border border-transparent hover:border-[#c29b38]/40"
             aria-label="Abrir menú de navegación"
           >
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -88,7 +88,7 @@ export function Header() {
 
         {/* Desplegable Mobile */}
         {mobileMenuOpen && (
-          <div className="md:hidden border-t border-dnd-border bg-dnd-surface px-4 py-3 space-y-2 animate-in slide-in-from-top-2">
+          <div className="md:hidden border-t border-[#c29b38]/40 bg-[#241711] px-4 py-3 space-y-2 animate-in slide-in-from-top-2">
             {navLinks.map(link => {
               const Icon = link.icon;
               const isActive = pathname === link.href;
@@ -97,13 +97,13 @@ export function Header() {
                   key={link.href}
                   href={link.href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium ${
+                  className={`flex items-center gap-2.5 px-3 py-2 rounded-sm text-xs font-dnd-title font-semibold uppercase tracking-wider ${
                     isActive
-                      ? 'bg-dnd-card text-dnd-gold border border-dnd-gold/40'
-                      : 'text-slate-300 hover:bg-dnd-card/50'
+                      ? 'bg-[#58180D] text-[#fdf6ea] border border-[#c29b38]/60 shadow-xs'
+                      : 'text-[#d4c2a5] hover:bg-[#2c1e18]'
                   }`}
                 >
-                  <Icon className="w-4 h-4" />
+                  <Icon className="w-4 h-4 text-[#c29b38]" />
                   {link.label}
                 </Link>
               );
@@ -114,19 +114,19 @@ export function Header() {
                 setMobileMenuOpen(false);
                 setIsAboutOpen(true);
               }}
-              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:bg-dnd-card/50 text-left"
+              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-sm text-xs font-dnd-title font-semibold uppercase tracking-wider text-[#d4c2a5] hover:bg-[#2c1e18] text-left"
             >
-              <Info className="w-4 h-4" />
+              <Info className="w-4 h-4 text-[#c29b38]" />
               Acerca de
             </button>
 
-            <div className="pt-2 border-t border-dnd-border/80">
+            <div className="pt-2 border-t border-[#c29b38]/30">
               <Link
                 href="/portal"
                 onClick={() => setMobileMenuOpen(false)}
-                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-dnd-gold to-amber-600 text-slate-950 text-xs font-bold"
+                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-sm bg-[#58180D] hover:bg-[#7a2021] text-[#fdf6ea] border-2 border-[#c29b38] text-xs font-dnd-title font-bold uppercase tracking-wider"
               >
-                <Shield className="w-4 h-4" />
+                <Shield className="w-4 h-4 text-[#c29b38]" />
                 Acceder al Portal
               </Link>
             </div>

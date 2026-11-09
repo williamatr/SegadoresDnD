@@ -20,6 +20,7 @@ import {
   Lock,
   X
 } from 'lucide-react';
+import { TaperedRule, DndBadge } from '@segadores/ui';
 import { CAMPAIGN_CHARACTERS } from '@/lib/campaign/characters';
 import type { AdminPlayerItem } from '@/app/api/admin/invitations/route';
 
@@ -179,64 +180,62 @@ export function DmInvitationsConsole({ currentDmId, initialPlayers = [] }: DmInv
   const pendingCount = players.filter(p => p.status === 'pending').length;
 
   return (
-    <section className="space-y-8 p-6 sm:p-8 rounded-3xl bg-gradient-to-b from-dnd-card via-slate-900 to-slate-950 border border-amber-900/40 shadow-2xl relative overflow-hidden">
-      {/* Resplandor decorativo arcano */}
-      <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/5 rounded-full blur-3xl pointer-events-none" />
-
+    <section className="space-y-8 p-6 sm:p-8 rounded-sm bg-[#fdf6ea] text-[#242528] border-2 border-[#d4c2a5] dnd-notched shadow-xl relative overflow-hidden">
       {/* Encabezado de la Consola DM */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-dnd-border/80 pb-6 relative z-10">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-[#d4c2a5]/80 pb-6 relative z-10">
         <div className="space-y-1">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-950/60 border border-red-800/40 text-red-300 text-xs font-semibold">
-            <Lock className="w-3.5 h-3.5 text-red-400" />
-            Consola Exclusiva del Dungeon Master
+          <div className="inline-flex items-center gap-2">
+            <DndBadge variant="crimson" size="sm" icon={<Lock className="w-3.5 h-3.5 text-[#fdf6ea]" />}>
+              Consola Exclusiva del Dungeon Master
+            </DndBadge>
           </div>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-100 font-fantasy tracking-wide">
-            Administración de Aventureros &amp; Invitaciones
+          <h2 className="text-2xl sm:text-3xl font-bold text-[#58180D] font-dnd-title tracking-wider uppercase">
+            Bitácora de Aventureros &amp; Invitaciones
           </h2>
-          <p className="text-xs sm:text-sm text-slate-400 max-w-2xl">
-            Autoriza cuentas de Google para ingresar a la mesa de <strong className="text-slate-200">Segadores de Orcos</strong>, asigna sus héroes oficiales de campaña o gestiona sus permisos.
+          <p className="text-xs sm:text-sm text-[#58544d] font-dnd-body max-w-2xl leading-relaxed">
+            Autoriza cuentas de Google para ingresar a la mesa de <strong className="text-[#58180D] font-dnd-title">Segadores de Orcos</strong>, asigna sus héroes oficiales de campaña o gestiona sus permisos.
           </p>
         </div>
 
         {/* Métricas rápidas */}
         <div className="flex items-center gap-3 shrink-0">
-          <div className="px-3.5 py-2 rounded-xl bg-dnd-surface border border-dnd-border text-center">
-            <span className="text-[10px] uppercase tracking-wider text-slate-400 block font-medium">Mesa Total</span>
-            <span className="text-base font-bold text-dnd-gold">{totalAdventurers}</span>
+          <div className="px-3.5 py-2 rounded-sm bg-[#ede2cb] border border-[#d4c2a5] text-center">
+            <span className="text-[10px] uppercase tracking-wider text-[#58544d] block font-dnd-title font-semibold">Mesa Total</span>
+            <span className="text-base font-bold text-[#58180D] font-dnd-title">{totalAdventurers}</span>
           </div>
-          <div className="px-3.5 py-2 rounded-xl bg-emerald-950/40 border border-emerald-800/40 text-center">
-            <span className="text-[10px] uppercase tracking-wider text-emerald-300 block font-medium">Activos</span>
-            <span className="text-base font-bold text-emerald-400">{activeCount}</span>
+          <div className="px-3.5 py-2 rounded-sm bg-[#ede2cb] border border-[#d4c2a5] text-center">
+            <span className="text-[10px] uppercase tracking-wider text-[#15803d] block font-dnd-title font-semibold">Activos</span>
+            <span className="text-base font-bold text-[#15803d] font-dnd-title">{activeCount}</span>
           </div>
-          <div className="px-3.5 py-2 rounded-xl bg-amber-950/40 border border-amber-800/40 text-center">
-            <span className="text-[10px] uppercase tracking-wider text-amber-300 block font-medium">Pendientes</span>
-            <span className="text-base font-bold text-amber-400">{pendingCount}</span>
+          <div className="px-3.5 py-2 rounded-sm bg-[#ede2cb] border border-[#d4c2a5] text-center">
+            <span className="text-[10px] uppercase tracking-wider text-[#b45309] block font-dnd-title font-semibold">Pendientes</span>
+            <span className="text-base font-bold text-[#b45309] font-dnd-title">{pendingCount}</span>
           </div>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start relative z-10">
         {/* Formulario de Invitación / Autorización (Columna Izquierda: 5 cols) */}
-        <div className="lg:col-span-5 p-5 sm:p-6 rounded-2xl bg-dnd-surface/90 border border-dnd-border space-y-5 shadow-lg">
-          <div className="flex items-center gap-2.5 border-b border-dnd-border/60 pb-3">
-            <div className="w-8 h-8 rounded-lg bg-amber-950/60 border border-amber-800/50 flex items-center justify-center text-dnd-gold">
+        <div className="lg:col-span-5 p-5 sm:p-6 rounded-sm bg-[#ede2cb] border border-[#d4c2a5] space-y-5 shadow-xs">
+          <div className="flex items-center gap-2.5 border-b border-[#d4c2a5]/80 pb-3">
+            <div className="w-8 h-8 rounded-sm bg-[#58180D] border border-[#c29b38] flex items-center justify-center text-[#c29b38]">
               <UserPlus className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="font-fantasy font-bold text-base text-slate-100">
+              <h3 className="font-dnd-title font-bold text-sm text-[#58180D] uppercase tracking-wider">
                 Invitar / Autorizar Aventurero
               </h3>
-              <p className="text-[11px] text-slate-400">
+              <p className="text-[11px] text-[#58544d] font-dnd-body">
                 Concede acceso a la lista blanca vinculada a Google
               </p>
             </div>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4 text-xs">
+          <form onSubmit={handleSubmit} className="space-y-4 text-xs font-dnd-body">
             {/* Nombre del Jugador */}
             <div className="space-y-1.5">
-              <label htmlFor="display_name" className="font-semibold text-slate-200 block">
-                Nombre del Jugador <span className="text-amber-400">*</span>
+              <label htmlFor="display_name" className="font-bold text-[#58180D] font-dnd-title uppercase tracking-wider block text-[11px]">
+                Nombre del Jugador <span className="text-[#b45309]">*</span>
               </label>
               <input
                 id="display_name"
@@ -245,17 +244,17 @@ export function DmInvitationsConsole({ currentDmId, initialPlayers = [] }: DmInv
                 placeholder="ej: Carlos Gómez o Skelly"
                 value={displayName}
                 onChange={e => setDisplayName(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-dnd-border text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-dnd-gold focus:ring-1 focus:ring-dnd-gold transition"
+                className="w-full px-3.5 py-2 rounded-sm bg-[#fdf6ea] border border-[#d4c2a5] text-[#242528] placeholder-[#8a7f72] focus:outline-none focus:border-[#b45309] transition"
               />
             </div>
 
             {/* Correo de Google */}
             <div className="space-y-1.5">
-              <label htmlFor="email" className="font-semibold text-slate-200 block">
-                Correo de Google <span className="text-amber-400">*</span>
+              <label htmlFor="email" className="font-bold text-[#58180D] font-dnd-title uppercase tracking-wider block text-[11px]">
+                Correo de Google <span className="text-[#b45309]">*</span>
               </label>
               <div className="relative">
-                <Mail className="w-4 h-4 text-slate-500 absolute left-3 top-3 pointer-events-none" />
+                <Mail className="w-4 h-4 text-[#8a7f72] absolute left-3 top-2.5 pointer-events-none" />
                 <input
                   id="email"
                   type="email"
@@ -263,26 +262,26 @@ export function DmInvitationsConsole({ currentDmId, initialPlayers = [] }: DmInv
                   placeholder="aventurero@ejemplo.com"
                   value={email}
                   onChange={e => setEmail(e.target.value)}
-                  className="w-full pl-9 pr-3.5 py-2.5 rounded-xl bg-slate-900 border border-dnd-border text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-dnd-gold focus:ring-1 focus:ring-dnd-gold transition"
+                  className="w-full pl-9 pr-3.5 py-2 rounded-sm bg-[#fdf6ea] border border-[#d4c2a5] text-[#242528] placeholder-[#8a7f72] focus:outline-none focus:border-[#b45309] transition"
                 />
               </div>
-              <p className="text-[10px] text-slate-400">
+              <p className="text-[10px] text-[#58544d]">
                 Debe ser la cuenta Google con la que el jugador iniciará sesión.
               </p>
             </div>
 
             {/* Personaje Asignado */}
             <div className="space-y-1.5">
-              <label htmlFor="character" className="font-semibold text-slate-200 block">
+              <label htmlFor="character" className="font-bold text-[#58180D] font-dnd-title uppercase tracking-wider block text-[11px]">
                 Personaje Asignado (Campaña)
               </label>
               <div className="relative">
-                <Swords className="w-4 h-4 text-slate-500 absolute left-3 top-3 pointer-events-none" />
+                <Swords className="w-4 h-4 text-[#8a7f72] absolute left-3 top-2.5 pointer-events-none" />
                 <select
                   id="character"
                   value={assignedCharacterSlug}
                   onChange={e => setAssignedCharacterSlug(e.target.value)}
-                  className="w-full pl-9 pr-3.5 py-2.5 rounded-xl bg-slate-900 border border-dnd-border text-slate-100 focus:outline-none focus:border-dnd-gold focus:ring-1 focus:ring-dnd-gold transition"
+                  className="w-full pl-9 pr-3.5 py-2 rounded-sm bg-[#fdf6ea] border border-[#d4c2a5] text-[#242528] focus:outline-none focus:border-[#b45309] transition"
                 >
                   <option value="">Ninguno / Creación libre a futuro</option>
                   {CAMPAIGN_CHARACTERS.map(c => (
@@ -296,29 +295,29 @@ export function DmInvitationsConsole({ currentDmId, initialPlayers = [] }: DmInv
 
             {/* Rol en la Mesa */}
             <div className="space-y-1.5">
-              <label className="font-semibold text-slate-200 block">
+              <label className="font-bold text-[#58180D] font-dnd-title uppercase tracking-wider block text-[11px]">
                 Rol en la Mesa de Juego
               </label>
               <div className="grid grid-cols-2 gap-2">
                 <button
                   type="button"
                   onClick={() => setRole('player')}
-                  className={`p-2.5 rounded-xl border flex items-center justify-center gap-1.5 font-medium transition ${
+                  className={`p-2 rounded-sm border flex items-center justify-center gap-1.5 font-dnd-title uppercase tracking-wider text-[11px] font-bold transition ${
                     role === 'player'
-                      ? 'bg-amber-950/60 border-dnd-gold text-dnd-gold shadow-sm'
-                      : 'bg-slate-900 border-dnd-border text-slate-400 hover:text-slate-200'
+                      ? 'bg-[#58180D] border-[#7a2021] text-[#fdf6ea] shadow-xs'
+                      : 'bg-[#fdf6ea] border-[#d4c2a5] text-[#58544d] hover:text-[#242528]'
                   }`}
                 >
                   <Shield className="w-3.5 h-3.5" />
-                  Jugador (player)
+                  Jugador
                 </button>
                 <button
                   type="button"
                   onClick={() => setRole('dm')}
-                  className={`p-2.5 rounded-xl border flex items-center justify-center gap-1.5 font-medium transition ${
+                  className={`p-2 rounded-sm border flex items-center justify-center gap-1.5 font-dnd-title uppercase tracking-wider text-[11px] font-bold transition ${
                     role === 'dm'
-                      ? 'bg-red-950/60 border-red-600 text-red-300 shadow-sm'
-                      : 'bg-slate-900 border-dnd-border text-slate-400 hover:text-slate-200'
+                      ? 'bg-[#58180D] border-[#7a2021] text-[#fdf6ea] shadow-xs'
+                      : 'bg-[#fdf6ea] border-[#d4c2a5] text-[#58544d] hover:text-[#242528]'
                   }`}
                 >
                   <Lock className="w-3.5 h-3.5" />
@@ -329,34 +328,34 @@ export function DmInvitationsConsole({ currentDmId, initialPlayers = [] }: DmInv
 
             {/* Error en Formulario */}
             {formError && (
-              <div className="p-3 rounded-xl bg-red-950/60 border border-red-800/60 text-red-200 text-xs flex items-start gap-2">
-                <AlertTriangle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
+              <div className="p-3 rounded-sm bg-[#fbeeed] border border-[#7a2021] text-[#58180D] text-xs flex items-start gap-2">
+                <AlertTriangle className="w-4 h-4 text-[#7a2021] shrink-0 mt-0.5" />
                 <span>{formError}</span>
               </div>
             )}
 
             {/* Éxito y Retroalimentación con Botón de Copiar Enlace */}
             {formSuccess && (
-              <div className="p-3.5 rounded-xl bg-emerald-950/60 border border-emerald-800/60 text-emerald-200 text-xs space-y-2.5 animate-in fade-in">
-                <div className="flex items-center gap-2 font-semibold text-emerald-300">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+              <div className="p-3.5 rounded-sm bg-[#ede2cb] border border-[#15803d] text-[#15803d] text-xs space-y-2.5 animate-in fade-in">
+                <div className="flex items-center gap-2 font-bold font-dnd-title uppercase tracking-wider text-[11px]">
+                  <CheckCircle2 className="w-4 h-4 text-[#15803d] shrink-0" />
                   <span>{formSuccess.message}</span>
                 </div>
-                <div className="pt-1 border-t border-emerald-900/50 flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                <div className="pt-1 border-t border-[#d4c2a5] flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
                   <input
                     type="text"
                     readOnly
                     value={formSuccess.invitationLink}
-                    className="flex-1 px-2.5 py-1.5 rounded-lg bg-slate-950 border border-emerald-800/40 text-[11px] font-mono text-slate-300 select-all"
+                    className="flex-1 px-2.5 py-1.5 rounded-sm bg-[#fdf6ea] border border-[#d4c2a5] text-[11px] font-mono text-[#242528] select-all"
                   />
                   <button
                     type="button"
                     onClick={() => handleCopyLink(formSuccess.invitationLink, 'form_success')}
-                    className="inline-flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg bg-emerald-800 hover:bg-emerald-700 text-white font-medium text-[11px] transition shrink-0"
+                    className="inline-flex items-center justify-center gap-1 px-3 py-1.5 rounded-sm bg-[#15803d] hover:bg-[#166534] text-white font-dnd-title font-bold text-[11px] uppercase tracking-wider transition shrink-0"
                   >
                     {copiedLinkIndex === 'form_success' ? (
                       <>
-                        <Check className="w-3 h-3 text-emerald-200" />
+                        <Check className="w-3 h-3 text-white" />
                         ¡Copiado!
                       </>
                     ) : (
@@ -374,11 +373,11 @@ export function DmInvitationsConsole({ currentDmId, initialPlayers = [] }: DmInv
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-gradient-to-r from-dnd-gold to-amber-700 text-slate-950 font-bold hover:brightness-110 active:scale-[0.99] transition disabled:opacity-50 disabled:cursor-not-allowed shadow-md text-sm"
+              className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-sm bg-[#58180D] hover:bg-[#7a2021] text-[#fdf6ea] border border-[#7a2021] font-dnd-title font-bold uppercase tracking-wider transition disabled:opacity-50 disabled:cursor-not-allowed shadow-md text-xs"
             >
               {isSubmitting ? (
                 <>
-                  <span className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
+                  <span className="w-4 h-4 border-2 border-[#fdf6ea] border-t-transparent rounded-full animate-spin" />
                   Registrando en el tomo de la mesa...
                 </>
               ) : (
@@ -395,15 +394,15 @@ export function DmInvitationsConsole({ currentDmId, initialPlayers = [] }: DmInv
         <div className="lg:col-span-7 space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Users className="w-4 h-4 text-dnd-gold" />
-              <h3 className="font-fantasy font-bold text-base text-slate-100">
+              <Users className="w-4 h-4 text-[#b45309]" />
+              <h3 className="font-dnd-title font-bold text-sm uppercase tracking-wider text-[#58180D]">
                 Aventureros Registrados ({players.length})
               </h3>
             </div>
             <button
               onClick={refreshPlayers}
               disabled={isLoadingList}
-              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-dnd-surface border border-dnd-border text-slate-400 hover:text-slate-100 text-xs transition"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm bg-[#ede2cb] border border-[#d4c2a5] text-[#58544d] hover:text-[#242528] text-xs font-dnd-title uppercase tracking-wider transition"
               title="Refrescar lista desde la base de datos"
             >
               <RefreshCw className={`w-3 h-3 ${isLoadingList ? 'animate-spin' : ''}`} />
@@ -411,12 +410,12 @@ export function DmInvitationsConsole({ currentDmId, initialPlayers = [] }: DmInv
             </button>
           </div>
 
-          {/* Tarjetas / Tabla de Jugadores */}
+          {/* Tarjetas de Jugadores en Pergamino */}
           <div className="space-y-3">
             {players.length === 0 ? (
-              <div className="p-8 rounded-2xl bg-dnd-surface/50 border border-dnd-border text-center space-y-2">
-                <Users className="w-8 h-8 text-slate-600 mx-auto" />
-                <p className="text-xs text-slate-400">No hay aventureros registrados en la lista blanca aún.</p>
+              <div className="p-8 rounded-sm bg-[#ede2cb] border border-[#d4c2a5] text-center space-y-2">
+                <Users className="w-8 h-8 text-[#8a7f72] mx-auto" />
+                <p className="text-xs text-[#58544d] font-dnd-body">No hay aventureros registrados en la lista blanca aún.</p>
               </div>
             ) : (
               players.map(p => {
@@ -427,35 +426,35 @@ export function DmInvitationsConsole({ currentDmId, initialPlayers = [] }: DmInv
                 return (
                   <div
                     key={p.id}
-                    className="p-4 rounded-xl bg-dnd-surface/90 border border-dnd-border hover:border-slate-700 transition space-y-3 shadow-md"
+                    className="p-4 rounded-sm bg-[#ede2cb] border border-[#d4c2a5] hover:border-[#b45309] transition space-y-3 shadow-xs"
                   >
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                       {/* Avatar y Datos Principales */}
                       <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700 flex items-center justify-center font-bold text-dnd-gold text-xs shadow-inner">
+                        <div className="w-9 h-9 rounded-sm bg-[#58180D] border border-[#c29b38] flex items-center justify-center font-dnd-title font-bold text-[#c29b38] text-xs shadow-sm">
                           {p.display_name.charAt(0).toUpperCase()}
                         </div>
                         <div>
                           <div className="flex items-center gap-2 flex-wrap">
-                            <span className="font-bold text-slate-100 text-sm">
+                            <span className="font-dnd-title font-bold text-[#58180D] text-sm">
                               {p.display_name}
                             </span>
                             {isSelf && (
-                              <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 font-medium">
+                              <span className="text-[10px] px-1.5 py-0.2 rounded-sm bg-[#58544d] text-[#fdf6ea] font-dnd-title uppercase">
                                 Tú
                               </span>
                             )}
                             {p.role === 'dm' ? (
-                              <span className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-red-950/60 border border-red-800/40 text-red-300 font-semibold">
-                                <Lock className="w-2.5 h-2.5 text-red-400" /> DM
-                              </span>
+                              <DndBadge variant="crimson" size="sm">
+                                DM
+                              </DndBadge>
                             ) : (
-                              <span className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-amber-950/50 border border-amber-800/40 text-dnd-gold-light font-medium">
-                                <Shield className="w-2.5 h-2.5 text-dnd-gold" /> Jugador
-                              </span>
+                              <DndBadge variant="parchment" size="sm">
+                                Jugador
+                              </DndBadge>
                             )}
                           </div>
-                          <span className="text-xs text-slate-400 font-mono block">
+                          <span className="text-xs text-[#58544d] font-mono block">
                             {p.email}
                           </span>
                         </div>
@@ -464,13 +463,13 @@ export function DmInvitationsConsole({ currentDmId, initialPlayers = [] }: DmInv
                       {/* Estado de Conexión */}
                       <div className="shrink-0">
                         {p.status === 'active' ? (
-                          <span className="inline-flex items-center gap-1.5 text-[11px] px-2.5 py-1 rounded-full bg-emerald-950/60 border border-emerald-800/50 text-emerald-300 font-medium">
-                            <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                          <span className="inline-flex items-center gap-1.5 text-[11px] px-2.5 py-0.5 rounded-sm bg-[#fdf6ea] border border-[#15803d] text-[#15803d] font-dnd-body font-semibold">
+                            <CheckCircle2 className="w-3 h-3 text-[#15803d]" />
                             Activo (Google)
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1.5 text-[11px] px-2.5 py-1 rounded-full bg-amber-950/60 border border-amber-800/50 text-amber-300 font-medium">
-                            <Clock className="w-3 h-3 text-amber-400" />
+                          <span className="inline-flex items-center gap-1.5 text-[11px] px-2.5 py-0.5 rounded-sm bg-[#fdf6ea] border border-[#b45309] text-[#b45309] font-dnd-body font-semibold">
+                            <Clock className="w-3 h-3 text-[#b45309]" />
                             Invitación pendiente
                           </span>
                         )}
@@ -478,16 +477,16 @@ export function DmInvitationsConsole({ currentDmId, initialPlayers = [] }: DmInv
                     </div>
 
                     {/* Fila de Personaje Asignado y Acciones */}
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 pt-2 border-t border-dnd-border/60 text-xs">
-                      <div className="flex items-center gap-2 text-slate-400">
-                        <Swords className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 pt-2 border-t border-[#d4c2a5]/80 text-xs">
+                      <div className="flex items-center gap-2 text-[#58544d] font-dnd-body">
+                        <Swords className="w-3.5 h-3.5 text-[#b45309] shrink-0" />
                         <span>Héroe:</span>
                         {char ? (
-                          <span className="font-semibold text-dnd-gold">
-                            {char.name} <span className="text-slate-400 font-normal">({char.characterClass})</span>
+                          <span className="font-bold text-[#58180D] font-dnd-title text-[11px]">
+                            {char.name} <span className="text-[#58544d] font-normal font-dnd-body">({char.characterClass})</span>
                           </span>
                         ) : (
-                          <span className="text-slate-500 italic">
+                          <span className="text-[#8a7f72] italic">
                             Sin asignar (Creación libre a futuro)
                           </span>
                         )}
@@ -498,17 +497,17 @@ export function DmInvitationsConsole({ currentDmId, initialPlayers = [] }: DmInv
                         <button
                           type="button"
                           onClick={() => handleCopyLink(invitationUrl, p.id)}
-                          className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-dnd-border text-slate-300 hover:text-slate-100 text-[11px] transition"
+                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-sm bg-[#fdf6ea] hover:bg-[#f4ebe1] border border-[#d4c2a5] text-[#58544d] hover:text-[#242528] text-[11px] font-dnd-title uppercase tracking-wider transition"
                           title="Copiar enlace directo de invitación"
                         >
                           {copiedLinkIndex === p.id ? (
                             <>
-                              <Check className="w-3 h-3 text-emerald-400" />
-                              <span className="text-emerald-300">¡Copiado!</span>
+                              <Check className="w-3 h-3 text-[#15803d]" />
+                              <span className="text-[#15803d]">¡Copiado!</span>
                             </>
                           ) : (
                             <>
-                              <Copy className="w-3 h-3 text-slate-400" />
+                              <Copy className="w-3 h-3 text-[#8a7f72]" />
                               Enlace
                             </>
                           )}
@@ -518,10 +517,10 @@ export function DmInvitationsConsole({ currentDmId, initialPlayers = [] }: DmInv
                         <button
                           type="button"
                           onClick={() => handleEditPlayer(p)}
-                          className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-dnd-border text-slate-300 hover:text-slate-100 text-[11px] transition"
+                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-sm bg-[#fdf6ea] hover:bg-[#f4ebe1] border border-[#d4c2a5] text-[#58544d] hover:text-[#242528] text-[11px] font-dnd-title uppercase tracking-wider transition"
                           title="Modificar asignación o rol en el formulario"
                         >
-                          <Edit3 className="w-3 h-3 text-slate-400" />
+                          <Edit3 className="w-3 h-3 text-[#8a7f72]" />
                           Editar
                         </button>
 
@@ -530,10 +529,10 @@ export function DmInvitationsConsole({ currentDmId, initialPlayers = [] }: DmInv
                           <button
                             type="button"
                             onClick={() => setPlayerToRevoke(p)}
-                            className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-red-950/40 hover:bg-red-950/80 border border-red-900/50 text-red-300 hover:text-red-100 text-[11px] transition"
+                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-sm bg-[#fbeeed] hover:bg-[#f8d7da] border border-[#7a2021]/40 text-[#7a2021] text-[11px] font-dnd-title uppercase tracking-wider transition"
                             title="Revocar acceso y expulsar de la lista blanca"
                           >
-                            <Trash2 className="w-3 h-3 text-red-400" />
+                            <Trash2 className="w-3 h-3 text-[#7a2021]" />
                             Revocar
                           </button>
                         )}
@@ -549,29 +548,29 @@ export function DmInvitationsConsole({ currentDmId, initialPlayers = [] }: DmInv
 
       {/* Modal de Confirmación para Revocar Acceso */}
       {playerToRevoke && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in">
-          <div className="w-full max-w-md p-6 rounded-2xl bg-dnd-card border border-red-900/60 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between border-b border-dnd-border/80 pb-3">
-              <div className="flex items-center gap-2 text-red-400">
-                <AlertTriangle className="w-5 h-5" />
-                <h4 className="font-fantasy font-bold text-base text-slate-100">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs animate-in fade-in">
+          <div className="w-full max-w-md p-6 rounded-sm bg-[#fdf6ea] text-[#242528] border-2 border-[#7a2021] dnd-notched shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-[#d4c2a5] pb-3">
+              <div className="flex items-center gap-2 text-[#58180D]">
+                <AlertTriangle className="w-5 h-5 text-[#7a2021]" />
+                <h4 className="font-dnd-title font-bold text-sm text-[#58180D] uppercase tracking-wider">
                   ¿Revocar Acceso a la Mesa?
                 </h4>
               </div>
               <button
                 onClick={() => setPlayerToRevoke(null)}
-                className="text-slate-400 hover:text-slate-200"
+                className="text-[#58544d] hover:text-[#58180D]"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            <p className="text-xs text-slate-300 leading-relaxed">
-              Estás a punto de retirar a <strong className="text-white">{playerToRevoke.display_name}</strong> (<code>{playerToRevoke.email}</code>) de la lista de aventureros autorizados. No podrá ingresar al portal a menos que lo vuelvas a invitar.
+            <p className="text-xs text-[#242528]/90 font-dnd-body leading-relaxed">
+              Estás a punto de retirar a <strong className="text-[#58180D] font-dnd-title">{playerToRevoke.display_name}</strong> (<code>{playerToRevoke.email}</code>) de la lista de aventureros autorizados. No podrá ingresar al portal a menos que lo vuelvas a invitar.
             </p>
 
             {revokeError && (
-              <div className="p-3 rounded-xl bg-red-950/60 border border-red-800/60 text-red-200 text-xs">
+              <div className="p-3 rounded-sm bg-[#fbeeed] border border-[#7a2021] text-[#58180D] text-xs">
                 {revokeError}
               </div>
             )}
@@ -581,7 +580,7 @@ export function DmInvitationsConsole({ currentDmId, initialPlayers = [] }: DmInv
                 type="button"
                 onClick={() => setPlayerToRevoke(null)}
                 disabled={isRevoking}
-                className="px-4 py-2 rounded-xl bg-dnd-surface border border-dnd-border text-slate-300 text-xs font-semibold hover:text-white transition"
+                className="px-4 py-2 rounded-sm bg-[#ede2cb] border border-[#d4c2a5] text-[#58544d] text-xs font-dnd-title uppercase tracking-wider font-semibold hover:text-[#242528] transition"
               >
                 Cancelar
               </button>
@@ -589,7 +588,7 @@ export function DmInvitationsConsole({ currentDmId, initialPlayers = [] }: DmInv
                 type="button"
                 onClick={handleConfirmRevoke}
                 disabled={isRevoking}
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-red-700 hover:bg-red-600 text-white text-xs font-bold transition disabled:opacity-50"
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-sm bg-[#58180D] hover:bg-[#7a2021] text-white text-xs font-dnd-title uppercase tracking-wider font-bold transition disabled:opacity-50"
               >
                 {isRevoking ? (
                   <>

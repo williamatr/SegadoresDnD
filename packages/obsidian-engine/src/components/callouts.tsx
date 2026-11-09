@@ -23,53 +23,53 @@ interface CalloutTheme {
 
 const CALLOUT_THEMES: Record<string, CalloutTheme> = {
   statblock: {
-    border: 'border-amber-600/50',
-    bg: 'bg-amber-950/20',
-    headerText: 'text-amber-200 font-fantasy',
+    border: 'border-2 border-[#58180D]',
+    bg: 'bg-[#fdf1dc] text-[#242528] dnd-notched-sm shadow-md',
+    headerText: 'text-[#58180D] font-dnd-title font-bold uppercase tracking-wider',
     icon: Shield
   },
   'dnd-grid': {
-    border: 'border-amber-700/40',
-    bg: 'bg-slate-950/50',
-    headerText: 'text-amber-300 font-semibold',
+    border: 'border-2 border-[#c29b38]',
+    bg: 'bg-[#fdf6ea] text-[#242528] dnd-notched-sm shadow-sm',
+    headerText: 'text-[#78350f] font-dnd-title font-bold uppercase tracking-wider',
     icon: Dices
   },
   info: {
-    border: 'border-sky-700/50',
-    bg: 'bg-sky-950/25',
-    headerText: 'text-sky-200 font-semibold',
+    border: 'border-2 border-[#d4c2a5]',
+    bg: 'bg-[#fdf6ea] text-[#242528] dnd-notched-sm shadow-sm',
+    headerText: 'text-[#58180D] font-dnd-title font-bold uppercase tracking-wider',
     icon: Info
   },
   tip: {
-    border: 'border-emerald-700/50',
-    bg: 'bg-emerald-950/25',
-    headerText: 'text-emerald-200 font-semibold',
+    border: 'border-2 border-[#15803d]',
+    bg: 'bg-[#f0fdf4] text-[#14532d] dnd-notched-sm shadow-sm',
+    headerText: 'text-[#15803d] font-dnd-title font-bold uppercase tracking-wider',
     icon: Sparkles
   },
   warning: {
-    border: 'border-amber-700/60',
-    bg: 'bg-amber-950/30',
-    headerText: 'text-amber-300 font-semibold',
+    border: 'border-2 border-[#b45309]',
+    bg: 'bg-[#fef3c7] text-[#78350f] dnd-notched-sm shadow-sm',
+    headerText: 'text-[#b45309] font-dnd-title font-bold uppercase tracking-wider',
     icon: AlertTriangle
   },
   todo: {
-    border: 'border-indigo-700/50',
-    bg: 'bg-indigo-950/25',
-    headerText: 'text-indigo-200 font-semibold',
+    border: 'border-2 border-[#4338ca]',
+    bg: 'bg-[#eef2ff] text-[#312e81] dnd-notched-sm shadow-sm',
+    headerText: 'text-[#4338ca] font-dnd-title font-bold uppercase tracking-wider',
     icon: ListTodo
   },
   dm: {
-    border: 'border-red-700/60',
-    bg: 'bg-red-950/40',
-    headerText: 'text-red-200 font-bold',
-    badgeBg: 'bg-red-900/60',
-    badgeText: 'text-red-300 border border-red-700/50',
+    border: 'border-2 border-[#7a2021]',
+    bg: 'bg-[#fbeeed] text-[#58180D] dnd-notched-sm shadow-md',
+    headerText: 'text-[#58180D] font-dnd-title font-bold uppercase tracking-wider',
+    badgeBg: 'bg-[#58180D]',
+    badgeText: 'text-[#fdf6ea] border border-[#7a2021]',
     icon: Lock
   },
   note: {
-    border: 'border-slate-700/60',
-    bg: 'bg-slate-900/40',
-    headerText: 'text-slate-200 font-semibold',
+    border: 'border-2 border-[#d4c2a5]',
+    bg: 'bg-[#fdf6ea] text-[#242528] dnd-notched-sm shadow-sm',
+    headerText: 'text-[#58180D] font-dnd-title font-bold uppercase tracking-wider',
     icon: FileText
   }
 };
@@ -106,19 +106,19 @@ export function Callout({ callout, className = '', children }: CalloutProps) {
 
       <div className="flex items-center gap-2">
         {callout.isDmOnly && (
-          <span className="text-[10px] uppercase tracking-wider font-semibold px-2 py-0.5 rounded bg-red-900/80 text-red-200 border border-red-600/40 flex items-center gap-1 shadow-sm">
-            <Lock className="w-2.5 h-2.5" /> Confidencial DM
+          <span className="text-[10px] uppercase tracking-wider font-dnd-title font-bold px-2 py-0.5 rounded-sm bg-[#58180D] text-[#fdf6ea] border border-[#7a2021] flex items-center gap-1 shadow-xs">
+            <Lock className="w-2.5 h-2.5 text-[#c29b38]" /> Confidencial DM 🔒
           </span>
         )}
         {isCollapsible && (
-          <ChevronDown className="w-4 h-4 text-slate-400 group-open:rotate-180 transition-transform duration-200" />
+          <ChevronDown className="w-4 h-4 text-[#8a7f72] group-open:rotate-180 transition-transform duration-200" />
         )}
       </div>
     </div>
   );
 
   const bodyContent = (
-    <div className="text-sm leading-relaxed text-slate-300 mt-2.5 space-y-2 whitespace-pre-wrap font-sans">
+    <div className="text-xs leading-relaxed text-[#242528]/90 mt-2.5 space-y-2 whitespace-pre-wrap font-dnd-body">
       {children || callout.content}
     </div>
   );
