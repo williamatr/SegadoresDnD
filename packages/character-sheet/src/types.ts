@@ -57,6 +57,7 @@ export interface CharacterSheetProps extends CharacterSheetCallbacks {
   onTabChange?: (tab: CharacterSheetTab) => void;
   readOnly?: boolean;
   userRole?: 'dm' | 'player';
+  viewerCharacterSlug?: string | null;
   evaluatedState?: EvaluatedCharacterState;
   className?: string;
 }
@@ -65,5 +66,6 @@ export interface BaseViewProps extends CharacterSheetCallbacks {
   character: Character;
   readOnly?: boolean;
   userRole?: 'dm' | 'player';
+  viewerCharacterSlug?: string | null;
   evaluatedState?: EvaluatedCharacterState;
 }
