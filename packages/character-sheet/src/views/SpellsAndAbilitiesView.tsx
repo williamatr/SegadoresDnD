@@ -314,6 +314,58 @@ export function SpellsAndAbilitiesView({
     );
   };
 
+  // Helper para renderizar espacios de conjuro por nivel
+  const renderSlotTracker = (levelNum: number) => {
+    if (levelNum === 0) return null;
+    const levelKey = String(levelNum);
+    const slotPool = character.spell_slots?.[levelKey];
+    if (!slotPool || slotPool.total === 0) return null;
+
+    const total = slotPool.total;
+    const used = slotPool.used || 0;
+    const available = Math.max(0, total - used);
+
+    return (
+      <div className="flex items-center gap-2 bg-dnd-parchment-contrast px-2.5 py-1 rounded-sm border border-dnd-border-antique shadow-xs">
+        <span className="text-[10px] font-dnd-title font-bold text-dnd-crimson uppercase tracking-wider">
+          Espacios:
+        </span>
+        <div className="flex items-center gap-1.5">
+          {Array.from({ length: total }).map((_, idx) => {
+            const isSlotAvailable = idx < available;
+            return (
+              <button
+                key={idx}
+                type="button"
+                disabled={readOnly || !onUpdateSpellSlot}
+                onClick={() => {
+                  if (readOnly || !onUpdateSpellSlot) return;
+                  const newUsed = isSlotAvailable ? used + 1 : Math.max(0, used - 1);
+                  onUpdateSpellSlot(levelKey, newUsed);
+                }}
+                title={
+                  isSlotAvailable
+                    ? `Espacio ${idx + 1} disponible (clic para consumir)`
+                    : `Espacio ${idx + 1} consumido (clic para recuperar)`
+                }
+                className={`w-3.5 h-3.5 rounded-full border transition flex items-center justify-center text-[9px] font-bold ${
+                  isSlotAvailable
+                    ? 'bg-emerald-700 border-emerald-500 text-dnd-parchment shadow-xs hover:scale-110 cursor-pointer'
+                    : 'bg-dnd-parchment-contrast border-dnd-border-antique text-dnd-ink-subtle opacity-60 hover:opacity-100 cursor-pointer'
+                }`}
+              >
+                {isSlotAvailable ? '●' : '○'}
+              </button>
+            );
+          })}
+        </div>
+        <span className="text-[10px] font-dnd-body font-bold text-dnd-ink-muted">
+          ({available}/{total})
+        </span>
+      </div>
+    );
+  };
+
   return (
     <div className="space-y-6">
       {/* ============================================================== */}
