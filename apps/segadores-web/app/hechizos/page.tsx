@@ -48,14 +48,16 @@ export default async function HechizosPage({
       <main className="flex-1 max-w-6xl w-full mx-auto p-4 sm:p-8 space-y-8">
         {/* Encabezado de Sección */}
         <section className="space-y-3">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-950/40 border border-sky-800/40 text-sky-300 text-xs font-medium">
-            <BookOpen className="w-3.5 h-3.5" />
-            Grimorio &bull; D&D 5.5e
+          <div className="inline-flex items-center gap-2">
+            <span className="px-3 py-1 rounded-sm bg-dnd-parchment border border-dnd-border-antique text-dnd-crimson text-xs font-dnd-title font-bold uppercase tracking-wider inline-flex items-center gap-1.5 shadow-xs">
+              <BookOpen className="w-3.5 h-3.5 text-dnd-gold" />
+              Grimorio &bull; D&D 5.5e
+            </span>
           </div>
-          <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-slate-100 font-fantasy">
+          <h1 className="text-3xl sm:text-5xl font-bold tracking-tight text-dnd-crimson font-dnd-title uppercase">
             Compendio de Hechizos
           </h1>
-          <p className="text-sm text-slate-400 max-w-2xl leading-relaxed">
+          <p className="text-sm text-dnd-ink-muted max-w-2xl leading-relaxed font-dnd-body">
             Explora y filtra en tiempo real los conjuros disponibles para tu personaje. Consulta escuelas arcanas, tiempos de lanzamiento, componentes verbales, somáticos o materiales y requisitos de concentración.
           </p>
         </section>

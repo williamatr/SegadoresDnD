@@ -45,6 +45,7 @@ Cuando el usuario solicita implementar una funcionalidad o idea nueva, todos los
 | **TASK-09** | **Sistema de Diseño Editorial D&D 5e (Tokens, Pergamino, Heráldica y Tipografía)** | 🟢 Completada | `frontend-engineer`, `theme-design-reviewer` | [task-09-dnd-design-system.md](./task-09-dnd-design-system.md) |
 | **TASK-10** | **Refactor Visual de la Hoja de Personaje D&D 5e (Heráldica, Escudo CA, Cajas Notched y Tarjetas de Hechizos)** | 🟢 Completada | `frontend-engineer`, `theme-design-reviewer` | [task-10-dnd-character-sheet-refactor.md](./task-10-dnd-character-sheet-refactor.md) |
 | **TASK-11** | **Inmersión Visual del Portal del Jugador, Wiki y Bitácora del DM** | 🟢 Completada | `frontend-engineer`, `theme-design-reviewer` | [task-11-portal-and-wiki-immersion.md](./task-11-portal-and-wiki-immersion.md) |
+| **TASK-12** | **Sistema Temático Dual D&D 5.5e (Modo Claro / Pergamino Diurno vs Modo Oscuro / Códice Nocturno)** | 📋 Especificada | `frontend-engineer`, `theme-design-reviewer` | [task-12-light-dark-theming-system.md](./task-12-light-dark-theming-system.md) |
 
 ---
 

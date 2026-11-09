@@ -1,6 +1,7 @@
 import type { Config } from 'tailwindcss';
 
 const config: Config = {
+  darkMode: 'class',
   content: [
     './pages/**/*.{js,ts,jsx,tsx,mdx}',
     './components/**/*.{js,ts,jsx,tsx,mdx}',
@@ -16,20 +17,29 @@ const config: Config = {
     extend: {
       colors: {
         dnd: {
-          // Paleta Editorial de Imprenta D&D 5e (Inspirada en PHB 2024, Monster Manual y Hojas Oficiales)
-          parchment: '#fdf6ea',
-          'parchment-dark': '#f4ebe1',
-          'parchment-contrast': '#ede2cb',
-          crimson: '#58180D',
-          'crimson-hover': '#7a2021',
-          terracotta: '#c45b1d',
-          gold: '#c29b38',
-          'gold-light': '#e5b960',
-          ink: '#242528',
-          'ink-muted': '#58544d',
-          'border-antique': '#d4c2a5',
-          leather: '#2c1e18',
-          'leather-dark': '#1b120e',
+          // Paleta Editorial Dinámica D&D 5.5e (Motor de 4 Temas)
+          canvas: 'var(--dnd-canvas)',
+          parchment: 'var(--dnd-parchment)',
+          'parchment-dark': 'var(--dnd-parchment-dark)',
+          'parchment-contrast': 'var(--dnd-parchment-contrast)',
+          crimson: 'var(--dnd-crimson)',
+          'crimson-btn': 'var(--dnd-crimson-btn, var(--dnd-crimson))',
+          'crimson-btn-hover': 'var(--dnd-crimson-btn-hover, var(--dnd-crimson-hover))',
+          'crimson-hover': 'var(--dnd-crimson-hover)',
+          'crimson-surface': 'var(--dnd-crimson-surface)',
+          'crimson-fg': 'var(--dnd-crimson-fg, #ffffff)',
+          'on-crimson': 'var(--dnd-on-crimson, #ffffff)',
+          terracotta: 'var(--dnd-terracotta)',
+          gold: 'var(--dnd-gold)',
+          'gold-light': 'var(--dnd-gold-light)',
+          'gold-surface': 'var(--dnd-gold-surface)',
+          ink: 'var(--dnd-ink)',
+          'ink-muted': 'var(--dnd-ink-muted)',
+          'ink-subtle': 'var(--dnd-ink-subtle)',
+          'border-antique': 'var(--dnd-border-antique)',
+          'border-strong': 'var(--dnd-border-strong)',
+          leather: 'var(--dnd-leather)',
+          'leather-dark': 'var(--dnd-leather-dark)',
 
           // Colores de soporte / legado (compatibilidad transicional)
           dark: '#0c0e12',
@@ -45,7 +55,7 @@ const config: Config = {
         'dnd-title': ['var(--font-cinzel)', 'Cinzel', 'Trajan Pro', 'Georgia', 'serif'],
         'dnd-body': ['var(--font-spectral)', 'Spectral', 'Crimson Pro', 'Georgia', 'serif'],
         fantasy: ['var(--font-cinzel)', 'Cinzel', 'Trajan Pro', 'Georgia', 'serif'],
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        sans: ['var(--font-sans)', 'Inter', 'system-ui', 'sans-serif'],
         mono: ['JetBrains Mono', 'Fira Code', 'monospace']
       }
     }

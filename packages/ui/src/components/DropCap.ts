@@ -11,12 +11,12 @@ export interface DropCapProps {
  * Utilizada al inicio de capítulos y descripciones canónicas en manuales de D&D.
  */
 export function DropCap({ letter, className = '', variant = 'gold' }: DropCapProps) {
-  let colorStyle = 'text-[#c29b38] border-[#c29b38]/40 bg-[#f4ebe1]';
+  let colorStyle = 'text-dnd-gold border-dnd-gold/40 bg-dnd-parchment-contrast';
 
   if (variant === 'crimson') {
-    colorStyle = 'text-[#58180D] border-[#58180D]/40 bg-[#ede2cb]';
+    colorStyle = 'text-dnd-crimson border-dnd-crimson/40 bg-dnd-parchment-contrast';
   } else if (variant === 'ink') {
-    colorStyle = 'text-[#242528] border-[#242528]/40 bg-[#fdf6ea]';
+    colorStyle = 'text-dnd-ink border-dnd-ink/40 bg-dnd-parchment';
   }
 
   return React.createElement(

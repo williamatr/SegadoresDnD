@@ -9,7 +9,50 @@ y este proyecto se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ## [Unreleased]
 
+### Añadido
+* **Motor Dinámico de 4 Temas por Tokens CSS y Arquitectura Zero-FOUC:**
+  * Implementado soporte nativo para 4 temas canónicos completos a través de variables CSS semánticas en `apps/segadores-web/app/globals.css`:
+    * `parchment-royal`: Pergamino Real 5.5e (modo claro oficial por defecto / alias `'light'`).
+    * `parchment-classic`: Pergamino Clásico Cálido (modo claro alternativo de tomo envejecido).
+    * `grimoire-blood`: Grimorio Sangre & Obsidiana (modo oscuro oficial por defecto / alias `'dark'`).
+    * `grimoire-abyssal`: Tomo Nigromántico Abisal (modo oscuro arcano amatista con fuego fatuo espectral).
+  * Creado el módulo de tipado y lógica pura `apps/segadores-web/components/theme/theme-constants.ts` con helpers de resolución (`resolveSpecificTheme`, `isDarkTheme`) y metadatos de las 4 opciones (`THEME_OPTIONS`).
+  * Actualizado `ThemeProvider` en `theme-provider.tsx` para sincronizar automáticamente el atributo `data-theme` y la clase `.dark` en `<html>`, manteniendo retrocompatibilidad absoluta con consumidores existentes.
+  * Diseñado el componente interactivo `ThemeToggle` con acción dual: clic rápido para alternar claro/oscuro y menú emergente compacto accesible para seleccionar individualmente cualquiera de los 4 temas con indicación visual activa.
+  * Añadido script síncrono anti-FOUC (0ms) en `apps/segadores-web/app/layout.tsx` que lee `localStorage` y las preferencias del sistema antes del primer pintado, eliminando cualquier parpadeo de tema.
+  * Creada la suite de pruebas unitarias `apps/segadores-web/components/theme/theme.test.mjs` que valida la resolución de temas, alias legados y presencia de tokens obligatorios.
+
+* **Tipografía Híbrida Moderna (Regla 20/80) y Legibilidad Humana:**
+  * Integrada la fuente `Inter` junto a `Cinzel` y `Spectral` en `layout.tsx` y configurada en `fontFamily.sans` en `tailwind.config.ts`.
+  * La tipografía técnica y de interfaz (números, tablas, botones, formularios, etiquetas y modificadores) utiliza `Inter`, reservando `Cinzel` exclusivamente para títulos principales y `Spectral` para narrativa y lore.
+  * Eliminado el forzado de `font-variant-caps: small-caps` en `.font-dnd-title`, restaurando la nitidez de numerales, acrónimos y jerarquía visual.
+  * Elevados los tamaños de micro-texto ilegibles (`text-[9px]`, `text-[10px]`) a tamaños accesibles `text-xs` (11px-12px) en badges, puntuaciones de características, tiradas de salvación y contadores de recursos.
+
+* **Suavizado de Bordes, Cajas y Estética Editorial Moderna:**
+  * Rediseñadas las clases `.dnd-notched` y `.dnd-notched-sm` en `globals.css` reemplazando los recortes poligonales agresivos por bordes limpios de `1px` (`border`), esquinas suavemente redondeadas (`rounded-lg` / `rounded-md`) y sombras sutiles.
+  * Refactorizados los componentes de `packages/ui` (`ParchmentFrame`, `DndBadge`, `HeraldicShield`, `DndTable`) y callouts de `packages/obsidian-engine` para eliminar bordes dobles pesados y garantizar contraste de lectura óptimo.
+  * Modernizadas las 7 vistas de la hoja de personaje (`packages/character-sheet/src/views/*`) y sus componentes complementarios (`HpTracker`, `HitDiceTracker`, `DeathSavesTracker`, `ExhaustionSelector`, `AttunementTracker`, `LevelUpModal`).
+
 ### Corregido
+* **Contraste y Legibilidad en Elementos Interactivos Carmesí (`bg-dnd-crimson`):**
+  * Desacopladas las variables `--dnd-crimson-btn` (fondo de botón interactivo de alto impacto) y `--dnd-crimson-fg` / `--dnd-on-crimson` (`#FFFFFF`), resolviendo el problema de texto lavado o ilegible en temas oscuros.
+  * Corregidos todos los botones primarios, selectores y badges con fondo carmesí a lo largo de `apps/segadores-web` (`header.tsx`, `portal-dashboard.tsx`, `dm-invitations-console.tsx`, `login/page.tsx`, `acceso-denegado/page.tsx`, `demo/page.tsx`, `hero-action-buttons.tsx`) y `packages/character-sheet`.
+
+* **Sistema de Tema Dual Canónico: "Pergamino Diurno" y "Códice Nocturno" (TASK-12):**
+  * Implementado el sistema completo de theming dual mediante variables CSS en `globals.css` (`--dnd-canvas`, `--dnd-parchment`, `--dnd-ink`, `--dnd-crimson`, `--dnd-gold`, etc.) y tokens semánticos de Tailwind (`bg-dnd-parchment`, `text-dnd-ink`, `border-dnd-border-antique`, etc.).
+  * Soporte fluido de modo claro ("Pergamino Diurno" para lectura sobre papel cálido) y modo oscuro ("Códice Nocturno" para sesiones de juego en salas oscuras), alternable con persistencia en `localStorage` o sincronizado con las preferencias del sistema operativo.
+  * Creado el componente interactivo `ThemeToggle` integrado en la barra de navegación (`Header.tsx`) y en el panel de sesión del usuario en el portal (`portal-dashboard.tsx`).
+  * Solucionados los problemas de contraste en modo oscuro en encabezados principales ("Portal de Campaña", subtítulos y cabeceras de héroes de la compañía), garantizando legibilidad y accesibilidad WCAG AA/AAA.
+
+### Corregido
+* **Eliminación de Redundancia en la Clase de Armadura (CA) y Limpieza Visual de la Ficha:**
+  * Eliminado el escudo SVG duplicado que repetía el valor numérico al lado del contenedor de Clase de Armadura en `CoreStatsView.tsx`, reemplazándolo por una iconografía limpia y unificada con `<Shield className="w-5 h-5 text-dnd-gold" />`.
+  * Purgados los bloques con estética azulada/marina residual (`slate-900`) en "Agotamiento (D&D 5.5e)", "Recursos de Clase y Poderes Consumibles" y "Dados de Golpe y Descansos", alineándolos al tono de pergamino y cuero medieval del resto de la ficha.
+  * Eliminado el bloque de cabecera duplicado en el modal de subida de nivel (`LevelUpModal.tsx`).
+* **Erradicación Total de Clases Legadas y Migración a Tokens Semánticos Dinámicos:**
+  * Purgadas al 100% las clases estáticas `bg-slate-*`, `text-slate-*`, `border-slate-*`, `bg-dnd-card` y `bg-dnd-surface` en todas las vistas de `@segadores/character-sheet`, componentes de `@segadores/ui`, `@segadores/obsidian-engine` y páginas de `apps/segadores-web`.
+  * Migrados los componentes de `@segadores/ui` (`DndBadge`, `ParchmentFrame`, `DropCap`, `DndTable`) a tokens semánticos y actualizadas sus pruebas unitarias en `components.test.ts`.
+  * Verificado el conjunto de 57 pruebas del monorepo (`turbo run test`) y compilación exitosa de Next.js (`turbo run build`) con 0 errores y 12/12 páginas generadas.
 * **Resolución de Rutas y Modo Fallback en `@segadores/obsidian-engine`:**
   * Corregida la resolución de rutas de `content/wiki` y `content/mocks` para que se resuelvan dinámicamente con respecto a la raíz del monorepo, haciendo que las pruebas unitarias pasen sin importar desde qué directorio se ejecuten.
   * Creado el directorio `content/mocks/Objetos/` con fixtures canónicos SRD 5.2.1 amparados bajo CC-BY-4.0 (`Pocion_de_Curacion.md` y `Espada_Larga.md`), garantizando que el modo de contingencia cargue tanto hechizos como objetos sin dependencias de la wiki privada.

@@ -91,18 +91,18 @@ export function DeathSavesTracker({
   const isStabilized = successes >= 3;
 
   return (
-    <div className="p-4 rounded-sm bg-[#fdf6ea] text-[#242528] border-2 border-[#d4c2a5] dnd-notched space-y-3 shadow-md">
+    <div className="p-4 rounded-sm bg-dnd-parchment text-dnd-ink border-2 border-dnd-border-antique dnd-notched space-y-3 shadow-md">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Skull className={`w-4 h-4 ${isDead ? 'text-[#58180D] animate-bounce' : 'text-[#58544d]'}`} />
-          <h4 className="font-dnd-title font-bold text-xs text-[#58180D] uppercase tracking-wider">
+          <Skull className={`w-4 h-4 ${isDead ? 'text-dnd-crimson animate-bounce' : 'text-dnd-ink-muted'}`} />
+          <h4 className="font-dnd-title font-bold text-xs text-dnd-crimson uppercase tracking-wider">
             Salvaciones contra la Muerte
           </h4>
         </div>
         {!readOnly && (successes > 0 || failures > 0) && (
           <button
             onClick={handleReset}
-            className="flex items-center gap-1 text-[11px] font-dnd-title text-[#58544d] hover:text-[#58180D] transition"
+            className="flex items-center gap-1 text-[11px] font-dnd-title text-dnd-ink-muted hover:text-dnd-crimson transition"
             title="Reiniciar salvaciones"
           >
             <RotateCcw className="w-3 h-3" /> Reiniciar
@@ -112,27 +112,27 @@ export function DeathSavesTracker({
 
       {/* Estados extremos */}
       {isDead && (
-        <div className="p-2.5 rounded-sm bg-[#58180D] border border-[#7a2021] text-[#fdf6ea] text-xs font-dnd-title font-bold text-center animate-pulse shadow-md">
+        <div className="p-2.5 rounded-md bg-dnd-crimson border border-dnd-crimson-hover text-white text-xs font-dnd-title font-bold text-center animate-pulse shadow-md">
           💀 ¡3 Fallos! El personaje ha sucumbido a la muerte.
         </div>
       )}
       {isStabilized && !isDead && (
-        <div className="p-2.5 rounded-sm bg-[#15803d] border border-[#166534] text-[#fdf6ea] text-xs font-dnd-title font-bold text-center shadow-md">
+        <div className="p-2.5 rounded-sm bg-[#15803d] border border-[#166534] text-white text-xs font-dnd-title font-bold text-center shadow-md">
           ✨ ¡3 Éxitos! El personaje está estabilizado (0 PG inconsciente).
         </div>
       )}
 
       {/* Selector de Dados (Digital o Tirado en Mesa Físico) */}
       {!readOnly && !isDead && !isStabilized && (
-        <div className="space-y-2 pt-1 border-t border-[#d4c2a5]/80">
+        <div className="space-y-2 pt-1 border-t border-dnd-border-antique/80">
           <div className="grid grid-cols-2 gap-2">
             <button
               type="button"
               onClick={handleRollDigital}
-              className="py-1 px-2 rounded-sm bg-[#ede2cb] hover:bg-[#d4c2a5] border border-[#d4c2a5] text-[#58180D] text-[11px] font-dnd-title font-bold flex items-center justify-center gap-1.5 transition shadow-sm"
+              className="py-1 px-2 rounded-sm bg-dnd-parchment-contrast hover:bg-dnd-parchment border border-dnd-border-antique text-dnd-crimson text-[11px] font-dnd-title font-bold flex items-center justify-center gap-1.5 transition shadow-sm"
               title="Tirar 1d20 digital"
             >
-              <Dices className="w-3 h-3 text-[#c29b38]" />
+              <Dices className="w-3 h-3 text-dnd-gold" />
               <span>Tirar Digital</span>
             </button>
 
@@ -141,8 +141,8 @@ export function DeathSavesTracker({
               onClick={() => setShowPhysicalEntry(!showPhysicalEntry)}
               className={`py-1 px-2 rounded-sm border text-[11px] font-dnd-title font-bold flex items-center justify-center gap-1.5 transition ${
                 showPhysicalEntry
-                  ? 'bg-[#c29b38]/30 border-[#c29b38] text-[#854d0e] shadow-sm'
-                  : 'bg-[#ede2cb] hover:bg-[#d4c2a5] border-[#d4c2a5] text-[#242528]'
+                  ? 'bg-dnd-gold/20 border-dnd-gold text-dnd-gold font-bold shadow-sm'
+                  : 'bg-dnd-parchment-contrast hover:bg-dnd-parchment border-dnd-border-antique text-dnd-ink'
               }`}
               title="Registrar tirada física en mesa"
             >
@@ -152,8 +152,8 @@ export function DeathSavesTracker({
 
           {/* Botonera de 1 al 20 para el d20 físico tirado en la mesa */}
           {showPhysicalEntry && (
-            <div className="p-2.5 rounded-sm bg-[#f4ebe1] border-2 border-[#c29b38] space-y-1.5 shadow-md">
-              <span className="text-[10px] font-dnd-title font-bold text-[#58180D] uppercase tracking-wide block">
+            <div className="p-2.5 rounded-sm bg-dnd-parchment-dark border-2 border-dnd-gold space-y-1.5 shadow-md">
+              <span className="text-[10px] font-dnd-title font-bold text-dnd-crimson uppercase tracking-wide block">
                 Selecciona tu d20 físico de la mesa:
               </span>
               <div className="grid grid-cols-5 sm:grid-cols-10 gap-1">
@@ -164,12 +164,12 @@ export function DeathSavesTracker({
                     onClick={() => handleApplyPhysical(num)}
                     className={`py-1 rounded text-xs font-dnd-title font-bold transition ${
                       num === 20
-                        ? 'bg-[#c29b38] text-[#1b120e] hover:bg-[#a88225]'
+                        ? 'bg-dnd-gold text-dnd-leather-dark hover:bg-dnd-gold-light font-bold'
                         : num === 1
-                          ? 'bg-[#58180D] text-white hover:bg-[#7a2021]'
+                          ? 'bg-dnd-crimson text-white hover:bg-dnd-crimson-hover'
                           : num >= 10
                             ? 'bg-[#15803d] text-white hover:bg-[#166534]'
-                            : 'bg-[#ede2cb] border border-[#d4c2a5] text-[#242528] hover:border-[#c29b38]'
+                            : 'bg-dnd-parchment-contrast border border-dnd-border-antique text-dnd-ink hover:border-dnd-gold'
                     }`}
                   >
                     {num}
@@ -180,7 +180,7 @@ export function DeathSavesTracker({
           )}
 
           {lastRollMessage && (
-            <div className="text-[10px] font-dnd-body italic text-center text-[#58180D] bg-[#ede2cb] py-1 px-2 rounded border border-[#d4c2a5]">
+            <div className="text-[10px] font-dnd-body italic text-center text-dnd-crimson bg-dnd-parchment-contrast py-1 px-2 rounded border border-dnd-border-antique">
               {lastRollMessage}
             </div>
           )}
@@ -194,7 +194,7 @@ export function DeathSavesTracker({
             <CheckCircle2 className="w-3.5 h-3.5" /> Éxitos
           </span>
           <div className="relative flex items-center justify-between w-28">
-            <div className="absolute top-1/2 left-2 right-2 h-0.5 bg-[#d4c2a5] -translate-y-1/2" />
+            <div className="absolute top-1/2 left-2 right-2 h-0.5 bg-dnd-border-antique -translate-y-1/2" />
             {[0, 1, 2].map(idx => (
               <button
                 key={idx}
@@ -204,10 +204,10 @@ export function DeathSavesTracker({
                 className={`relative z-10 w-6 h-6 rounded-full border-2 transition flex items-center justify-center ${
                   idx < successes
                     ? 'bg-[#15803d] border-[#166534] shadow-sm'
-                    : 'bg-[#f4ebe1] border-[#d4c2a5] hover:border-[#15803d]'
+                    : 'bg-dnd-parchment-dark border-dnd-border-antique hover:border-[#15803d]'
                 }`}
               >
-                {idx < successes && <span className="w-2 h-2 rounded-full bg-[#fdf6ea]" />}
+                {idx < successes && <span className="w-2 h-2 rounded-full bg-dnd-parchment" />}
               </button>
             ))}
           </div>
@@ -215,11 +215,11 @@ export function DeathSavesTracker({
 
         {/* Fallos (3 Orbes Encadenados Canónicos ○─○─○) */}
         <div className="space-y-1.5">
-          <span className="text-[11px] font-dnd-title font-bold text-[#58180D] flex items-center gap-1">
+          <span className="text-[11px] font-dnd-title font-bold text-dnd-crimson flex items-center gap-1">
             <Skull className="w-3.5 h-3.5" /> Fallos
           </span>
           <div className="relative flex items-center justify-between w-28">
-            <div className="absolute top-1/2 left-2 right-2 h-0.5 bg-[#d4c2a5] -translate-y-1/2" />
+            <div className="absolute top-1/2 left-2 right-2 h-0.5 bg-dnd-border-antique -translate-y-1/2" />
             {[0, 1, 2].map(idx => (
               <button
                 key={idx}
@@ -228,11 +228,11 @@ export function DeathSavesTracker({
                 onClick={() => handleToggleFailure(idx)}
                 className={`relative z-10 w-6 h-6 rounded-full border-2 transition flex items-center justify-center ${
                   idx < failures
-                    ? 'bg-[#58180D] border-[#7a2021] shadow-sm'
-                    : 'bg-[#f4ebe1] border-[#d4c2a5] hover:border-[#58180D]'
+                    ? 'bg-dnd-crimson border-dnd-crimson-hover shadow-sm'
+                    : 'bg-dnd-parchment-dark border-dnd-border-antique hover:border-dnd-crimson'
                 }`}
               >
-                {idx < failures && <span className="w-2 h-2 rounded-full bg-[#fdf6ea]" />}
+                {idx < failures && <span className="w-2 h-2 rounded-full bg-dnd-parchment" />}
               </button>
             ))}
           </div>

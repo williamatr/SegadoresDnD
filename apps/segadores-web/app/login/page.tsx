@@ -62,38 +62,38 @@ function LoginForm() {
   };
 
   return (
-    <div className="w-full max-w-md p-6 sm:p-10 rounded-sm bg-[#fdf6ea] text-[#242528] border-2 border-[#d4c2a5] dnd-notched shadow-2xl text-center space-y-6">
-      <div className="mx-auto w-14 h-14 rounded-sm bg-[#58180D] border-2 border-[#c29b38] flex items-center justify-center text-[#c29b38] shadow-md shadow-black/30">
+    <div className="w-full max-w-md p-6 sm:p-10 rounded-sm bg-dnd-parchment text-dnd-ink border-2 border-dnd-border-antique dnd-notched shadow-2xl text-center space-y-6">
+      <div className="mx-auto w-14 h-14 rounded-sm bg-dnd-crimson border-2 border-dnd-gold flex items-center justify-center text-dnd-gold shadow-md">
         <Shield className="w-7 h-7" />
       </div>
 
       <div className="space-y-2">
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-wider text-[#58180D] font-dnd-title uppercase">
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-wider text-dnd-crimson font-dnd-title uppercase">
           Portal de Campaña
         </h1>
-        <p className="text-xs sm:text-sm text-[#58544d] font-dnd-body leading-relaxed">
-          Inicia sesión con tu cuenta autorizada de Google para ingresar a las crónicas y fichas de <strong className="text-[#58180D] font-dnd-title">Segadores de Orcos</strong>.
+        <p className="text-xs sm:text-sm text-dnd-ink-muted font-dnd-body leading-relaxed">
+          Inicia sesión con tu cuenta autorizada de Google para ingresar a las crónicas y fichas de <strong className="text-dnd-crimson font-dnd-title">Segadores de Orcos</strong>.
         </p>
         <TaperedRule variant="crimson" />
       </div>
 
       {/* Banner de Invitación de Mesa */}
       {searchParams.get('invited') === 'true' && (
-        <div className="p-4 rounded-sm bg-[#ede2cb] border border-[#c29b38] text-left space-y-1.5 shadow-sm animate-in fade-in">
-          <div className="flex items-center gap-2 text-[#58180D] font-dnd-title font-bold text-xs uppercase tracking-wider">
-            <Sparkles className="w-4 h-4 text-[#b45309]" />
+        <div className="p-4 rounded-sm bg-dnd-parchment-contrast border border-dnd-gold text-left space-y-1.5 shadow-sm animate-in fade-in">
+          <div className="flex items-center gap-2 text-dnd-crimson font-dnd-title font-bold text-xs uppercase tracking-wider">
+            <Sparkles className="w-4 h-4 text-dnd-terracotta" />
             ¡Has sido convocado a la mesa de juego!
           </div>
-          <p className="text-xs text-[#242528]/90 font-dnd-body leading-relaxed">
-            El Dungeon Master te ha autorizado el acceso a <strong className="text-[#58180D] font-dnd-title">Segadores de Orcos</strong>. Continúa con tu cuenta de Google autorizada para acceder a tu hoja de personaje y a las crónicas.
+          <p className="text-xs text-dnd-ink font-dnd-body leading-relaxed">
+            El Dungeon Master te ha autorizado el acceso a <strong className="text-dnd-crimson font-dnd-title">Segadores de Orcos</strong>. Continúa con tu cuenta de Google autorizada para acceder a tu hoja de personaje y a las crónicas.
           </p>
         </div>
       )}
 
       {/* Alerta de error si viene en URL o en cliente */}
       {(errorParam || clientError) && (
-        <div className="p-3.5 rounded-sm bg-[#fbeeed] border border-[#7a2021] text-[#58180D] text-xs text-left flex items-start gap-2.5">
-          <AlertTriangle className="w-4 h-4 text-[#7a2021] shrink-0 mt-0.5" />
+        <div className="p-3.5 rounded-sm bg-dnd-crimson-surface border border-dnd-crimson text-dnd-crimson text-xs text-left flex items-start gap-2.5">
+          <AlertTriangle className="w-4 h-4 text-dnd-crimson shrink-0 mt-0.5" />
           <div className="space-y-1">
             <span className="font-dnd-title font-bold block uppercase tracking-wider text-[11px]">
               Fallo de Autenticación
@@ -116,11 +116,11 @@ function LoginForm() {
         <button
           onClick={handleGoogleLogin}
           disabled={isLoading}
-          className="w-full inline-flex items-center justify-center gap-3 px-5 py-3.5 rounded-sm bg-[#58180D] hover:bg-[#7a2021] text-[#fdf6ea] border-2 border-[#c29b38] font-dnd-title uppercase tracking-wider font-bold transition disabled:opacity-50 disabled:cursor-not-allowed text-xs shadow-md"
+          className="w-full inline-flex items-center justify-center gap-3 px-5 py-3.5 rounded-md bg-dnd-crimson hover:bg-dnd-crimson-hover text-white border border-dnd-gold font-dnd-title uppercase tracking-wider font-bold transition disabled:opacity-50 disabled:cursor-not-allowed text-xs shadow-md"
         >
           {isLoading ? (
             <span className="inline-flex items-center gap-2">
-              <span className="w-4 h-4 border-2 border-[#fdf6ea] border-t-transparent rounded-full animate-spin" />
+              <span className="w-4 h-4 border-2 border-dnd-parchment border-t-transparent rounded-full animate-spin" />
               Invocando portal...
             </span>
           ) : (
@@ -154,31 +154,31 @@ function LoginForm() {
           <>
             <div className="relative my-3">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-[#d4c2a5]" />
+                <div className="w-full border-t border-dnd-border-antique" />
               </div>
               <div className="relative flex justify-center text-[10px] uppercase">
-                <span className="bg-[#fdf6ea] px-2 text-[#58544d] font-dnd-title">o en desarrollo local</span>
+                <span className="bg-dnd-parchment px-2 text-dnd-ink-muted font-dnd-title">o en desarrollo local</span>
               </div>
             </div>
 
-            <div className="p-4 rounded-sm bg-[#ede2cb] border border-[#d4c2a5] text-left space-y-2.5 shadow-sm">
+            <div className="p-4 rounded-sm bg-dnd-parchment-contrast border border-dnd-border-antique text-left space-y-2.5 shadow-sm">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-1.5 text-[#58180D] font-dnd-title font-bold text-xs uppercase tracking-wide">
-                  <Sparkles className="w-3.5 h-3.5 text-[#b45309]" />
+                <div className="flex items-center gap-1.5 text-dnd-crimson font-dnd-title font-bold text-xs uppercase tracking-wide">
+                  <Sparkles className="w-3.5 h-3.5 text-dnd-gold" />
                   Acceso Rápido en Local
                 </div>
                 <DndBadge variant="parchment" size="sm">
                   Sin Google OAuth
                 </DndBadge>
               </div>
-              <p className="text-[11px] text-[#58544d] font-dnd-body leading-relaxed">
+              <p className="text-[11px] text-dnd-ink-muted font-dnd-body leading-relaxed">
                 Para probar en tu máquina local sin necesidad de configurar credenciales en Supabase / Google Cloud:
               </p>
 
               <div className="space-y-1.5 pt-1">
                 <a
                   href={`/api/auth/dev-login?role=dm&next=${encodeURIComponent(sanitizeNextPath(nextParam))}`}
-                  className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-sm bg-[#58180D] hover:bg-[#7a2021] border border-[#7a2021] text-[#fdf6ea] text-xs font-dnd-title font-bold uppercase tracking-wider transition shadow-xs"
+                  className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-md bg-dnd-crimson hover:bg-dnd-crimson-hover border border-dnd-gold text-white text-xs font-dnd-title font-bold uppercase tracking-wider transition shadow-xs"
                 >
                   👑 Entrar como Dungeon Master (William)
                 </a>
@@ -186,25 +186,25 @@ function LoginForm() {
                 <div className="grid grid-cols-2 gap-1.5 pt-1">
                   <a
                     href={`/api/auth/dev-login?role=honiel&next=${encodeURIComponent(sanitizeNextPath(nextParam))}`}
-                    className="flex items-center justify-center gap-1 p-2 rounded-sm bg-[#fdf6ea] hover:bg-[#f4ebe1] border border-[#d4c2a5] text-[#242528] text-[11px] font-dnd-body transition font-semibold"
+                    className="flex items-center justify-center gap-1 p-2 rounded-sm bg-dnd-parchment hover:bg-dnd-parchment-dark border border-dnd-border-antique text-dnd-ink text-[11px] font-dnd-body transition font-semibold"
                   >
                     🧙 Honiel (Jugador)
                   </a>
                   <a
                     href={`/api/auth/dev-login?role=eru&next=${encodeURIComponent(sanitizeNextPath(nextParam))}`}
-                    className="flex items-center justify-center gap-1 p-2 rounded-sm bg-[#fdf6ea] hover:bg-[#f4ebe1] border border-[#d4c2a5] text-[#242528] text-[11px] font-dnd-body transition font-semibold"
+                    className="flex items-center justify-center gap-1 p-2 rounded-sm bg-dnd-parchment hover:bg-dnd-parchment-dark border border-dnd-border-antique text-dnd-ink text-[11px] font-dnd-body transition font-semibold"
                   >
                     ⚔️ Eru (Jugador)
                   </a>
                   <a
                     href={`/api/auth/dev-login?role=alizar&next=${encodeURIComponent(sanitizeNextPath(nextParam))}`}
-                    className="flex items-center justify-center gap-1 p-2 rounded-sm bg-[#fdf6ea] hover:bg-[#f4ebe1] border border-[#d4c2a5] text-[#242528] text-[11px] font-dnd-body transition font-semibold"
+                    className="flex items-center justify-center gap-1 p-2 rounded-sm bg-dnd-parchment hover:bg-dnd-parchment-dark border border-dnd-border-antique text-dnd-ink text-[11px] font-dnd-body transition font-semibold"
                   >
                     🛠️ Alizar (Jugador)
                   </a>
                   <a
                     href={`/api/auth/dev-login?role=solaria&next=${encodeURIComponent(sanitizeNextPath(nextParam))}`}
-                    className="flex items-center justify-center gap-1 p-2 rounded-sm bg-[#fdf6ea] hover:bg-[#f4ebe1] border border-[#d4c2a5] text-[#242528] text-[11px] font-dnd-body transition font-semibold"
+                    className="flex items-center justify-center gap-1 p-2 rounded-sm bg-dnd-parchment hover:bg-dnd-parchment-dark border border-dnd-border-antique text-dnd-ink text-[11px] font-dnd-body transition font-semibold"
                   >
                     🌿 Solaria (Jugadora)
                   </a>
@@ -214,15 +214,15 @@ function LoginForm() {
           </>
         )}
 
-        <p className="text-[11px] text-[#8a7f72] font-dnd-body leading-relaxed pt-1">
+        <p className="text-[11px] text-dnd-ink-subtle font-dnd-body leading-relaxed pt-1">
           El acceso con Google en producción está restringido a jugadores registrados en la lista blanca de la campaña.
         </p>
       </div>
 
-      <div className="pt-4 border-t border-[#d4c2a5]">
+      <div className="pt-4 border-t border-dnd-border-antique">
         <Link
           href="/"
-          className="inline-flex items-center gap-1.5 text-xs text-[#58544d] hover:text-[#58180D] font-dnd-title uppercase tracking-wider transition"
+          className="inline-flex items-center gap-1.5 text-xs text-dnd-ink-muted hover:text-dnd-crimson font-dnd-title uppercase tracking-wider transition"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
           Volver a la página principal
@@ -238,7 +238,7 @@ export default function LoginPage() {
       <Header />
 
       <main className="flex-1 max-w-4xl w-full mx-auto p-4 sm:p-8 flex items-center justify-center">
-        <Suspense fallback={<div className="text-slate-400 text-xs">Cargando santuario...</div>}>
+        <Suspense fallback={<div className="text-dnd-ink-muted text-xs font-dnd-body">Cargando santuario...</div>}>
           <LoginForm />
         </Suspense>
       </main>

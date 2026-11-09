@@ -20,18 +20,18 @@ export function DndBadge({
   icon,
 }: DndBadgeProps) {
   const sizeClasses =
-    size === 'sm' ? 'px-1.5 py-0.5 text-[10px]' : 'px-2.5 py-1 text-xs';
+    size === 'sm' ? 'px-2 py-0.5 text-xs' : 'px-2.5 py-1 text-xs';
 
-  let colorClasses = 'bg-[#f4ebe1] text-[#242528] border-[#d4c2a5]';
+  let colorClasses = 'bg-dnd-parchment-contrast text-dnd-ink border-dnd-border-antique';
 
   if (variant === 'crimson') {
-    colorClasses = 'bg-[#58180D] text-[#fdf6ea] border-[#7a2021] shadow-sm';
+    colorClasses = 'bg-dnd-crimson text-white border-dnd-crimson-hover shadow-xs';
   } else if (variant === 'gold') {
-    colorClasses = 'bg-[#fef9c3] text-[#854d0e] border-[#ca8a04] shadow-sm';
+    colorClasses = 'bg-dnd-gold-surface text-dnd-gold border-dnd-gold shadow-xs';
   } else if (variant === 'terracotta') {
-    colorClasses = 'bg-[#c45b1d] text-[#fdf6ea] border-[#9a4312] shadow-sm';
+    colorClasses = 'bg-dnd-terracotta text-white border-dnd-border-strong shadow-xs';
   } else if (variant === 'ink') {
-    colorClasses = 'bg-[#242528] text-[#fdf6ea] border-[#58544d] shadow-sm';
+    colorClasses = 'bg-dnd-canvas text-dnd-ink border-dnd-border-antique shadow-xs';
   }
 
   const iconElement = icon
@@ -41,7 +41,7 @@ export function DndBadge({
   return React.createElement(
     'span',
     {
-      className: `inline-flex items-center gap-1 font-dnd-title font-semibold tracking-wider uppercase border rounded-sm select-none ${sizeClasses} ${colorClasses} ${className}`,
+      className: `inline-flex items-center gap-1 font-dnd-title font-semibold tracking-wide border rounded-md select-none ${sizeClasses} ${colorClasses} ${className}`,
     },
     iconElement,
     children

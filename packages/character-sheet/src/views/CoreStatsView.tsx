@@ -84,29 +84,29 @@ export function CoreStatsView({
   return (
     <div className="space-y-6">
       {/* 0. Barra de Progreso de Nivel y Experiencia (XP) - Pergamino y Oro */}
-      <div className="p-4 sm:p-5 rounded-sm bg-[#fdf6ea] text-[#242528] border-2 border-[#d4c2a5] dnd-notched shadow-md space-y-3">
+      <div className="p-4 sm:p-5 rounded-lg bg-dnd-parchment text-dnd-ink border border-dnd-border-antique dnd-notched shadow-sm space-y-3">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-sm bg-[#ede2cb] border border-[#d4c2a5] flex items-center justify-center text-[#58180D] shrink-0 shadow-inner">
-              <Sparkles className="w-5 h-5 text-[#c29b38]" />
+            <div className="w-10 h-10 rounded-md bg-dnd-parchment-contrast border border-dnd-border-antique flex items-center justify-center text-dnd-crimson shrink-0 shadow-inner">
+              <Sparkles className="w-5 h-5 text-dnd-gold" />
             </div>
             <div>
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="font-dnd-title font-black text-base text-[#58180D] uppercase tracking-wide">
+                <span className="font-dnd-title font-black text-base text-dnd-crimson uppercase tracking-wide">
                   Nivel {xpProgress.currentLevel}
                 </span>
                 {character.multiclass && character.multiclass.length > 0 && (
-                  <span className="text-xs text-[#c45b1d] font-dnd-title font-bold">
+                  <span className="text-xs text-dnd-terracotta font-dnd-title font-bold">
                     ({character.multiclass.map(m => `${m.class} ${m.level}`).join(' / ')})
                   </span>
                 )}
               </div>
-              <p className="text-xs text-[#58544d] font-dnd-body">
+              <p className="text-xs text-dnd-ink-muted font-dnd-body">
                 {xpProgress.isMaxLevel ? (
-                  <span className="text-[#854d0e] font-bold">¡Nivel Épico Máximo alcanzado (Nivel 20)!</span>
+                  <span className="text-dnd-gold font-bold">¡Nivel Épico Máximo alcanzado (Nivel 20)!</span>
                 ) : (
                   <>
-                    Próximo objetivo: <strong className="text-[#242528]">Nivel {xpProgress.nextLevel}</strong> ({xpProgress.nextLevelThreshold.toLocaleString()} PX acumulados)
+                    Próximo objetivo: <strong className="text-dnd-ink">Nivel {xpProgress.nextLevel}</strong> ({xpProgress.nextLevelThreshold.toLocaleString()} PX acumulados)
                   </>
                 )}
               </p>
@@ -116,15 +116,15 @@ export function CoreStatsView({
           <div className="flex flex-col sm:items-end gap-2">
             <div className="text-left sm:text-right">
               <div className="flex items-baseline sm:justify-end gap-1.5">
-                <span className="text-xl sm:text-2xl font-dnd-title font-black text-[#58180D]">
+                <span className="text-xl sm:text-2xl font-dnd-title font-black text-dnd-crimson">
                   {xpProgress.currentXp.toLocaleString()}
                 </span>
-                <span className="text-xs font-dnd-body text-[#58544d]">
+                <span className="text-xs font-dnd-body text-dnd-ink-muted">
                   / {xpProgress.isMaxLevel ? 'MAX' : `${xpProgress.nextLevelThreshold.toLocaleString()} PX`}
                 </span>
               </div>
               {!xpProgress.isMaxLevel && (
-                <span className="text-[11px] text-[#c45b1d] font-dnd-body italic block">
+                <span className="text-xs text-dnd-terracotta font-dnd-body italic block">
                   Faltan {xpProgress.remainingXp.toLocaleString()} PX para subir de nivel
                 </span>
               )}
@@ -134,7 +134,7 @@ export function CoreStatsView({
               <button
                 type="button"
                 onClick={onOpenLevelUp}
-                className="px-3 py-1.5 rounded-sm bg-gradient-to-r from-[#c45b1d] to-[#c29b38] hover:from-[#a34712] hover:to-[#a88225] text-[#fdf6ea] font-dnd-title font-bold text-xs uppercase tracking-wider flex items-center gap-1.5 shadow-md border border-[#c29b38] transition active:scale-95 self-start sm:self-end"
+                className="px-3 py-1.5 rounded-md bg-gradient-to-r from-dnd-terracotta to-dnd-gold hover:from-[#a34712] hover:to-[#a88225] text-white font-dnd-title font-bold text-xs uppercase tracking-wider flex items-center gap-1.5 shadow-md border border-dnd-gold transition active:scale-95 self-start sm:self-end"
                 title="Abrir motor interactivo de subida de nivel y multiclase al 50%"
               >
                 <Zap className="w-3.5 h-3.5 fill-current" />
@@ -146,15 +146,15 @@ export function CoreStatsView({
 
         {/* Barra Visual de Progreso */}
         <div className="space-y-1">
-          <div className="w-full h-3 rounded-full bg-[#ede2cb] border border-[#d4c2a5] overflow-hidden relative">
+          <div className="w-full h-3 rounded-full bg-dnd-parchment-contrast border border-dnd-border-antique overflow-hidden relative">
             <div
-              className="h-full bg-gradient-to-r from-[#c45b1d] via-[#c29b38] to-[#e5b960] transition-all duration-500 rounded-full"
+              className="h-full bg-gradient-to-r from-dnd-terracotta via-dnd-gold to-dnd-gold-light transition-all duration-500 rounded-full"
               style={{ width: `${xpProgress.progressPercent}%` }}
             />
           </div>
-          <div className="flex justify-between items-center text-[10px] text-[#58544d] font-dnd-body">
+          <div className="flex justify-between items-center text-xs text-dnd-ink-muted font-dnd-body">
             <span>Umbral Nv. {xpProgress.currentLevel}: {xpProgress.currentLevelThreshold.toLocaleString()} PX</span>
-            <span className="font-bold text-[#58180D]">{xpProgress.progressPercent}% completado</span>
+            <span className="font-bold text-dnd-crimson">{xpProgress.progressPercent}% completado</span>
             <span>Objetivo Nv. {xpProgress.nextLevel}: {xpProgress.nextLevelThreshold.toLocaleString()} PX</span>
           </div>
         </div>
@@ -162,83 +162,85 @@ export function CoreStatsView({
 
       {/* 1. Métricas Defensivas y de Combate Principales (Escudo Heráldico CA, Velocidad, Iniciativa, Percepción) */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 items-stretch">
-        {/* Clase de Armadura (Escudo Heráldico Medieval D&D 5e) */}
-        <div className="p-3.5 sm:p-4 rounded-sm bg-[#fdf6ea] border-2 border-[#d4c2a5] text-[#242528] dnd-notched flex items-center justify-between shadow-md relative overflow-hidden group">
+        {/* Clase de Armadura (Icono heráldico D&D 5e sin números duplicados) */}
+        <div className="p-3.5 sm:p-4 rounded-lg bg-dnd-parchment border border-dnd-border-antique text-dnd-ink dnd-notched flex items-center justify-between shadow-sm relative overflow-hidden group">
           <div className="space-y-0.5">
-            <span className="text-[11px] font-dnd-title font-bold text-[#58180D] uppercase tracking-wider block">
+            <span className="text-xs font-dnd-title font-bold text-dnd-crimson uppercase tracking-wider block">
               Clase Armadura
             </span>
             <div className="flex items-baseline gap-1.5">
-              <span className="text-2xl sm:text-3xl font-dnd-title font-black text-[#58180D]">
+              <span className="text-2xl sm:text-3xl font-dnd-title font-black text-dnd-crimson">
                 {effectiveAc}
               </span>
-              <span className="text-[10px] text-[#58544d] uppercase font-dnd-title font-semibold">CA</span>
+              <span className="text-xs text-dnd-ink-muted uppercase font-dnd-title font-semibold">CA</span>
             </div>
             {evaluatedState && evaluatedState.acBreakdown.length > 0 && (
-              <span className="text-[10px] text-[#58544d] block truncate max-w-[120px] font-dnd-body" title={evaluatedState.acBreakdown.join(', ')}>
+              <span className="text-xs text-dnd-ink-muted block truncate max-w-[120px] font-dnd-body" title={evaluatedState.acBreakdown.join(', ')}>
                 {evaluatedState.acBreakdown[0]}
               </span>
             )}
           </div>
-          <HeraldicShield value={effectiveAc} label="" size="sm" />
+          <div className="w-10 h-10 rounded-md bg-dnd-parchment-contrast border border-dnd-border-antique flex items-center justify-center text-dnd-crimson shrink-0">
+            <Shield className="w-5 h-5 text-dnd-gold" />
+          </div>
         </div>
 
         {/* Velocidad */}
-        <div className="p-3.5 sm:p-4 rounded-sm bg-[#fdf6ea] border-2 border-[#d4c2a5] text-[#242528] dnd-notched flex items-center justify-between shadow-md">
+        <div className="p-3.5 sm:p-4 rounded-lg bg-dnd-parchment border border-dnd-border-antique text-dnd-ink dnd-notched flex items-center justify-between shadow-sm">
           <div className="space-y-0.5">
-            <span className="text-[11px] font-dnd-title font-bold text-[#58180D] uppercase tracking-wider block">
+            <span className="text-xs font-dnd-title font-bold text-dnd-crimson uppercase tracking-wider block">
               Velocidad
             </span>
             <div className="flex items-baseline gap-1.5">
-              <span className="text-2xl sm:text-3xl font-dnd-title font-black text-[#242528]">
+              <span className="text-2xl sm:text-3xl font-dnd-title font-black text-dnd-ink">
                 {effectiveSpeed}
               </span>
-              <span className="text-[10px] text-[#58544d] font-dnd-body">pies</span>
+              <span className="text-xs text-dnd-ink-muted font-dnd-body">pies</span>
             </div>
             {exhaustion > 0 && (
-              <span className="text-[10px] text-[#58180D] font-bold block">
+              <span className="text-xs text-dnd-crimson font-bold block">
                 -{exhaustion * 5} pies por fatiga
               </span>
             )}
           </div>
-          <div className="w-10 h-10 rounded-sm bg-[#ede2cb] border border-[#d4c2a5] flex items-center justify-center text-[#58180D] shrink-0">
+          <div className="w-10 h-10 rounded-md bg-dnd-parchment-contrast border border-dnd-border-antique flex items-center justify-center text-dnd-crimson shrink-0">
             <Footprints className="w-5 h-5" />
           </div>
         </div>
 
         {/* Iniciativa */}
-        <div className="p-3.5 sm:p-4 rounded-sm bg-[#fdf6ea] border-2 border-[#d4c2a5] text-[#242528] dnd-notched flex items-center justify-between shadow-md">
+        <div className="p-3.5 sm:p-4 rounded-lg bg-dnd-parchment border border-dnd-border-antique text-dnd-ink dnd-notched flex items-center justify-between shadow-sm">
           <div className="space-y-0.5">
-            <span className="text-[11px] font-dnd-title font-bold text-[#58180D] uppercase tracking-wider block">
+            <span className="text-xs font-dnd-title font-bold text-dnd-crimson uppercase tracking-wider block">
               Iniciativa
             </span>
             <div className="flex items-baseline gap-1.5">
-              <span className="text-2xl sm:text-3xl font-dnd-title font-black text-[#242528]">
+              <span className="text-2xl sm:text-3xl font-dnd-title font-black text-dnd-ink">
                 {formatModifier(character.initiative_modifier)}
               </span>
             </div>
-            <span className="text-[10px] text-[#58544d] block font-dnd-body">DES base</span>
+            <span className="text-xs text-dnd-ink-muted block font-dnd-body">DES base</span>
           </div>
-          <div className="w-10 h-10 rounded-sm bg-[#ede2cb] border border-[#d4c2a5] flex items-center justify-center text-[#c45b1d] shrink-0">
+          <div className="w-10 h-10 rounded-md bg-dnd-parchment-contrast border border-dnd-border-antique flex items-center justify-center text-dnd-terracotta shrink-0">
             <Zap className="w-5 h-5" />
           </div>
         </div>
 
         {/* Percepción Pasiva */}
-        <div className="p-3.5 sm:p-4 rounded-sm bg-[#fdf6ea] border-2 border-[#d4c2a5] text-[#242528] dnd-notched flex items-center justify-between shadow-md">
+        <div className="p-3.5 sm:p-4 rounded-lg bg-dnd-parchment border border-dnd-border-antique text-dnd-ink dnd-notched flex items-center justify-between shadow-sm">
           <div className="space-y-0.5">
-            <span className="text-[11px] font-dnd-title font-bold text-[#58180D] uppercase tracking-wider block">
+            <span className="text-xs font-dnd-title font-bold text-dnd-crimson uppercase tracking-wider block">
               Percepción Pas.
             </span>
             <div className="flex items-baseline gap-1.5">
-              <span className="text-2xl sm:text-3xl font-dnd-title font-black text-[#242528]">
+              <span className="text-2xl sm:text-3xl font-dnd-title font-black text-dnd-ink">
                 {character.passive_perception}
               </span>
-              <span className="text-[10px] text-[#58544d] font-dnd-body">SAB</span>
+              <span className="text-xs text-dnd-ink-muted font-dnd-body">SAB</span>
             </div>
-            <span className="text-[10px] text-[#58544d] block font-dnd-body">10 + SAB + PB</span>
+            <span className="text-xs text-dnd-ink-muted block font-dnd-body">10 + SAB + PB</span>
           </div>
-          <div className="w-10 h-10 rounded-sm bg-[#ede2cb] border border-[#d4c2a5] flex items-center justify-center text-[#854d0e] shrink-0">
+          <div className="w-10 h-10 rounded-md bg-dnd-parchment-contrast border border-dnd-border-antique flex items-center justify-center text-dnd-gold shrink-0">
             <Eye className="w-5 h-5" />
           </div>
         </div>
@@ -278,16 +280,16 @@ export function CoreStatsView({
       </div>
 
       {/* 3. Atributos Nucleares (FUE, DES, CON, INT, SAB, CAR) - Cajas Notched D&D 5e */}
-      <div className="p-4 sm:p-5 rounded-sm bg-[#fdf6ea] text-[#242528] border-2 border-[#d4c2a5] dnd-notched space-y-3 shadow-md">
-        <div className="flex items-center justify-between border-b border-[#d4c2a5]/80 pb-2">
+      <div className="p-4 sm:p-5 rounded-lg bg-dnd-parchment text-dnd-ink border border-dnd-border-antique dnd-notched space-y-3 shadow-sm">
+        <div className="flex items-center justify-between border-b border-dnd-border-antique/80 pb-2">
           <div className="flex items-center gap-2">
-            <Award className="w-4 h-4 text-[#c29b38]" />
-            <h3 className="font-dnd-title font-bold text-sm text-[#58180D] tracking-wide uppercase">
+            <Award className="w-4 h-4 text-dnd-gold" />
+            <h3 className="font-dnd-title font-bold text-sm text-dnd-crimson tracking-wide uppercase">
               Puntuaciones de Característica y Salvaciones
             </h3>
           </div>
-          <span className="text-xs font-dnd-title text-[#58544d]">
-            Bonif. Competencia: <strong className="text-[#58180D]">+{pb}</strong>
+          <span className="text-xs font-dnd-title text-dnd-ink-muted">
+            Bonif. Competencia: <strong className="text-dnd-crimson">+{pb}</strong>
           </span>
         </div>
 
@@ -306,39 +308,39 @@ export function CoreStatsView({
             return (
               <div
                 key={abil.key}
-                className="p-3 rounded-sm bg-[#f4ebe1] border-2 border-[#d4c2a5] text-center space-y-2 relative group hover:border-[#c29b38] transition shadow-sm dnd-notched-sm"
+                className="p-3 rounded-lg bg-dnd-parchment-dark border border-dnd-border-antique text-center space-y-2 relative group hover:border-dnd-gold transition shadow-xs dnd-notched-sm"
               >
                 <div>
-                  <span className="text-[10px] font-dnd-title font-black tracking-wider text-[#58180D] uppercase block">
+                  <span className="text-xs font-dnd-title font-black tracking-wider text-dnd-crimson uppercase block">
                     {abil.code}
                   </span>
-                  <span className="text-[11px] font-dnd-body text-[#58544d] truncate block">
+                  <span className="text-xs font-dnd-body text-dnd-ink-muted truncate block">
                     {abil.name}
                   </span>
                 </div>
 
                 {/* Modificador Grande en Óvalo/Círculo Recortado Canónico */}
-                <div className="w-12 h-12 mx-auto rounded-full bg-[#fdf6ea] border-2 border-[#58180D] flex items-center justify-center font-dnd-title font-black text-2xl text-[#58180D] shadow-inner group-hover:border-[#c29b38] transition">
+                <div className="w-12 h-12 mx-auto rounded-full bg-dnd-parchment border-2 border-dnd-crimson flex items-center justify-center font-dnd-title font-black text-2xl text-dnd-crimson shadow-inner group-hover:border-dnd-gold transition">
                   {formatModifier(mod)}
                 </div>
 
                 {/* Puntuación Base */}
-                <div className="text-[11px] font-dnd-title font-bold text-[#58544d]">
-                  Base: <strong className="text-[#242528]">{score}</strong>
+                <div className="text-xs font-dnd-title font-bold text-dnd-ink-muted">
+                  Base: <strong className="text-dnd-ink">{score}</strong>
                 </div>
 
                 {/* Tirada de Salvación */}
                 <div
-                  className={`pt-1.5 border-t border-[#d4c2a5]/80 flex items-center justify-between text-[11px] px-1 font-dnd-title ${
-                    isSaveProf ? 'text-[#58180D] font-bold' : 'text-[#58544d]'
+                  className={`pt-1.5 border-t border-dnd-border-antique/80 flex items-center justify-between text-xs px-1 font-dnd-title ${
+                    isSaveProf ? 'text-dnd-crimson font-bold' : 'text-dnd-ink-muted'
                   }`}
                   title={isSaveProf ? 'Competente en tiradas de salvación' : 'No competente'}
                 >
                   <span className="flex items-center gap-1">
                     {isSaveProf ? (
-                      <span className="text-[#c29b38]">●</span>
+                      <span className="text-dnd-gold">●</span>
                     ) : (
-                      <span className="text-[#d4c2a5]">○</span>
+                      <span className="text-dnd-border-antique">○</span>
                     )}
                     TS:
                   </span>
@@ -369,20 +371,20 @@ export function CoreStatsView({
       </div>
 
       {/* 5. Competencias y Habilidades (Skills) - Pergamino Editorial */}
-      <div className="p-4 sm:p-5 rounded-sm bg-[#fdf6ea] text-[#242528] border-2 border-[#d4c2a5] dnd-notched space-y-4 shadow-md">
-        <div className="flex items-center justify-between border-b border-[#d4c2a5]/80 pb-2">
+      <div className="p-4 sm:p-5 rounded-sm bg-dnd-parchment text-dnd-ink border-2 border-dnd-border-antique dnd-notched space-y-4 shadow-md">
+        <div className="flex items-center justify-between border-b border-dnd-border-antique/80 pb-2">
           <div className="flex items-center gap-2">
-            <Star className="w-4 h-4 text-[#c29b38]" />
-            <h3 className="font-dnd-title font-bold text-sm text-[#58180D] tracking-wide uppercase">
+            <Star className="w-4 h-4 text-dnd-gold" />
+            <h3 className="font-dnd-title font-bold text-sm text-dnd-crimson tracking-wide uppercase">
               Habilidades y Competencias (18 Oficiales)
             </h3>
           </div>
-          <div className="flex items-center gap-3 text-[11px] font-dnd-body text-[#58544d]">
+          <div className="flex items-center gap-3 text-[11px] font-dnd-body text-dnd-ink-muted">
             <span className="flex items-center gap-1">
-              <span className="w-2 h-2 rounded-full bg-[#58180D]" /> Competente
+              <span className="w-2 h-2 rounded-full bg-dnd-crimson" /> Competente
             </span>
             <span className="flex items-center gap-1">
-              <Star className="w-3 h-3 text-[#c29b38] fill-[#c29b38]" /> Pericia (Expertise)
+              <Star className="w-3 h-3 text-dnd-gold fill-dnd-gold" /> Pericia (Expertise)
             </span>
           </div>
         </div>
@@ -414,24 +416,24 @@ export function CoreStatsView({
                 key={sk.name}
                 className={`p-2.5 rounded-sm border flex items-center justify-between transition ${
                   isExpert
-                    ? 'bg-[#ede2cb] border-[#c29b38] text-[#58180D] font-bold shadow-sm'
+                    ? 'bg-dnd-parchment-contrast border-dnd-gold text-dnd-crimson font-bold shadow-sm'
                     : isProf
-                    ? 'bg-[#f4ebe1] border-[#d4c2a5] text-[#242528]'
-                    : 'bg-[#fdf6ea] border-[#d4c2a5]/50 text-[#58544d]'
+                    ? 'bg-dnd-parchment-dark border-dnd-border-antique text-dnd-ink'
+                    : 'bg-dnd-parchment border-dnd-border-antique/50 text-dnd-ink-muted'
                 }`}
               >
                 <div className="flex items-center gap-2">
                   {isExpert ? (
-                    <Star className="w-3.5 h-3.5 text-[#c29b38] fill-[#c29b38] shrink-0" />
+                    <Star className="w-3.5 h-3.5 text-dnd-gold fill-dnd-gold shrink-0" />
                   ) : isProf ? (
-                    <span className="w-3.5 h-3.5 rounded-full bg-[#58180D] flex items-center justify-center text-[9px] text-[#fdf6ea] font-bold shrink-0">
+                    <span className="w-3.5 h-3.5 rounded-full bg-dnd-crimson flex items-center justify-center text-[10px] text-white font-bold shrink-0">
                       ✓
                     </span>
                   ) : (
-                    <span className="w-3.5 h-3.5 rounded-full border border-[#d4c2a5] shrink-0" />
+                    <span className="w-3.5 h-3.5 rounded-full border border-dnd-border-antique shrink-0" />
                   )}
                   <span className="text-xs font-dnd-body font-semibold">{sk.name}</span>
-                  <span className="text-[10px] text-[#58544d] font-dnd-title uppercase">
+                  <span className="text-xs text-dnd-ink-muted font-dnd-title uppercase">
                     ({sk.ability})
                   </span>
                 </div>
@@ -439,10 +441,10 @@ export function CoreStatsView({
                 <span
                   className={`font-dnd-title text-xs font-bold ${
                     isExpert
-                      ? 'text-[#58180D]'
+                      ? 'text-dnd-crimson'
                       : isProf
-                      ? 'text-[#242528]'
-                      : 'text-[#58544d]'
+                      ? 'text-dnd-ink'
+                      : 'text-dnd-ink-muted'
                   }`}
                 >
                   {formatModifier(bonus)}

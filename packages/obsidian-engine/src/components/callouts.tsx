@@ -23,53 +23,53 @@ interface CalloutTheme {
 
 const CALLOUT_THEMES: Record<string, CalloutTheme> = {
   statblock: {
-    border: 'border-2 border-[#58180D]',
-    bg: 'bg-[#fdf1dc] text-[#242528] dnd-notched-sm shadow-md',
-    headerText: 'text-[#58180D] font-dnd-title font-bold uppercase tracking-wider',
+    border: 'border border-dnd-crimson/50',
+    bg: 'bg-dnd-parchment text-dnd-ink rounded-lg shadow-sm',
+    headerText: 'text-dnd-crimson font-dnd-title font-bold tracking-wide',
     icon: Shield
   },
   'dnd-grid': {
-    border: 'border-2 border-[#c29b38]',
-    bg: 'bg-[#fdf6ea] text-[#242528] dnd-notched-sm shadow-sm',
-    headerText: 'text-[#78350f] font-dnd-title font-bold uppercase tracking-wider',
+    border: 'border border-dnd-gold/60',
+    bg: 'bg-dnd-parchment text-dnd-ink rounded-lg shadow-sm',
+    headerText: 'text-dnd-gold font-dnd-title font-bold tracking-wide',
     icon: Dices
   },
   info: {
-    border: 'border-2 border-[#d4c2a5]',
-    bg: 'bg-[#fdf6ea] text-[#242528] dnd-notched-sm shadow-sm',
-    headerText: 'text-[#58180D] font-dnd-title font-bold uppercase tracking-wider',
+    border: 'border border-dnd-border-antique',
+    bg: 'bg-dnd-parchment text-dnd-ink rounded-lg shadow-sm',
+    headerText: 'text-dnd-crimson font-dnd-title font-bold tracking-wide',
     icon: Info
   },
   tip: {
-    border: 'border-2 border-[#15803d]',
-    bg: 'bg-[#f0fdf4] text-[#14532d] dnd-notched-sm shadow-sm',
-    headerText: 'text-[#15803d] font-dnd-title font-bold uppercase tracking-wider',
+    border: 'border border-emerald-600/40',
+    bg: 'bg-emerald-950/10 text-dnd-ink rounded-lg shadow-sm',
+    headerText: 'text-emerald-700 dark:text-emerald-400 font-dnd-title font-bold tracking-wide',
     icon: Sparkles
   },
   warning: {
-    border: 'border-2 border-[#b45309]',
-    bg: 'bg-[#fef3c7] text-[#78350f] dnd-notched-sm shadow-sm',
-    headerText: 'text-[#b45309] font-dnd-title font-bold uppercase tracking-wider',
+    border: 'border border-amber-600/40',
+    bg: 'bg-amber-950/10 text-dnd-ink rounded-lg shadow-sm',
+    headerText: 'text-amber-700 dark:text-amber-400 font-dnd-title font-bold tracking-wide',
     icon: AlertTriangle
   },
   todo: {
-    border: 'border-2 border-[#4338ca]',
-    bg: 'bg-[#eef2ff] text-[#312e81] dnd-notched-sm shadow-sm',
-    headerText: 'text-[#4338ca] font-dnd-title font-bold uppercase tracking-wider',
+    border: 'border border-indigo-600/40',
+    bg: 'bg-indigo-950/10 text-dnd-ink rounded-lg shadow-sm',
+    headerText: 'text-indigo-700 dark:text-indigo-400 font-dnd-title font-bold tracking-wide',
     icon: ListTodo
   },
   dm: {
-    border: 'border-2 border-[#7a2021]',
-    bg: 'bg-[#fbeeed] text-[#58180D] dnd-notched-sm shadow-md',
-    headerText: 'text-[#58180D] font-dnd-title font-bold uppercase tracking-wider',
-    badgeBg: 'bg-[#58180D]',
-    badgeText: 'text-[#fdf6ea] border border-[#7a2021]',
+    border: 'border border-dnd-crimson',
+    bg: 'bg-dnd-crimson-surface text-dnd-ink rounded-lg shadow-sm',
+    headerText: 'text-dnd-crimson font-dnd-title font-bold tracking-wide',
+    badgeBg: 'bg-dnd-crimson',
+    badgeText: 'text-white border border-dnd-gold',
     icon: Lock
   },
   note: {
-    border: 'border-2 border-[#d4c2a5]',
-    bg: 'bg-[#fdf6ea] text-[#242528] dnd-notched-sm shadow-sm',
-    headerText: 'text-[#58180D] font-dnd-title font-bold uppercase tracking-wider',
+    border: 'border border-dnd-border-antique',
+    bg: 'bg-dnd-parchment text-dnd-ink rounded-lg shadow-sm',
+    headerText: 'text-dnd-crimson font-dnd-title font-bold tracking-wide',
     icon: FileText
   }
 };
@@ -98,7 +98,7 @@ export function Callout({ callout, className = '', children }: CalloutProps) {
   const headerContent = (
     <div className="flex items-center justify-between w-full gap-2">
       <div className="flex items-center gap-2.5">
-        <IconComponent className="w-4 h-4 shrink-0 opacity-90" />
+        <IconComponent className="w-4 h-4 shrink-0 opacity-90 text-dnd-crimson" />
         <span className={`text-sm tracking-wide ${theme.headerText}`}>
           {callout.title}
         </span>
@@ -106,19 +106,19 @@ export function Callout({ callout, className = '', children }: CalloutProps) {
 
       <div className="flex items-center gap-2">
         {callout.isDmOnly && (
-          <span className="text-[10px] uppercase tracking-wider font-dnd-title font-bold px-2 py-0.5 rounded-sm bg-[#58180D] text-[#fdf6ea] border border-[#7a2021] flex items-center gap-1 shadow-xs">
-            <Lock className="w-2.5 h-2.5 text-[#c29b38]" /> Confidencial DM 🔒
+          <span className="text-xs uppercase tracking-wider font-dnd-title font-bold px-2 py-0.5 rounded-md bg-dnd-crimson text-white border border-dnd-gold flex items-center gap-1 shadow-xs">
+            <Lock className="w-3 h-3 text-dnd-gold" /> Confidencial DM 🔒
           </span>
         )}
         {isCollapsible && (
-          <ChevronDown className="w-4 h-4 text-[#8a7f72] group-open:rotate-180 transition-transform duration-200" />
+          <ChevronDown className="w-4 h-4 text-dnd-ink-subtle group-open:rotate-180 transition-transform duration-200" />
         )}
       </div>
     </div>
   );
 
   const bodyContent = (
-    <div className="text-xs leading-relaxed text-[#242528]/90 mt-2.5 space-y-2 whitespace-pre-wrap font-dnd-body">
+    <div className="text-xs leading-relaxed text-dnd-ink/90 mt-2.5 space-y-2 whitespace-pre-wrap font-dnd-body">
       {children || callout.content}
     </div>
   );
@@ -127,7 +127,7 @@ export function Callout({ callout, className = '', children }: CalloutProps) {
     return (
       <details
         open={defaultOpen}
-        className={`group my-4 rounded-xl border p-4 shadow-md transition-colors ${theme.border} ${theme.bg} ${className}`}
+        className={`group my-4 rounded-lg border p-4 shadow-sm transition-colors ${theme.border} ${theme.bg} ${className}`}
       >
         <summary className="list-none cursor-pointer select-none">
           {headerContent}
@@ -139,7 +139,7 @@ export function Callout({ callout, className = '', children }: CalloutProps) {
 
   return (
     <div
-      className={`my-4 rounded-xl border p-4 shadow-md ${theme.border} ${theme.bg} ${className}`}
+      className={`my-4 rounded-lg border p-4 shadow-sm ${theme.border} ${theme.bg} ${className}`}
     >
       {headerContent}
       {bodyContent}

@@ -37,7 +37,7 @@ describe('@segadores/ui - Componentes Anatómicos D&D 5e', () => {
       )
     );
     assert.ok(html.includes('dnd-notched'));
-    assert.ok(html.includes('bg-[#fdf6ea]'));
+    assert.ok(html.includes('bg-dnd-parchment'));
     assert.ok(html.includes('Contenido Pergamino'));
   });
 
@@ -49,9 +49,9 @@ describe('@segadores/ui - Componentes Anatómicos D&D 5e', () => {
         'Portada de Cuero'
       )
     );
-    assert.ok(html.includes('bg-[#2c1e18]'));
-    assert.ok(html.includes('text-[#fdf6ea]'));
-    assert.ok(html.includes('border-[#c29b38]'));
+    assert.ok(html.includes('bg-dnd-leather'));
+    assert.ok(html.includes('text-dnd-parchment'));
+    assert.ok(html.includes('border-dnd-gold'));
   });
 
   it('DropCap: genera letra capitular iluminada con estilo de imprenta', () => {
@@ -60,7 +60,7 @@ describe('@segadores/ui - Componentes Anatómicos D&D 5e', () => {
     );
     assert.ok(html.includes('E'));
     assert.ok(html.includes('font-dnd-title'));
-    assert.ok(html.includes('text-[#c29b38]'));
+    assert.ok(html.includes('text-dnd-gold'));
   });
 
   it('HeraldicShield: genera el escudo medieval de CA con el valor y blasón', () => {
@@ -83,7 +83,7 @@ describe('@segadores/ui - Componentes Anatómicos D&D 5e', () => {
       React.createElement(DndBadge, { variant: 'crimson' }, 'Evocación')
     );
     assert.ok(html.includes('Evocación'));
-    assert.ok(html.includes('bg-[#58180D]'));
+    assert.ok(html.includes('bg-dnd-crimson'));
     assert.ok(html.includes('font-dnd-title'));
   });
 
@@ -101,9 +101,9 @@ describe('@segadores/ui - Componentes Anatómicos D&D 5e', () => {
       })
     );
     assert.ok(html.includes('El Guerrero'));
-    assert.ok(html.includes('bg-[#58180D]'));
+    assert.ok(html.includes('bg-dnd-crimson'));
     assert.ok(html.includes('Oleada de Acción'));
-    assert.ok(html.includes('bg-[#fdf6ea]'));
-    assert.ok(html.includes('bg-[#f4ebe1]'));
+    assert.ok(html.includes('bg-dnd-parchment'));
+    assert.ok(html.includes('bg-dnd-parchment-contrast'));
   });
 });

@@ -2,38 +2,149 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #0c0e12;
-  --foreground: #e2e8f0;
+/* =========================================================================
+   SISTEMA DE 4 TEMAS DINÁMICOS POR TOKENS CSS (SEGADORES D&D 5.5e)
+   ========================================================================= */
 
-  /* Tríada Tipográfica D&D 5e */
+/* Tríada Tipográfica Base (Regla 20/80: 20% Fantasía / 80% Precisión Moderna) */
+:root {
   --font-cinzel: 'Cinzel', Trajan Pro, Georgia, serif;
   --font-spectral: 'Spectral', 'Crimson Pro', Georgia, serif;
-
-  /* Paleta Editorial D&D 5e */
-  --dnd-parchment: #fdf6ea;
-  --dnd-parchment-dark: #f4ebe1;
-  --dnd-parchment-contrast: #ede2cb;
-  --dnd-crimson: #58180D;
-  --dnd-terracotta: #c45b1d;
-  --dnd-gold: #c29b38;
-  --dnd-ink: #242528;
-  --dnd-ink-muted: #58544d;
-  --dnd-border-antique: #d4c2a5;
-  --dnd-leather: #2c1e18;
+  --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
+/* 1. TEMA: PARCHMENT-ROYAL (Pergamino Real 5.5e — Diurno por defecto / alias 'light') */
+:root,
+[data-theme="parchment-royal"],
+[data-theme="light"] {
+  --background: #F3EDE0;
+  --foreground: #1E2024;
+
+  --dnd-canvas: #F3EDE0;
+  --dnd-parchment: #FBF8F3;
+  --dnd-parchment-dark: #F4EDE1;
+  --dnd-parchment-contrast: #EAE1D0;
+  --dnd-ink: #1E2024;
+  --dnd-ink-muted: #554F46;
+  --dnd-ink-subtle: #7A7267;
+  --dnd-border-antique: #DCD0BA;
+  --dnd-border-strong: #C5B496;
+  --dnd-crimson: #6E140E;
+  --dnd-crimson-hover: #8B1A12;
+  --dnd-crimson-surface: #FCF1F0;
+  --dnd-crimson-btn: #6E140E;
+  --dnd-crimson-btn-hover: #8B1A12;
+  --dnd-crimson-fg: #FFFFFF;
+  --dnd-on-crimson: #FFFFFF;
+  --dnd-terracotta: #B44B18;
+  --dnd-gold: #B8892E;
+  --dnd-gold-light: #D8AD54;
+  --dnd-gold-surface: #FBF3DC;
+  --dnd-leather: #231C18;
+  --dnd-leather-dark: #16120F;
+}
+
+/* 2. TEMA: PARCHMENT-CLASSIC (Pergamino Clásico Cálido — Diurno 2) */
+[data-theme="parchment-classic"] {
+  --background: #E9DAC2;
+  --foreground: #231D18;
+
+  --dnd-canvas: #E9DAC2;
+  --dnd-parchment: #F7ECDA;
+  --dnd-parchment-dark: #EFE0C6;
+  --dnd-parchment-contrast: #E3CFAF;
+  --dnd-ink: #231D18;
+  --dnd-ink-muted: #594B3E;
+  --dnd-ink-subtle: #7D6B5A;
+  --dnd-border-antique: #CBB494;
+  --dnd-border-strong: #B39772;
+  --dnd-crimson: #58180D;
+  --dnd-crimson-hover: #752012;
+  --dnd-crimson-surface: #F7DFD9;
+  --dnd-crimson-btn: #58180D;
+  --dnd-crimson-btn-hover: #752012;
+  --dnd-crimson-fg: #FFFFFF;
+  --dnd-on-crimson: #FFFFFF;
+  --dnd-terracotta: #9C4215;
+  --dnd-gold: #9E7322;
+  --dnd-gold-light: #C79940;
+  --dnd-gold-surface: #F5E6C4;
+  --dnd-leather: #2A1E17;
+  --dnd-leather-dark: #1A120E;
+}
+
+/* 3. TEMA: GRIMOIRE-BLOOD (Grimorio Sangre & Obsidiana — Nocturno por defecto / alias 'dark') */
+.dark,
+[data-theme="grimoire-blood"],
+[data-theme="dark"] {
+  --background: #090A0F;
+  --foreground: #ECE8DF;
+
+  --dnd-canvas: #090A0F;
+  --dnd-parchment: #12141D;
+  --dnd-parchment-dark: #171A26;
+  --dnd-parchment-contrast: #1E2231;
+  --dnd-ink: #ECE8DF;
+  --dnd-ink-muted: #9CA3B5;
+  --dnd-ink-subtle: #6E768A;
+  --dnd-border-antique: #262A3B;
+  --dnd-border-strong: #383E56;
+  --dnd-crimson: #F87171;
+  --dnd-crimson-hover: #FCA5A5;
+  --dnd-crimson-surface: #261217;
+  --dnd-crimson-btn: #991B1B;
+  --dnd-crimson-btn-hover: #B91C1C;
+  --dnd-crimson-fg: #FFFFFF;
+  --dnd-on-crimson: #FFFFFF;
+  --dnd-terracotta: #FB923C;
+  --dnd-gold: #EAB308;
+  --dnd-gold-light: #FDE047;
+  --dnd-gold-surface: #292111;
+  --dnd-leather: #0D0F17;
+  --dnd-leather-dark: #07080C;
+}
+
+/* 4. TEMA: GRIMOIRE-ABYSSAL (Tomo Nigromántico Abisal — Nocturno 2) */
+[data-theme="grimoire-abyssal"],
+.dark[data-theme="grimoire-abyssal"] {
+  --background: #090810;
+  --foreground: #EAE6F5;
+
+  --dnd-canvas: #090810;
+  --dnd-parchment: #13111F;
+  --dnd-parchment-dark: #191629;
+  --dnd-parchment-contrast: #221D36;
+  --dnd-ink: #EAE6F5;
+  --dnd-ink-muted: #A39BBF;
+  --dnd-ink-subtle: #756C94;
+  --dnd-border-antique: #2C2542;
+  --dnd-border-strong: #433863;
+  --dnd-crimson: #C084FC;
+  --dnd-crimson-hover: #D8B4FE;
+  --dnd-crimson-surface: #221433;
+  --dnd-crimson-btn: #6D28D9;
+  --dnd-crimson-btn-hover: #7C3AED;
+  --dnd-crimson-fg: #FFFFFF;
+  --dnd-on-crimson: #FFFFFF;
+  --dnd-terracotta: #38BDF8;
+  --dnd-gold: #FBBF24;
+  --dnd-gold-light: #FDE68A;
+  --dnd-gold-surface: #281F14;
+  --dnd-leather: #0E0B18;
+  --dnd-leather-dark: #07050C;
+}
+
+/* Tipografía Base Global */
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: var(--font-spectral, 'Spectral', 'Crimson Pro', Georgia, serif);
+  font-family: var(--font-sans, 'Inter', system-ui, sans-serif);
   min-height: 100vh;
 }
 
 /* Tipografía Editorial Oficial */
 .font-dnd-title {
   font-family: var(--font-cinzel, 'Cinzel', Trajan Pro, Georgia, serif);
-  font-variant-caps: small-caps;
   letter-spacing: 0.05em;
 }
 
@@ -41,60 +152,64 @@ body {
   font-family: var(--font-spectral, 'Spectral', 'Crimson Pro', Georgia, serif);
 }
 
-/* Efecto Pergamino Táctil de Libro de Campaña */
+/* Botones y fondos carmesí con alto contraste garantizado en los 4 temas */
+.bg-dnd-crimson {
+  background-color: var(--dnd-crimson-btn, var(--dnd-crimson));
+  --dnd-parchment: #FBF8F3;
+}
+button.bg-dnd-crimson,
+a.bg-dnd-crimson {
+  color: var(--dnd-crimson-fg, #ffffff);
+}
+.bg-dnd-crimson:hover {
+  background-color: var(--dnd-crimson-btn-hover, var(--dnd-crimson-hover));
+}
+
+/* Efecto Pergamino Táctil Adaptativo */
 .bg-parchment-texture {
-  background-color: #fdf6ea;
+  background-color: var(--dnd-parchment);
   background-image: 
-    radial-gradient(#ede2cb 0.75px, transparent 0.75px),
-    radial-gradient(#f4ebe1 0.75px, #fdf6ea 0.75px);
+    radial-gradient(var(--dnd-parchment-contrast) 0.75px, transparent 0.75px),
+    radial-gradient(var(--dnd-parchment-dark) 0.75px, var(--dnd-parchment) 0.75px);
   background-size: 30px 30px;
   background-position: 0 0, 15px 15px;
 }
 
 .bg-parchment-sheet {
-  background-color: #fdf6ea;
-  color: #242528;
+  background-color: var(--dnd-parchment);
+  color: var(--dnd-ink);
   box-shadow: 
-    0 1px 3px rgba(0, 0, 0, 0.12),
-    0 10px 25px -5px rgba(0, 0, 0, 0.25),
-    inset 0 0 40px rgba(196, 177, 146, 0.2);
+    0 1px 3px rgba(0, 0, 0, 0.06),
+    0 4px 12px -2px rgba(0, 0, 0, 0.08);
 }
 
-/* Borde Biselado Notched (Esquinas cortadas a 45° clásicas de D&D) */
+/* Suavizado de Bordes y Cajas (De 'Tosco' a 'Editorial Moderno') */
 .dnd-notched {
-  clip-path: polygon(
-    12px 0%, calc(100% - 12px) 0%,
-    100% 12px, 100% calc(100% - 12px),
-    calc(100% - 12px) 100%, 12px 100%,
-    0% calc(100% - 12px), 0% 12px
-  );
+  border-radius: 0.5rem;
+  border-width: 1px;
 }
 
 .dnd-notched-sm {
-  clip-path: polygon(
-    6px 0%, calc(100% - 6px) 0%,
-    100% 6px, 100% calc(100% - 6px),
-    calc(100% - 6px) 100%, 6px 100%,
-    0% calc(100% - 6px), 0% 6px
-  );
+  border-radius: 0.375rem;
+  border-width: 1px;
 }
 
-/* Scrollbars temáticos latón envejecido y cuero */
+/* Scrollbars temáticos adaptativos */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #1b120e;
+  background: var(--dnd-canvas);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #58544d;
+  background: var(--dnd-ink-muted);
   border-radius: 4px;
-  border: 1px solid #c29b38;
+  border: 1px solid var(--dnd-border-antique);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #c29b38;
+  background: var(--dnd-gold);
 }

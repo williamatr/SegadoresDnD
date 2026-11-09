@@ -23,7 +23,7 @@ export function DndTable({
         'caption',
         {
           className:
-            'font-dnd-title font-bold text-base text-[#58180D] p-2.5 text-left bg-[#ede2cb] border-b border-[#d4c2a5]',
+            'font-dnd-title font-bold text-base text-dnd-crimson p-2.5 text-left bg-dnd-parchment-contrast border-b border-dnd-border-antique',
         },
         caption
       )
@@ -35,7 +35,7 @@ export function DndTable({
       {
         key: i,
         className:
-          'py-2.5 px-3.5 border-b border-[#7a2021] first:pl-4 last:pr-4',
+          'py-2.5 px-3.5 border-b border-dnd-crimson-hover first:pl-4 last:pr-4',
       },
       h
     )
@@ -48,7 +48,7 @@ export function DndTable({
       'tr',
       {
         className:
-          'bg-[#58180D] text-[#fdf6ea] font-dnd-title font-semibold tracking-wider text-xs uppercase select-none',
+          'bg-dnd-crimson text-white font-dnd-title font-semibold tracking-wide text-xs select-none',
       },
       headerCells
     )
@@ -57,8 +57,8 @@ export function DndTable({
   const bodyRows = rows.map((row, rIdx) => {
     const isEven = rIdx % 2 === 0;
     const rowClass = isEven
-      ? 'bg-[#fdf6ea]'
-      : 'bg-[#f4ebe1] hover:bg-[#ede2cb] transition-colors';
+      ? 'bg-dnd-parchment'
+      : 'bg-dnd-parchment-contrast hover:bg-dnd-parchment-dark transition-colors';
 
     const cells = row.map((cell, cIdx) =>
       React.createElement(
@@ -83,7 +83,7 @@ export function DndTable({
 
   const tbody = React.createElement(
     'tbody',
-    { className: 'divide-y divide-[#d4c2a5]/50 font-dnd-body' },
+    { className: 'divide-y divide-dnd-border-antique/50 font-dnd-body' },
     bodyRows
   );
 
@@ -91,7 +91,7 @@ export function DndTable({
     'table',
     {
       className:
-        'w-full text-left border-collapse text-sm text-[#242528]',
+        'w-full text-left border-collapse text-sm text-dnd-ink',
     },
     captionElement,
     thead,
@@ -101,7 +101,7 @@ export function DndTable({
   return React.createElement(
     'div',
     {
-      className: `overflow-x-auto my-4 border border-[#d4c2a5] shadow-sm rounded-sm ${className}`,
+      className: `overflow-x-auto my-4 border border-dnd-border-antique shadow-sm rounded-lg ${className}`,
     },
     table
   );

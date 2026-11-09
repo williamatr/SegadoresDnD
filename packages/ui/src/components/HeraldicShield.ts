@@ -34,15 +34,15 @@ export function HeraldicShield({
   }[size];
 
   const labelFontClasses = {
-    sm: 'text-[9px]',
-    md: 'text-[11px]',
+    sm: 'text-[10px]',
+    md: 'text-xs',
     lg: 'text-xs',
   }[size];
 
-  let fillColor = '#fdf6ea';
-  let strokeColor = '#58180D';
-  let innerStrokeColor = '#c29b38';
-  let textColor = '#58180D';
+  let fillColor = 'var(--dnd-parchment, #fdf6ea)';
+  let strokeColor = 'var(--dnd-crimson, #58180D)';
+  let innerStrokeColor = 'var(--dnd-gold, #c29b38)';
+  let textColor = 'var(--dnd-crimson, #58180D)';
 
   if (variant === 'steel') {
     fillColor = '#e2e8f0';
@@ -108,7 +108,7 @@ export function HeraldicShield({
         'span',
         {
           className:
-            'text-[8px] text-[#58544d] italic tracking-tight line-clamp-1 max-w-[80%]',
+            'text-[10px] text-dnd-ink-muted italic tracking-tight line-clamp-1 max-w-[80%]',
         },
         sublabel
       )

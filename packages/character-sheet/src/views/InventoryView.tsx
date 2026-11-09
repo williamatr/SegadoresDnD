@@ -56,44 +56,44 @@ export function InventoryView({
         </div>
 
         {/* Monedero de 5 Divisas Canónicas D&D 5e */}
-        <div className="p-4 rounded-sm bg-[#fdf6ea] text-[#242528] border-2 border-[#d4c2a5] dnd-notched space-y-3 shadow-md">
-          <div className="flex items-center justify-between border-b border-[#d4c2a5]/80 pb-2">
+        <div className="p-4 rounded-sm bg-dnd-parchment text-dnd-ink border-2 border-dnd-border-antique dnd-notched space-y-3 shadow-md">
+          <div className="flex items-center justify-between border-b border-dnd-border-antique/80 pb-2">
             <div className="flex items-center gap-2">
-              <Coins className="w-4 h-4 text-[#c29b38]" />
-              <h4 className="font-dnd-title font-bold text-xs text-[#58180D] uppercase tracking-wider">
+              <Coins className="w-4 h-4 text-dnd-gold" />
+              <h4 className="font-dnd-title font-bold text-xs text-dnd-crimson uppercase tracking-wider">
                 Monedero Canónico
               </h4>
             </div>
-            <span className="text-[10px] text-[#58544d] font-dnd-title uppercase">5 Divisas</span>
+            <span className="text-[10px] text-dnd-ink-muted font-dnd-title uppercase">5 Divisas</span>
           </div>
 
           <div className="grid grid-cols-5 gap-1.5 text-center">
-            <div className="p-2 rounded-sm bg-[#ede2cb] border border-[#d4c2a5]">
-              <span className="text-[10px] text-[#b45309] font-dnd-title font-black block uppercase">PC</span>
-              <span className="text-xs font-dnd-title font-bold text-[#78350f]">{currency.cp}</span>
+            <div className="p-2 rounded-sm bg-dnd-parchment-contrast border border-dnd-border-antique">
+              <span className="text-[10px] text-dnd-terracotta font-dnd-title font-black block uppercase">PC</span>
+              <span className="text-xs font-dnd-title font-bold text-dnd-terracotta">{currency.cp}</span>
             </div>
-            <div className="p-2 rounded-sm bg-[#ede2cb] border border-[#d4c2a5]">
-              <span className="text-[10px] text-[#64748b] font-dnd-title font-black block uppercase">PP</span>
-              <span className="text-xs font-dnd-title font-bold text-[#334155]">{currency.sp}</span>
+            <div className="p-2 rounded-sm bg-dnd-parchment-contrast border border-dnd-border-antique">
+              <span className="text-[10px] text-dnd-ink-subtle font-dnd-title font-black block uppercase">PP</span>
+              <span className="text-xs font-dnd-title font-bold text-dnd-ink">{currency.sp}</span>
             </div>
-            <div className="p-2 rounded-sm bg-[#ede2cb] border border-[#d4c2a5]">
-              <span className="text-[10px] text-[#0284c7] font-dnd-title font-black block uppercase">PE</span>
-              <span className="text-xs font-dnd-title font-bold text-[#0369a1]">{currency.ep}</span>
+            <div className="p-2 rounded-sm bg-dnd-parchment-contrast border border-dnd-border-antique">
+              <span className="text-[10px] text-sky-600 dark:text-sky-400 font-dnd-title font-black block uppercase">PE</span>
+              <span className="text-xs font-dnd-title font-bold text-sky-700 dark:text-sky-300">{currency.ep}</span>
             </div>
-            <div className="p-2 rounded-sm bg-[#fef9c3] border-2 border-[#ca8a04] shadow-sm">
-              <span className="text-[10px] text-[#854d0e] font-dnd-title font-black block uppercase">PO</span>
-              <span className="text-xs font-dnd-title font-black text-[#854d0e]">{currency.gp}</span>
+            <div className="p-2 rounded-sm bg-dnd-gold-surface border-2 border-dnd-gold shadow-sm">
+              <span className="text-[10px] text-dnd-gold font-dnd-title font-black block uppercase">PO</span>
+              <span className="text-xs font-dnd-title font-black text-dnd-gold">{currency.gp}</span>
             </div>
-            <div className="p-2 rounded-sm bg-[#ede2cb] border border-[#d4c2a5]">
-              <span className="text-[10px] text-[#0f766e] font-dnd-title font-black block uppercase">PPT</span>
-              <span className="text-xs font-dnd-title font-bold text-[#115e59]">{currency.pp}</span>
+            <div className="p-2 rounded-sm bg-dnd-parchment-contrast border border-dnd-border-antique">
+              <span className="text-[10px] text-teal-600 dark:text-teal-400 font-dnd-title font-black block uppercase">PPT</span>
+              <span className="text-xs font-dnd-title font-bold text-teal-700 dark:text-teal-300">{currency.pp}</span>
             </div>
           </div>
         </div>
       </div>
 
       {/* 2. Filtros de Categoría de Inventario */}
-      <div className="flex items-center justify-between flex-wrap gap-2 pt-2 border-t border-[#d4c2a5]/80">
+      <div className="flex items-center justify-between flex-wrap gap-2 pt-2 border-t border-dnd-border-antique/80">
         <div className="flex items-center gap-1.5 flex-wrap">
           {[
             { id: 'all', label: 'Todos los Objetos', count: items.length },
@@ -106,14 +106,14 @@ export function InventoryView({
             <button
               key={cat.id}
               onClick={() => setSelectedCategory(cat.id)}
-              className={`px-3 py-1.5 rounded-sm text-xs font-dnd-title font-bold transition flex items-center gap-1.5 border ${
+              className={`px-3 py-1.5 rounded-md text-xs font-dnd-title font-bold transition flex items-center gap-1.5 border ${
                 selectedCategory === cat.id
-                  ? 'bg-[#58180D] border-[#7a2021] text-[#fdf6ea] shadow-sm'
-                  : 'bg-[#f4ebe1] border-[#d4c2a5] text-[#58544d] hover:text-[#242528] hover:border-[#c29b38]'
+                  ? 'bg-dnd-crimson border-dnd-gold text-white shadow-sm'
+                  : 'bg-dnd-parchment-contrast border-dnd-border-antique text-dnd-ink-muted hover:text-dnd-ink hover:border-dnd-gold'
               }`}
             >
               <span>{cat.label}</span>
-              <span className="text-[10px] px-1.5 py-0.2 rounded-sm bg-[#ede2cb] text-[#58180D] font-bold">
+              <span className="text-xs px-1.5 py-0.5 rounded-md bg-dnd-parchment text-dnd-crimson font-bold">
                 {cat.count}
               </span>
             </button>
@@ -132,26 +132,26 @@ export function InventoryView({
               key={item.slug}
               className={`p-4 rounded-sm border-2 transition flex flex-col justify-between space-y-3 relative dnd-notched shadow-sm ${
                 isAttuned
-                  ? 'bg-[#fef9c3]/50 border-[#ca8a04]'
+                  ? 'bg-dnd-gold-surface/40 border-dnd-gold'
                   : isEquipped
-                  ? 'bg-[#fdf6ea] border-[#c45b1d]'
-                  : 'bg-[#fdf6ea] border-[#d4c2a5] text-[#242528]'
+                  ? 'bg-dnd-parchment border-dnd-terracotta'
+                  : 'bg-dnd-parchment border-dnd-border-antique text-dnd-ink'
               }`}
             >
               <div>
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="font-dnd-title font-bold text-sm text-[#58180D] uppercase tracking-wide">
+                      <span className="font-dnd-title font-bold text-sm text-dnd-crimson uppercase tracking-wide">
                         {item.name}
                       </span>
                       {item.qty > 1 && (
-                        <span className="text-[10px] font-dnd-title font-bold px-1.5 py-0.5 rounded bg-[#ede2cb] text-[#58180D]">
+                        <span className="text-[10px] font-dnd-title font-bold px-1.5 py-0.5 rounded-sm bg-dnd-parchment-contrast text-dnd-crimson border border-dnd-border-antique">
                           x{item.qty}
                         </span>
                       )}
                     </div>
-                    <span className="text-[11px] text-[#58544d] font-dnd-title uppercase tracking-wider block mt-0.5">
+                    <span className="text-[11px] text-dnd-ink-muted font-dnd-title uppercase tracking-wider block mt-0.5">
                       • {item.category === 'weapon'
                         ? 'Arma'
                         : item.category === 'armor'
@@ -182,8 +182,8 @@ export function InventoryView({
 
                 {/* Notas y Descripción Canónica */}
                 {item.notes && (
-                  <p className="text-xs text-[#242528] font-dnd-body mt-2 leading-relaxed italic bg-[#f4ebe1]/80 p-2.5 rounded-sm border border-[#d4c2a5]/60">
-                    <strong className="font-dnd-title not-italic font-bold text-[#58180D]">Propiedad. </strong>
+                  <p className="text-xs text-dnd-ink font-dnd-body mt-2 leading-relaxed italic bg-dnd-parchment-contrast/70 p-2.5 rounded-sm border border-dnd-border-antique/80">
+                    <strong className="font-dnd-title not-italic font-bold text-dnd-crimson">Propiedad. </strong>
                     {item.notes}
                   </p>
                 )}
@@ -191,15 +191,15 @@ export function InventoryView({
 
               {/* Botones de Acción (Equipar / Sintonizar) */}
               {!readOnly && (
-                <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#d4c2a5]/60 text-xs">
+                <div className="flex items-center justify-end gap-2 pt-2 border-t border-dnd-border-antique/80 text-xs">
                   {/* Botón de Equipar/Desequipar (Armas y Armaduras) */}
                   {(item.category === 'weapon' || item.category === 'armor' || item.category === 'shield') && (
                     <button
                       onClick={() => onToggleEquipped?.(item.slug)}
                       className={`px-3 py-1 rounded-sm border font-dnd-title font-bold text-xs uppercase tracking-wider transition shadow-sm ${
                         isEquipped
-                          ? 'bg-[#58180D] border-[#7a2021] text-[#fdf6ea] hover:bg-[#7a2021]'
-                          : 'bg-[#ede2cb] border-[#d4c2a5] text-[#58180D] hover:bg-[#d4c2a5]'
+                          ? 'bg-dnd-crimson border-dnd-crimson-hover text-white hover:bg-dnd-crimson-hover'
+                          : 'bg-dnd-parchment-contrast border-dnd-border-antique text-dnd-crimson hover:bg-dnd-parchment'
                       }`}
                     >
                       {isEquipped ? 'Desequipar' : 'Equipar'}
@@ -212,8 +212,8 @@ export function InventoryView({
                       onClick={() => onToggleAttunement?.(item.slug)}
                       className={`px-3 py-1 rounded-sm border font-dnd-title font-bold text-xs uppercase tracking-wider flex items-center gap-1.5 transition shadow-sm ${
                         isAttuned
-                          ? 'bg-[#c29b38] border-[#ca8a04] text-[#1b120e] hover:bg-[#a88225]'
-                          : 'bg-[#ede2cb] border-[#d4c2a5] text-[#58180D] hover:bg-[#d4c2a5]'
+                          ? 'bg-dnd-gold border-dnd-gold-light text-dnd-leather-dark hover:bg-dnd-gold-light'
+                          : 'bg-dnd-parchment-contrast border-dnd-border-antique text-dnd-crimson hover:bg-dnd-parchment'
                       }`}
                     >
                       <Sparkles className="w-3 h-3" />
