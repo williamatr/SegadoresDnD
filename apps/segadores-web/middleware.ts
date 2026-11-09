@@ -12,8 +12,32 @@ import { updateSession } from '@/lib/supabase/middleware';
  */
 export async function middleware(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
+  const host = request.headers.get('host') || request.nextUrl.host || '';
 
-  // 1. Refrescar la sesión criptográfica con Supabase Auth (getUser)
+  // 1. Enmascaramiento canónico: si la petición llega por un dominio de Vercel en producción,
+  // redirigir con HTTP 308 (Permanente) al dominio canónico oficial (www.segadoresdnd.com).
+  const isVercelHost = host.includes('vercel.app');
+  const isProduction =
+    process.env.VERCEL_ENV === 'production' ||
+    (process.env.NODE_ENV === 'production' && isVercelHost);
+
+  if (isProduction && isVercelHost) {
+    const canonicalUrl = new URL(request.url);
+    canonicalUrl.host = 'www.segadoresdnd.com';
+    canonicalUrl.protocol = 'https:';
+    return NextResponse.redirect(canonicalUrl, 308);
+  }
+
+  // 2. Salvaguarda OAuth: si el proveedor OAuth devuelve el código a la raíz (/?code=...)
+  // en lugar de /auth/callback, interceptarlo inmediatamente y reenviarlo a /auth/callback
+  // para intercambiar la sesión en el servidor y redirigir al usuario directo al /portal.
+  if (pathname === '/' && request.nextUrl.searchParams.has('code')) {
+    const callbackUrl = new URL('/auth/callback', request.url);
+    callbackUrl.search = search;
+    return NextResponse.redirect(callbackUrl);
+  }
+
+  // 3. Refrescar la sesión criptográfica con Supabase Auth (getUser)
   const { supabaseResponse, user, supabase } = await updateSession(request);
 
   // 2. Determinar si la ruta actual es privada y requiere control de acceso

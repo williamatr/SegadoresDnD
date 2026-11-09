@@ -1,6 +1,6 @@
 # TASK-09: Sistema de Diseño Editorial D&D 5e (Tokens, Pergamino, Heráldica y Tipografía)
 
-> **Estado General:** 🔴 Alta Prioridad (Siguiente en Ejecución)
+> **Estado General:** 🟢 Completada
 > **Agentes Responsables:** `frontend-engineer`, `theme-design-reviewer`
 > **Paquetes Afectados:** `packages/ui`, `apps/segadores-web`
 
@@ -14,7 +14,7 @@ Reemplazar la estética moderna genérica ("estilo SaaS / iOS con fondos oscuros
 
 ## 📋 Subtareas y Checklist
 
-- [ ] **SUBTASK-09.1: Paleta de Colores Canónica D&D y Texturas de Pergamino en Tailwind**
+- [x] **SUBTASK-09.1: Paleta de Colores Canónica D&D y Texturas de Pergamino en Tailwind**
   - **Objetivo:** Configurar en `tailwind.config` de `apps/segadores-web` y `@segadores/ui` la paleta cromática extraída de los manuales físicos:
     - `dnd-parchment`: `#fdf6ea` (fondo de página de libro claro).
     - `dnd-parchment-dark`: `#f4ebe1` (pergamino envejecido para tarjetas y paneles).
@@ -26,23 +26,25 @@ Reemplazar la estética moderna genérica ("estilo SaaS / iOS con fondos oscuros
     - `dnd-ink`: `#242528` (tinta negra editorial de imprenta para texto corrido).
     - `dnd-ink-muted`: `#58544d` (tinta atenuada para metadatos y subtítulos).
     - `dnd-border-antique`: `#d4c2a5` / `#c4b192` (filetes y bordes envejecidos).
-  - **Archivos:** `apps/segadores-web/tailwind.config.ts` (o `.js`), `packages/ui/` y estilos globales `apps/segadores-web/app/globals.css`.
+  - **Archivos:** `apps/segadores-web/tailwind.config.ts`, `apps/segadores-web/app/globals.css`.
 
-- [ ] **SUBTASK-09.2: Tipografía de Manual Editorial de D&D (Google Fonts & Fallbacks)**
-  - **Objetivo:** Incorporar la tríada tipográfica oficial en Next.js (`next/font/google`):
-    - **Títulos y Rótulos Heráldicos:** `Cinzel` / `MedievalSharp` (emulando *Nodesto Caps* y *Modesto* de Wizards of the Coast).
+- [x] **SUBTASK-09.2: Tipografía de Manual Editorial de D&D (Google Fonts & Fallbacks)**
+  - **Objetivo:** Incorporar la tríada tipográfica oficial en Next.js:
+    - **Títulos y Rótulos Heráldicos:** `Cinzel` (emulando *Nodesto Caps* y *Modesto* de Wizards of the Coast).
     - **Cuerpo Narrativo y Mecánicas:** `Spectral` / `Crimson Pro` (emulando *Book Antiqua* / *Mrs Eaves* de imprenta).
-    - **Tablas y Estadísticas Condensadas:** `Scaly Sans` / `Cinzel Decorative` para valores numéricos y tablas.
-  - **Archivos:** `apps/segadores-web/app/layout.tsx`, clases de utilidad `.font-dnd-title`, `.font-dnd-body`, `.font-dnd-stats`.
+    - Clases de utilidad y variables CSS en `globals.css`: `.font-dnd-title`, `.font-dnd-body`.
+  - **Archivos:** `apps/segadores-web/app/layout.tsx`, `apps/segadores-web/app/globals.css`.
 
-- [ ] **SUBTASK-09.3: Componentes Anatómicos Core en `@segadores/ui`**
+- [x] **SUBTASK-09.3: Componentes Anatómicos Core en `@segadores/ui`**
   - **Objetivo:** Construir los bloques de construcción gráficos que emulan los manuales:
-    - **`TaperedRule`:** Componente SVG con la línea divisoria cónica (gruesa en el centro y fina en los extremos) en degradado carmesí/dorado.
-    - **`ParchmentFrame` / `NotchedCard`:** Contenedores con esquinas cóncavas o biseladas (45° / *notched corners*) con borde doble envejecido.
-    - **`DropCap`:** Letra capitular iluminada de 2 líneas de alto con grabado en oro viejo para inicios de sección.
-    - **`HeraldicCrest` / `DndBadge`:** Contenedores circulares u ovalados para blasones de clase e insignias de bonificadores.
-    - **`DndTable`:** Estructura de tabla con cabecera carmesí/vino y filas alternadas melocotón/pergamino (`#f2ded0` / `#fdf6ea`).
-  - **Archivos:** `packages/ui/src/components/TaperedRule.tsx`, `packages/ui/src/components/ParchmentFrame.tsx`, `packages/ui/src/components/DropCap.tsx`, `packages/ui/src/components/DndTable.tsx`, `packages/ui/index.ts`.
+    - **`TaperedRule`:** Componente SVG con la línea divisoria cónica en degradado carmesí/dorado.
+    - **`ParchmentFrame`:** Contenedores con esquinas biseladas (45° / *notched corners*) y relieve de pergamino.
+    - **`DropCap`:** Letra capitular iluminada de 2 líneas de alto para inicios de sección.
+    - **`HeraldicShield`:** Escudo medieval heráldico (heater shield) para Clase de Armadura (CA).
+    - **`DndBadge`:** Insignias de versalitas con estilos de cintilla y cera carmesí/oro.
+    - **`DndTable`:** Estructura de tabla con cabecera vino y filas alternadas pergamino.
+    - **Tests unitarios:** 8 pruebas automatizadas ejecutadas y validadas con `renderToStaticMarkup`.
+  - **Archivos:** `packages/ui/src/components/*`, `packages/ui/index.ts`, `packages/ui/src/tests/components.test.ts`.
 
 ---
 
@@ -50,4 +52,4 @@ Reemplazar la estética moderna genérica ("estilo SaaS / iOS con fondos oscuros
 
 | Fecha | Agente / Dev | Subtarea | Resumen de Cambios Realizados |
 | :--- | :--- | :--- | :--- |
-| *Pendiente* | `frontend-engineer` | - | Creación de la épica para el sistema de diseño D&D 5e. |
+| 2026-11-08 | `frontend-engineer` | SUBTASK-09.1, 09.2, 09.3 | Implementación completa de tokens Tailwind, tipografía Cinzel/Spectral, utilidades de pergamino y suite anatómica en `@segadores/ui` con 8 tests unitarios. |

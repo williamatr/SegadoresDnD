@@ -42,8 +42,8 @@ Cuando el usuario solicita implementar una funcionalidad o idea nueva, todos los
 
 | ID | Épica / Módulo | Estado | Agentes Asignados | Archivo de Especificación |
 | :--- | :--- | :---: | :--- | :--- |
-| **TASK-09** | **Sistema de Diseño Editorial D&D 5e (Tokens, Pergamino, Heráldica y Tipografía)** | 🔴 Alta Prioridad | `frontend-engineer`, `theme-design-reviewer` | [task-09-dnd-design-system.md](./task-09-dnd-design-system.md) |
-| **TASK-10** | **Refactor Visual de la Hoja de Personaje D&D 5e (Heráldica, Escudo CA, Cajas Notched y Tarjetas de Hechizos)** | 🟡 Pendiente | `frontend-engineer`, `theme-design-reviewer` | [task-10-dnd-character-sheet-refactor.md](./task-10-dnd-character-sheet-refactor.md) |
+| **TASK-09** | **Sistema de Diseño Editorial D&D 5e (Tokens, Pergamino, Heráldica y Tipografía)** | 🟢 Completada | `frontend-engineer`, `theme-design-reviewer` | [task-09-dnd-design-system.md](./task-09-dnd-design-system.md) |
+| **TASK-10** | **Refactor Visual de la Hoja de Personaje D&D 5e (Heráldica, Escudo CA, Cajas Notched y Tarjetas de Hechizos)** | 🔴 Alta Prioridad | `frontend-engineer`, `theme-design-reviewer` | [task-10-dnd-character-sheet-refactor.md](./task-10-dnd-character-sheet-refactor.md) |
 | **TASK-11** | **Inmersión Visual del Portal del Jugador, Wiki y Bitácora del DM** | 🟡 Pendiente | `frontend-engineer`, `theme-design-reviewer` | [task-11-portal-and-wiki-immersion.md](./task-11-portal-and-wiki-immersion.md) |
 
 ---
@@ -72,8 +72,8 @@ flowchart TD
     end
 
     subgraph Sprint2["Sprint 2: Experiencia Inmersiva D&D 5e (PRIORIDAD ACTUAL 🔴)"]
-        T05 --> T09["TASK-09 🔴\nSistema de Diseño D&D 5e\n(Tokens, Pergamino, Fuentes, SVG)"]
-        T09 --> T10["TASK-10 🟡\nRefactor Hoja Personaje\n(Escudo CA, Cajas Notched, Hechizos)"]
+        T05 --> T09["TASK-09 🟢\nSistema de Diseño D&D 5e\n(Tokens, Pergamino, Fuentes, SVG)"]
+        T09 --> T10["TASK-10 🔴\nRefactor Hoja Personaje\n(Escudo CA, Cajas Notched, Hechizos)"]
         T09 --> T11["TASK-11 🟡\nInmersión Portal, Wiki & DM\n(Lomo Cuero, Statblocks, Callouts)"]
     end
 

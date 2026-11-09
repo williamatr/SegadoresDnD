@@ -32,8 +32,11 @@ function LoginForm() {
 
       const supabase = createClient();
       const safeNext = sanitizeNextPath(nextParam);
-      const origin = window.location.origin;
-      const redirectTo = `${origin}/auth/callback?next=${encodeURIComponent(safeNext)}`;
+      const rawOrigin = window.location.origin;
+      const canonicalOrigin =
+        process.env.NEXT_PUBLIC_SITE_URL ||
+        (rawOrigin.includes('vercel.app') ? 'https://www.segadoresdnd.com' : rawOrigin);
+      const redirectTo = `${canonicalOrigin}/auth/callback?next=${encodeURIComponent(safeNext)}`;
 
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',

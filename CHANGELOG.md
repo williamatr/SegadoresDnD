@@ -10,6 +10,13 @@ y este proyecto se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 ## [Unreleased]
 
 ### Añadido
+* **Sistema de Diseño Editorial D&D 5e (`@segadores/ui` & Tailwind) (TASK-09):**
+  * Configurada la paleta canónica de manual de D&D 5e en `tailwind.config.ts`: pergamino claro (`#fdf6ea`), pergamino envejecido (`#f4ebe1`), carmesí oficial (`#58180D`), terracota (`#c45b1d`), oro viejo (`#c29b38`), tinta de imprenta (`#242528`) y lomo de cuero (`#2c1e18`).
+  * Integrada la tipografía oficial `Cinzel` (encabezados y rótulos) y `Spectral` (cuerpo editorial de libro de rol) con fallbacks sólidos y clases `.font-dnd-title` y `.font-dnd-body`.
+  * Implementados los componentes anatómicos en `@segadores/ui`: `TaperedRule` (línea divisoria SVG cónica), `ParchmentFrame` (marcos biselados notched 45°), `DropCap` (letra capitular de oro), `HeraldicShield` (escudo medieval para Clase de Armadura), `DndBadge` (insignias en versalitas) y `DndTable` (tablas alternadas pergamino/carmesí).
+  * Añadida suite de 8 tests unitarios en `@segadores/ui` validados mediante `renderToStaticMarkup`.
+* **Redirecciones Canónicas y Dominio Oficial (`apps/segadores-web`):**
+  * Enrutamiento de enlaces de invitación y retornos OAuth de Google directamente al dominio canónico `www.segadoresdnd.com`, evitando desajustes de origen cruzado en vistas previas de Vercel.
 * **Backlog de Inmersión Visual D&D 5e (Sprint 2):**
   * Creadas las épicas de diseño y refactor visual: `TASK-09` (Sistema de Diseño Editorial D&D 5e: tokens, paleta pergamino, heráldica y tipografía), `TASK-10` (Refactor de la Hoja de Personaje D&D 5e: escudo medieval CA, cajas notched y tarjetas de conjuro) y `TASK-11` (Inmersión Visual del Portal, Wiki y Bitácora del DM).
   * Reorganizado el tablero `docs/tasks/README.md` priorizando la experiencia y juego en mesa de los aventureros antes de las tareas de tooling interno (`TASK-07` y `TASK-08`).

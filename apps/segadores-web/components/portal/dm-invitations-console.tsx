@@ -23,6 +23,15 @@ import {
 import { CAMPAIGN_CHARACTERS } from '@/lib/campaign/characters';
 import type { AdminPlayerItem } from '@/app/api/admin/invitations/route';
 
+function getCanonicalInvitationUrl(): string {
+  if (typeof window === 'undefined') return '/login?invited=true';
+  const rawOrigin = window.location.origin;
+  const canonicalOrigin =
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    (rawOrigin.includes('vercel.app') ? 'https://www.segadoresdnd.com' : rawOrigin);
+  return `${canonicalOrigin}/login?invited=true`;
+}
+
 interface DmInvitationsConsoleProps {
   currentDmId: string;
   initialPlayers?: AdminPlayerItem[];
@@ -95,7 +104,7 @@ export function DmInvitationsConsole({ currentDmId, initialPlayers = [] }: DmInv
 
       setFormSuccess({
         message: data.message || `¡Aventurero ${displayName} autorizado con éxito!`,
-        invitationLink: data.invitationLink || `${window.location.origin}/login?invited=true`,
+        invitationLink: data.invitationLink || getCanonicalInvitationUrl(),
       });
 
       // Limpiar formulario tras éxito
@@ -413,9 +422,7 @@ export function DmInvitationsConsole({ currentDmId, initialPlayers = [] }: DmInv
               players.map(p => {
                 const isSelf = p.id === currentDmId;
                 const char = CAMPAIGN_CHARACTERS.find(c => c.slug === p.assigned_character_slug);
-                const invitationUrl = typeof window !== 'undefined'
-                  ? `${window.location.origin}/login?invited=true`
-                  : '/login?invited=true';
+                const invitationUrl = getCanonicalInvitationUrl();
 
                 return (
                   <div

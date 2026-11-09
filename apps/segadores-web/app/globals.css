@@ -5,30 +5,96 @@
 :root {
   --background: #0c0e12;
   --foreground: #e2e8f0;
+
+  /* Tríada Tipográfica D&D 5e */
+  --font-cinzel: 'Cinzel', Trajan Pro, Georgia, serif;
+  --font-spectral: 'Spectral', 'Crimson Pro', Georgia, serif;
+
+  /* Paleta Editorial D&D 5e */
+  --dnd-parchment: #fdf6ea;
+  --dnd-parchment-dark: #f4ebe1;
+  --dnd-parchment-contrast: #ede2cb;
+  --dnd-crimson: #58180D;
+  --dnd-terracotta: #c45b1d;
+  --dnd-gold: #c29b38;
+  --dnd-ink: #242528;
+  --dnd-ink-muted: #58544d;
+  --dnd-border-antique: #d4c2a5;
+  --dnd-leather: #2c1e18;
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: var(--font-sans, system-ui, -apple-system, sans-serif);
+  font-family: var(--font-spectral, 'Spectral', 'Crimson Pro', Georgia, serif);
   min-height: 100vh;
 }
 
-/* Scrollbars temáticos oscuros */
+/* Tipografía Editorial Oficial */
+.font-dnd-title {
+  font-family: var(--font-cinzel, 'Cinzel', Trajan Pro, Georgia, serif);
+  font-variant-caps: small-caps;
+  letter-spacing: 0.05em;
+}
+
+.font-dnd-body {
+  font-family: var(--font-spectral, 'Spectral', 'Crimson Pro', Georgia, serif);
+}
+
+/* Efecto Pergamino Táctil de Libro de Campaña */
+.bg-parchment-texture {
+  background-color: #fdf6ea;
+  background-image: 
+    radial-gradient(#ede2cb 0.75px, transparent 0.75px),
+    radial-gradient(#f4ebe1 0.75px, #fdf6ea 0.75px);
+  background-size: 30px 30px;
+  background-position: 0 0, 15px 15px;
+}
+
+.bg-parchment-sheet {
+  background-color: #fdf6ea;
+  color: #242528;
+  box-shadow: 
+    0 1px 3px rgba(0, 0, 0, 0.12),
+    0 10px 25px -5px rgba(0, 0, 0, 0.25),
+    inset 0 0 40px rgba(196, 177, 146, 0.2);
+}
+
+/* Borde Biselado Notched (Esquinas cortadas a 45° clásicas de D&D) */
+.dnd-notched {
+  clip-path: polygon(
+    12px 0%, calc(100% - 12px) 0%,
+    100% 12px, 100% calc(100% - 12px),
+    calc(100% - 12px) 100%, 12px 100%,
+    0% calc(100% - 12px), 0% 12px
+  );
+}
+
+.dnd-notched-sm {
+  clip-path: polygon(
+    6px 0%, calc(100% - 6px) 0%,
+    100% 6px, 100% calc(100% - 6px),
+    calc(100% - 6px) 100%, 6px 100%,
+    0% calc(100% - 6px), 0% 6px
+  );
+}
+
+/* Scrollbars temáticos latón envejecido y cuero */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #0c0e12;
+  background: #1b120e;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #2c3345;
+  background: #58544d;
   border-radius: 4px;
+  border: 1px solid #c29b38;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #c99a3e;
+  background: #c29b38;
 }
