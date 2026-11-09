@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import {
   Shield,
@@ -16,7 +16,11 @@ import {
   ExternalLink,
   Star,
   Compass,
-  ArrowRight
+  ArrowRight,
+  Loader2,
+  CheckCircle2,
+  CloudOff,
+  RefreshCw
 } from 'lucide-react';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
@@ -30,6 +34,7 @@ import {
 } from '@/lib/campaign/characters';
 import { CharacterSheet, type CharacterSheetTab } from '@segadores/character-sheet';
 import type { Character, ActiveEffect, DeathSaves, CharacterPersonality } from '@segadores/dnd-core';
+import { createInjuryActiveEffect } from '@segadores/dnd-core';
 import { DmInvitationsConsole } from '@/components/portal/dm-invitations-console';
 import type { AdminPlayerItem } from '@/app/api/admin/invitations/route';
 
@@ -66,28 +71,57 @@ export function PortalDashboard({
   const [selectedSlug, setSelectedSlug] = useState<string>(defaultCharSlug);
   const [activeSheetTab, setActiveSheetTab] = useState<CharacterSheetTab>('stats');
 
+  // Estado de sincronización en tiempo real con Supabase
+  const [syncStatus, setSyncStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
+
   // Estado mutable local de las 5 fichas de personaje
   const [charactersMap, setCharactersMap] = useState<Record<string, Character>>(() => {
     return { ...CAMPAIGN_FULL_CHARACTERS, ...(initialCharacters || {}) };
   });
 
-  // Cargar estado guardado en localStorage si existe, pero priorizando siempre
-  // los datos canónicos frescos que vienen desde Supabase (initialCharacters).
+  // Cargar estado guardado en localStorage o Supabase (initialCharacters),
+  // reconciliando defensivamente cualquier cambio local previo no sincronizado.
   useEffect(() => {
     try {
+      const saved = localStorage.getItem('segadores_portal_characters');
+      const parsedSaved: Record<string, Character> | null = saved ? JSON.parse(saved) : null;
+
       if (initialCharacters && Object.keys(initialCharacters).length > 0) {
-        const merged = { ...CAMPAIGN_FULL_CHARACTERS, ...initialCharacters };
+        const merged: Record<string, Character> = { ...CAMPAIGN_FULL_CHARACTERS, ...initialCharacters };
+
+        // Si el usuario tenía modificaciones locales más recientes (ej. equipamiento desequipado), reconciliar
+        if (parsedSaved) {
+          for (const [slug, savedChar] of Object.entries(parsedSaved)) {
+            if (merged[slug]) {
+              const serverUpdated = new Date(merged[slug].updated_at || 0).getTime();
+              const localUpdated = new Date(savedChar.updated_at || 0).getTime();
+              if (localUpdated > serverUpdated) {
+                merged[slug] = {
+                  ...merged[slug],
+                  inventory: savedChar.inventory ?? merged[slug].inventory,
+                  spell_slots: savedChar.spell_slots ?? merged[slug].spell_slots,
+                  current_hp: savedChar.current_hp ?? merged[slug].current_hp,
+                  temp_hp: savedChar.temp_hp ?? merged[slug].temp_hp,
+                  exhaustion: savedChar.exhaustion ?? merged[slug].exhaustion,
+                  death_saves: savedChar.death_saves ?? merged[slug].death_saves,
+                  hit_dice_current: savedChar.hit_dice_current ?? merged[slug].hit_dice_current,
+                  prepared_spells: savedChar.prepared_spells ?? merged[slug].prepared_spells,
+                  active_effects: savedChar.active_effects ?? merged[slug].active_effects,
+                  class_resources: savedChar.class_resources ?? merged[slug].class_resources
+                };
+              }
+            }
+          }
+        }
         setCharactersMap(merged);
         localStorage.setItem('segadores_portal_characters', JSON.stringify(merged));
         return;
       }
 
-      const saved = localStorage.getItem('segadores_portal_characters');
-      if (saved) {
-        const parsed = JSON.parse(saved);
+      if (parsedSaved) {
         setCharactersMap(prev => {
           const next = { ...prev };
-          for (const [slug, char] of Object.entries(parsed as Record<string, Character>)) {
+          for (const [slug, char] of Object.entries(parsedSaved)) {
             if (!next[slug] || (char.level || 0) >= (next[slug].level || 0)) {
               next[slug] = { ...next[slug], ...char };
             }
@@ -100,12 +134,86 @@ export function PortalDashboard({
     }
   }, [initialCharacters]);
 
-  const saveCharactersMap = (newMap: Record<string, Character>) => {
+  // Cola de persistencia con debouncing para ráfagas rápidas y prevención de condiciones de carrera
+  const pendingSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const isSavingRef = useRef<boolean>(false);
+  const queuedSaveRef = useRef<{ slug: string; character: Character } | null>(null);
+
+  const executePersist = async (slug: string, character: Character) => {
+    if (isSavingRef.current) {
+      queuedSaveRef.current = { slug, character };
+      return;
+    }
+
+    isSavingRef.current = true;
+    setSyncStatus('saving');
+
+    try {
+      // 1. Intentar endpoint dedicado REST /api/characters/[slug]
+      let res = await fetch(`/api/characters/${encodeURIComponent(slug)}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ character })
+      });
+
+      // 2. Fallback a POST /api/characters/update si el endpoint dinámico retornara 404/405
+      if (!res.ok && (res.status === 404 || res.status === 405)) {
+        res = await fetch('/api/characters/update', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ slug, character })
+        });
+      }
+
+      if (res.ok) {
+        setSyncStatus('saved');
+        setTimeout(() => {
+          setSyncStatus(prev => (prev === 'saved' ? 'idle' : prev));
+        }, 3000);
+      } else {
+        const errJson = await res.json().catch(() => null);
+        console.warn(`[PortalDashboard] Error persistiendo "${slug}" en BD:`, errJson?.error || res.statusText);
+        setSyncStatus('error');
+      }
+    } catch (e) {
+      console.warn('[PortalDashboard] Fallo de red/servidor persistiendo a Supabase:', e);
+      setSyncStatus('error');
+    } finally {
+      isSavingRef.current = false;
+      if (queuedSaveRef.current) {
+        const next = queuedSaveRef.current;
+        queuedSaveRef.current = null;
+        executePersist(next.slug, next.character);
+      }
+    }
+  };
+
+  const schedulePersistToDatabase = (slug: string, character: Character) => {
+    if (pendingSaveTimeoutRef.current) {
+      clearTimeout(pendingSaveTimeoutRef.current);
+    }
+    pendingSaveTimeoutRef.current = setTimeout(() => {
+      executePersist(slug, character);
+    }, 400);
+  };
+
+  const handleRetrySync = () => {
+    const current = charactersMap[selectedSlug];
+    if (current) {
+      executePersist(selectedSlug, current);
+    }
+  };
+
+  const saveCharactersMap = (newMap: Record<string, Character>, targetSlug?: string) => {
     setCharactersMap(newMap);
     try {
       localStorage.setItem('segadores_portal_characters', JSON.stringify(newMap));
     } catch {
-      // Ignorar límites de almacenamiento
+      // Ignorar límites de almacenamiento local
+    }
+
+    if (targetSlug && newMap[targetSlug]) {
+      schedulePersistToDatabase(targetSlug, newMap[targetSlug]);
     }
   };
 
@@ -123,13 +231,16 @@ export function PortalDashboard({
   // Permisos: Si es DM (sin simular), puede editar cualquier ficha. Si es jugador (o simula ser jugador), solo la que tenga asignada.
   const isReadOnlyForUser = activeRole === 'player' && effectiveAssignedSlug !== selectedSlug;
 
-  // Actualizador genérico de la ficha activa
+  // Actualizador genérico de la ficha activa con persistencia a base de datos
   const updateCurrentCharacter = (updater: (prev: Character) => Character) => {
     setCharactersMap(prev => {
       const current = prev[selectedSlug] || CAMPAIGN_FULL_CHARACTERS[selectedSlug] || prev['zuma'];
-      const updated = updater({ ...current });
+      const updated = updater({
+        ...current,
+        updated_at: new Date().toISOString()
+      });
       const nextMap = { ...prev, [selectedSlug]: updated };
-      saveCharactersMap(nextMap);
+      saveCharactersMap(nextMap, selectedSlug);
       return nextMap;
     });
   };
@@ -306,6 +417,14 @@ export function PortalDashboard({
 
   const handleLevelUp = (updatedCharacter: Character) => {
     updateCurrentCharacter(() => updatedCharacter);
+  };
+
+  const handleTriggerInjuryTable = (table: 'A' | 'B') => {
+    const d20 = Math.floor(Math.random() * 20) + 1;
+    const effect = createInjuryActiveEffect(table, d20, 'Sistema de Heridas');
+    if (effect) {
+      handleApplyEffect(effect);
+    }
   };
 
   return (
@@ -512,11 +631,41 @@ export function PortalDashboard({
                 <Swords className="w-4 h-4 text-dnd-gold" />
                 Héroes Oficiales de la Compañía (Niveles 7 a 9)
               </h2>
-              {isReadOnlyForUser && (
-                <span className="text-[11px] text-dnd-ink-muted font-dnd-title font-semibold">
-                  👀 Modo Lectura (Ficha de Compañero)
-                </span>
-              )}
+              <div className="flex items-center gap-2.5">
+                {syncStatus === 'saving' && (
+                  <span className="text-[10px] font-dnd-title font-bold text-amber-600 dark:text-amber-400 flex items-center gap-1.5 animate-pulse px-2 py-0.5 rounded bg-amber-500/10 border border-amber-600/30">
+                    <Loader2 className="w-3 h-3 animate-spin text-amber-600 dark:text-amber-400" />
+                    Guardando cambios...
+                  </span>
+                )}
+                {syncStatus === 'saved' && (
+                  <span className="text-[10px] font-dnd-title font-bold text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5 px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-600/30 animate-in fade-in">
+                    <CheckCircle2 className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
+                    Cambios guardados en la nube
+                  </span>
+                )}
+                {syncStatus === 'error' && (
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-[10px] font-dnd-title font-bold text-amber-700 dark:text-amber-400 flex items-center gap-1 px-2 py-0.5 rounded bg-amber-500/10 border border-amber-600/30" title="Cambios respaldados localmente en localStorage. Se sincronizarán al reconectar.">
+                      <CloudOff className="w-3 h-3 text-amber-600 dark:text-amber-400" />
+                      Modo sin conexión / Error al sincronizar
+                    </span>
+                    <button
+                      type="button"
+                      onClick={handleRetrySync}
+                      className="text-[10px] font-dnd-title font-bold px-1.5 py-0.5 rounded bg-amber-500/10 hover:bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-600/30 flex items-center gap-1 transition"
+                      title="Reintentar sincronización con la base de datos"
+                    >
+                      <RefreshCw className="w-2.5 h-2.5" /> Reintentar
+                    </button>
+                  </div>
+                )}
+                {isReadOnlyForUser && (
+                  <span className="text-[11px] text-dnd-ink-muted font-dnd-title font-semibold">
+                    👀 Modo Lectura (Ficha de Compañero)
+                  </span>
+                )}
+              </div>
             </div>
             <TaperedRule variant="gold" />
           </div>
@@ -601,6 +750,7 @@ export function PortalDashboard({
             onShortRest={handleShortRest}
             onLongRest={handleLongRest}
             onLevelUp={handleLevelUp}
+            onTriggerInjuryTable={handleTriggerInjuryTable}
           />
         </section>
 

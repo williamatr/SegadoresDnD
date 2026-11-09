@@ -16,5 +16,7 @@ export * from './src/rules/state-evaluator.ts';
 export * from './src/rules/level-up.ts';
 export * from './src/rules/spell-preparation.ts';
 export * from './src/rules/canonical-buffs.ts';
+export * from './src/rules/contextual-rules.ts';
+export * from './src/rules/tactical-actions.ts';
 export * from './src/data/class-spells.ts';
 export * from './src/data/class-features.ts';

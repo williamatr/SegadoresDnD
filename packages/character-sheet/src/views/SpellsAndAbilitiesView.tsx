@@ -25,6 +25,8 @@ import {
   CANONICAL_SPELLS_CATALOG,
   getCanonicalSpellBySlugOrName,
   getClassFeatures,
+  isEvocationSavant,
+  getClassMilestoneReward,
   type ClassFeatureItem,
   type CanonicalSpellData,
   type SpellPreparationRules
@@ -820,7 +822,8 @@ export function SpellsAndAbilitiesView({
               );
               const canCastLevel = spell.level === 0 || spell.level <= maxSlotAccessible;
               const isEvocationWizard =
-                character.slug === 'honiel' && spell.school.toLowerCase() === 'evocación';
+                isEvocationSavant(character) &&
+                (spell.school.toLowerCase() === 'evocación' || spell.school.toLowerCase() === 'evocation');
 
               return (
                 <div
@@ -1106,11 +1109,7 @@ export function SpellsAndAbilitiesView({
                 </DndBadge>
               </div>
               <p className="text-xs text-dnd-ink font-dnd-body leading-relaxed">
-                {character.slug === 'alizar' && 'Artificiero: Tu límite de sintonización mágica aumenta de 3 a 4 objetos mágicos simultáneos.'}
-                {character.slug === 'eru' && 'Guerrero: Rasgo marcial adicional de arquetipo e inmunidad a condiciones adicionales.'}
-                {character.slug === 'honiel' && 'Mago: Magia potenciada de la Escuela de Evocación (suma modificador de Inteligencia al daño de conjuros).'}
-                {character.slug === 'solaria' && 'Druida: Esporas expansivas (puedes lanzar tu Halo de Esporas a un punto a distancia como acción adicional).'}
-                {character.slug === 'zuma' && 'Pícaro: Mejora de característica adicional (ASI) o dote adicional de pícaro.'}
+                {getClassMilestoneReward(character, 10)}
               </p>
             </div>
           </div>
