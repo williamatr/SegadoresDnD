@@ -38,7 +38,7 @@ y este proyecto se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 * **Pruebas de Estado y Mutación (State Diff & Mutation Testing):**
   * Nueva prueba unitaria en `packages/dnd-core/src/tests/level-up.test.ts` verificando el cálculo exacto de PG con tirada manual en mesa (`hpMethod = manual`), comprobación del diferencial de estado antes vs después, invariabilidad de propiedades no alteradas y pruebas de límites de frontera (Boundary Testing). Total: 45 pruebas unitarias pasando al 100%.
 
-## [0.0.1]
+## [0.0.2]
 
 ### Añadido
 * **Regla Estricta de Repositorio sobre Integridad y Veracidad de Tests (`GEMINI.md` - Sección 9):**

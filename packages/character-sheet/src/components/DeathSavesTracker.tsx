@@ -15,7 +15,6 @@ export function DeathSavesTracker({
 }: DeathSavesTrackerProps) {
   const successes = Math.min(3, Math.max(0, deathSaves.successes || 0));
   const failures = Math.min(3, Math.max(0, deathSaves.failures || 0));
-
   const [showPhysicalEntry, setShowPhysicalEntry] = useState(false);
   const [selectedPhysicalD20, setSelectedPhysicalD20] = useState<number | null>(null);
   const [lastRollMessage, setLastRollMessage] = useState<string | null>(null);
