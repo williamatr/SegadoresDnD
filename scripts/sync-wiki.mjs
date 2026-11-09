@@ -1,11 +1,21 @@
 #!/usr/bin/env node
 import { execSync } from 'node:child_process';
-import { existsSync, readdirSync } from 'node:fs';
+import { existsSync, readdirSync, symlinkSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 const rootDir = resolve(process.cwd());
 const wikiDir = resolve(rootDir, 'content/wiki');
 const mocksDir = resolve(rootDir, 'content/mocks');
+
+// Asegurar enlace de .env.local para apps/segadores-web en entorno monorepo
+const rootEnv = resolve(rootDir, '.env.local');
+const appEnv = resolve(rootDir, 'apps/segadores-web/.env.local');
+if (existsSync(rootEnv) && !existsSync(appEnv)) {
+  try {
+    symlinkSync('../../.env.local', appEnv);
+    console.log('🔗 [SegadoresDnD] Enlace simbólico de .env.local vinculado a apps/segadores-web.');
+  } catch {}
+}
 
 console.log('\n🎲 [SegadoresDnD] Verificando sincronización del lore (Obsidian)...');
 

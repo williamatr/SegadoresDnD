@@ -45,6 +45,8 @@ y este proyecto se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
   * Feedback visual inmediato en la propia tarjeta del conjuro (`✨ ¡Lanzado! (Ranura Nv.X Y/Z)`) y desplazamiento suave automático hacia el banner superior de tirada en vivo.
 
 ### Corregido
+* **Resolución de Variables de Entorno en Monorepo (`scripts/sync-wiki.mjs`):**
+  * Vinculación automática del archivo `.env.local` de la raíz del monorepo hacia `apps/segadores-web/.env.local` en el script `predev` (`sync-wiki.mjs`), asegurando que Next.js cargue siempre las credenciales oficiales de Supabase sin advertencias de cliente degradado en desarrollo local.
 * **Detección de Escudo y Cálculo de Reglas de CA para Monje Multiclase (`@segadores/dnd-core/src/rules/state-evaluator.ts`):**
   * Subsanado el falso positivo en la detección de escudos donde accesorios como el *Broche de escudo* (*Brooch of Shielding*) eran interpretados erróneamente como escudos físicos empuñados por contener la palabra "escudo" en su nombre, lo cual provocaba la desactivación indebida de *Defensa sin Armadura* y *Artes Marciales* en personajes Monje como Honiel (Mago/Monje).
   * Corregida la normalización multiclase en `state-evaluator.ts` para detectar variantes en inglés (`monk`, `wizard`, etc.) y recursos de clase (`ki`, `artes marciales`).
