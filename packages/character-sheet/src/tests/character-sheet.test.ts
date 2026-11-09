@@ -7,6 +7,8 @@ import {
   calculateProficiencyBonus,
   previewLevelUp,
   validateLevelUp,
+  getContextualRules,
+  getTacticalActions,
   type Character
 } from '@segadores/dnd-core';
 
@@ -184,5 +186,15 @@ describe('@segadores/character-sheet - Suite de Hojas de Personaje (Agnóstica S
     // Invariabilidad del objeto original (Inmutabilidad funcional)
     assert.equal(mockSrdFighter.level, 5);
     assert.equal(mockSrdFighter.max_hp, 44);
+  });
+
+  it('genera acciones tácticas y reglas contextuales agnósticas sin depender de slug', () => {
+    const rules = getContextualRules(mockSrdFighter);
+    assert.ok(Array.isArray(rules));
+    assert.ok(rules.some(r => r.id === 'fighter-martial-resilience'), 'Debe incluir rasgo marcial de guerrero');
+
+    const tactical = getTacticalActions(mockSrdFighter);
+    assert.ok(tactical.bonusActions.some(b => b.id === 'fighter-second-wind'), 'Debe incluir Second Wind');
+    assert.ok(tactical.reactions.some(r => r.id === 'universal-opportunity-attack'), 'Debe incluir Ataque de Oportunidad');
   });
 });

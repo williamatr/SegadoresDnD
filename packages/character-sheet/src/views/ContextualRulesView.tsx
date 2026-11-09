@@ -11,7 +11,23 @@ import {
   Scale
 } from 'lucide-react';
 import type { BaseViewProps } from '../types.ts';
-import { calculateMulticlassLevelUpCost } from '@segadores/dnd-core';
+import { calculateMulticlassLevelUpCost, getContextualRules } from '@segadores/dnd-core';
+
+function renderRuleIcon(iconType: string) {
+  switch (iconType) {
+    case 'zap':
+      return <Zap className="w-4 h-4 text-dnd-terracotta" />;
+    case 'shield':
+      return <Shield className="w-4 h-4 text-dnd-gold" />;
+    case 'flame':
+      return <Flame className="w-4 h-4 text-dnd-terracotta" />;
+    case 'swords':
+      return <Swords className="w-4 h-4 text-dnd-gold" />;
+    case 'sparkles':
+    default:
+      return <Sparkles className="w-4 h-4 text-dnd-gold" />;
+  }
+}
 
 export function ContextualRulesView({ character }: BaseViewProps) {
   // Inicialización inteligente basada en las clases del personaje
@@ -38,6 +54,8 @@ export function ContextualRulesView({ character }: BaseViewProps) {
     calcTotalLevel
   );
 
+  const contextualRules = getContextualRules(character);
+
   return (
     <div className="space-y-6">
       {/* Encabezado */}
@@ -53,148 +71,31 @@ export function ContextualRulesView({ character }: BaseViewProps) {
         </p>
       </div>
 
-      {/* 1. Reglas Exclusivas del Personaje Activo */}
+      {/* 1. Reglas Exclusivas del Personaje Activo (Derivadas de Forma 100% Agnóstica) */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {character.slug === 'eru' && (
-          <>
-            <div className="p-4 rounded-sm bg-dnd-parchment text-dnd-ink border-2 border-dnd-border-antique dnd-notched space-y-2.5 shadow-md">
+        {contextualRules.map(rule => (
+          <div
+            key={rule.id}
+            className="p-4 rounded-sm bg-dnd-parchment text-dnd-ink border-2 border-dnd-border-antique dnd-notched space-y-2.5 shadow-md"
+          >
+            <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2 text-dnd-gold">
-                <Sparkles className="w-4 h-4 text-dnd-gold" />
+                {renderRuleIcon(rule.iconType)}
                 <h4 className="font-dnd-title font-bold text-xs text-dnd-crimson uppercase tracking-wider">
-                  Prótesis Arcana Permanente (FUE 20)
+                  {rule.title}
                 </h4>
               </div>
-              <p className="text-xs text-dnd-ink-muted font-dnd-body leading-relaxed">
-                Fruto del adiestramiento conjunto con Honiel Spellbinder, la mano amputada de Eru ha sido sustituida por una prótesis espectral permanente. Funciona como una mano física con <strong className="text-dnd-ink">Fuerza 20 (+5)</strong>, sin requerir concentración ni tener límite de duración. Le permite empuñar sus dos espadas largas rúnicas o embrazar su escudo baluarte.
-              </p>
+              {rule.badge && (
+                <span className="text-[10px] font-dnd-title font-bold px-2 py-0.5 rounded-sm bg-dnd-parchment-contrast border border-dnd-border-antique text-dnd-gold">
+                  {rule.badge}
+                </span>
+              )}
             </div>
-
-            <div className="p-4 rounded-sm bg-dnd-parchment text-dnd-ink border-2 border-dnd-border-antique dnd-notched space-y-2.5 shadow-md">
-              <div className="flex items-center gap-2 text-dnd-gold">
-                <Zap className="w-4 h-4 text-dnd-terracotta" />
-                <h4 className="font-dnd-title font-bold text-xs text-dnd-crimson uppercase tracking-wider">
-                  Combo Rúnico de Gorthok (Resonancia Sónica)
-                </h4>
-              </div>
-              <p className="text-xs text-dnd-ink-muted font-dnd-body leading-relaxed">
-                Cuando <em>Rúthaglar</em> (Estruendo) y <em>Aerasúl</em> (Trueno) impactan al mismo objetivo en el mismo turno, se desata una onda de resonancia de trueno que obliga al enemigo a una tirada de salvación de Constitución CD 15 o sufrir el estado <strong className="text-dnd-crimson">Paralizado</strong> durante 1d4 turnos.
-              </p>
-            </div>
-          </>
-        )}
-
-        {character.slug === 'alizar' && (
-          <>
-            <div className="p-4 rounded-sm bg-dnd-parchment text-dnd-ink border-2 border-dnd-border-antique dnd-notched space-y-2.5 shadow-md">
-              <div className="flex items-center gap-2 text-dnd-gold">
-                <Sparkles className="w-4 h-4 text-dnd-gold" />
-                <h4 className="font-dnd-title font-bold text-xs text-dnd-crimson uppercase tracking-wider">
-                  Tratamiento Alquímico (+4 INT a Daño y Curación)
-                </h4>
-              </div>
-              <p className="text-xs text-dnd-ink-muted font-dnd-body leading-relaxed">
-                Al lanzar cualquier conjuro utilizando sus herramientas de alquimista como foco que cure puntos de golpe o inflija daño de ácido, fuego, necrótico o veneno, suma su modificador de <strong className="text-dnd-ink">Inteligencia (+4)</strong> a una tirada de daño o curación.
-              </p>
-            </div>
-
-            <div className="p-4 rounded-sm bg-dnd-parchment text-dnd-ink border-2 border-dnd-border-antique dnd-notched space-y-2.5 shadow-md">
-              <div className="flex items-center gap-2 text-dnd-gold">
-                <Shield className="w-4 h-4 text-dnd-gold" />
-                <h4 className="font-dnd-title font-bold text-xs text-dnd-crimson uppercase tracking-wider">
-                  Aguante Enano y Armadura Pesada
-                </h4>
-              </div>
-              <p className="text-xs text-dnd-ink-muted font-dnd-body leading-relaxed">
-                Como enano de la colina, la velocidad de movimiento de Alizar no se reduce en 10 pies al vestir armadura pesada (como su Armadura de placas enana de CA 20). Además, gana +1 PG extra por cada nivel de personaje (+7 PG a nivel 7).
-              </p>
-            </div>
-          </>
-        )}
-
-        {character.slug === 'solaria' && (
-          <>
-            <div className="p-4 rounded-sm bg-dnd-parchment text-dnd-ink border-2 border-dnd-border-antique dnd-notched space-y-2.5 shadow-md">
-              <div className="flex items-center gap-2 text-dnd-gold">
-                <Sparkles className="w-4 h-4 text-[#15803d]" />
-                <h4 className="font-dnd-title font-bold text-xs text-dnd-crimson uppercase tracking-wider">
-                  Entidad Simbiótica (Círculo de las Esporas)
-                </h4>
-              </div>
-              <p className="text-xs text-dnd-ink-muted font-dnd-body leading-relaxed">
-                Al gastar 1 uso de Forma Salvaje como acción, despierta las esporas fúngicas:
-                gana <strong className="text-[#15803d]">28 puntos de golpe temporales</strong> (4 × nivel de druida), el daño de Halo de Esporas se duplica a <strong className="text-dnd-crimson">2d6 necrótico</strong>, y sus ataques cuerpo a cuerpo con armas infligen <strong className="text-dnd-crimson">+1d6 de daño necrótico</strong> adicional.
-              </p>
-            </div>
-
-            <div className="p-4 rounded-sm bg-dnd-parchment text-dnd-ink border-2 border-dnd-border-antique dnd-notched space-y-2.5 shadow-md">
-              <div className="flex items-center gap-2 text-dnd-gold">
-                <Flame className="w-4 h-4 text-dnd-terracotta" />
-                <h4 className="font-dnd-title font-bold text-xs text-dnd-crimson uppercase tracking-wider">
-                  Infección Fúngica (Reanimación Instantánea)
-                </h4>
-              </div>
-              <p className="text-xs text-dnd-ink-muted font-dnd-body leading-relaxed">
-                Cuando una criatura Pequeña o Mediana muere a 10 pies o menos de Solaria, puede utilizar su <strong className="text-dnd-ink">reacción</strong> para reanimarla inmediatamente como un zombi fúngico bajo su control con 1 PG durante 1 hora (hasta 5 veces por descanso largo).
-              </p>
-            </div>
-          </>
-        )}
-
-        {character.slug === 'honiel' && (
-          <>
-            <div className="p-4 rounded-sm bg-dnd-parchment text-dnd-ink border-2 border-dnd-border-antique dnd-notched space-y-2.5 shadow-md">
-              <div className="flex items-center gap-2 text-dnd-gold">
-                <Sparkles className="w-4 h-4 text-dnd-gold" />
-                <h4 className="font-dnd-title font-bold text-xs text-dnd-crimson uppercase tracking-wider">
-                  Esculpir Conjuros (Evocación Segura)
-                </h4>
-              </div>
-              <p className="text-xs text-dnd-ink-muted font-dnd-body leading-relaxed">
-                Al lanzar conjuros de evocación de área (como <em>Manos ardientes</em> o <em>Bola de fuego</em>), puede elegir hasta <strong className="text-dnd-ink">1 + nivel del conjuro</strong> criaturas aliadas para que superen automáticamente su tirada de salvación y no sufran ningún daño si normalmente recibirían la mitad.
-              </p>
-            </div>
-
-            <div className="p-4 rounded-sm bg-dnd-parchment text-dnd-ink border-2 border-dnd-border-antique dnd-notched space-y-2.5 shadow-md">
-              <div className="flex items-center gap-2 text-dnd-gold">
-                <Zap className="w-4 h-4 text-dnd-terracotta" />
-                <h4 className="font-dnd-title font-bold text-xs text-dnd-crimson uppercase tracking-wider">
-                  Truco Potenciado y Defensa sin Armadura
-                </h4>
-              </div>
-              <p className="text-xs text-dnd-ink-muted font-dnd-body leading-relaxed">
-                Sus trucos dañinos afectan incluso a criaturas que superen la tirada de salvación (reciben la mitad del daño en vez de ninguno). Gracias a su nivel de Monje, sin armadura su CA es 10 + DES + SAB (alcanzando CA 21 con sus protecciones mágicas).
-              </p>
-            </div>
-          </>
-        )}
-
-        {character.slug === 'zuma' && (
-          <>
-            <div className="p-4 rounded-sm bg-dnd-parchment text-dnd-ink border-2 border-dnd-border-antique dnd-notched space-y-2.5 shadow-md">
-              <div className="flex items-center gap-2 text-dnd-gold">
-                <Swords className="w-4 h-4 text-dnd-gold" />
-                <h4 className="font-dnd-title font-bold text-xs text-dnd-crimson uppercase tracking-wider">
-                  Ataque Furtivo con Fuerza (+4d6)
-                </h4>
-              </div>
-              <p className="text-xs text-dnd-ink-muted font-dnd-body leading-relaxed">
-                Según las reglas de D&D 5.5e y SRD, las armas con propiedad <em>Sutil (Finesse)</em> permiten elegir indistintamente Fuerza o Destreza sin perder el <strong className="text-dnd-crimson">Ataque Furtivo</strong>. Con los Guanteletes de Fuerza de Ogro (FUE 19), Zuma puede atacar con su estoque <em>Sa Yue</em> usando <strong className="text-dnd-ink">+4 de Fuerza</strong> y aplicar sus <strong className="text-dnd-crimson">+4d6 de furtivo</strong>.
-              </p>
-            </div>
-
-            <div className="p-4 rounded-sm bg-dnd-parchment text-dnd-ink border-2 border-dnd-border-antique dnd-notched space-y-2.5 shadow-md">
-              <div className="flex items-center gap-2 text-dnd-gold">
-                <Sparkles className="w-4 h-4 text-dnd-gold" />
-                <h4 className="font-dnd-title font-bold text-xs text-dnd-crimson uppercase tracking-wider">
-                  Mano de Mago Embaucadora y Afortunado
-                </h4>
-              </div>
-              <p className="text-xs text-dnd-ink-muted font-dnd-body leading-relaxed">
-                Su <em>Mano de mago</em> es completamente invisible y puede utilizarse mediante acción adicional de Acción Astuta para abrir cerraduras a 30 pies. Como mediano, si saca un 1 natural en cualquier tirada de ataque, salvación o habilidad, puede repetir el dado.
-              </p>
-            </div>
-          </>
-        )}
+            <p className="text-xs text-dnd-ink-muted font-dnd-body leading-relaxed">
+              {rule.description}
+            </p>
+          </div>
+        ))}
       </div>
 
       {/* 2. Reglas de Propiedades de Armas */}

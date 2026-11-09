@@ -10,7 +10,47 @@ y este proyecto se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 ## [Unreleased]
 
 ### Añadido
-* **Catálogo Canónico y Filtrado Contextual de Buffs de la Compañía (`@segadores/dnd-core`, `ConditionsAndEffectsView.tsx`, `CharacterSheet.tsx`):**
+* **Arquitectura 100% Agnóstica de UI en `@segadores/character-sheet` y `@segadores/dnd-core`:**
+  * Eliminado todo acoplamiento por slug (`character.slug === '...'`) en las vistas del paquete `@segadores/character-sheet`:
+    * `CombatConsoleView.tsx`: La Fuerza efectiva se evalúa mediante `getEffectiveAbilityScore(character, 'str')` analizando objetos con stat override (Guanteletes de ogro, Prótesis arcanas, etc.) sin depender de slugs específicos.
+    * `ContextualRulesView.tsx`: Dinamizado por completo utilizando la función agnóstica `getContextualRules(character)` que deriva reglas de clase, subclase, raza, prótesis y combinaciones de armas rúnicas.
+    * `SpellsAndAbilitiesView.tsx`: Evaluación agnóstica de Sabio en Evocación (`isEvocationSavant(character)`) para el 50% de coste en oro y tiempo de copiado, e hitos de nivel derivados mediante `getClassMilestoneReward(character, 10)`.
+  * Diseñado y exportado en `@segadores/dnd-core`:
+    * `getContextualRules(character: Character): ContextualRule[]`
+    * `getTacticalActions(character: Character, availability?: ActionAvailabilityMap): TacticalActionsResult`
+    * `getEffectiveAbilityScore(character: Character, ability: AbilityKey): number`
+    * `isEvocationSavant(character: Character): boolean`
+    * `getClassMilestoneReward(character: Character, level?: number): string`
+  * Añadida suite de pruebas unitarias exhaustiva en `packages/dnd-core/src/tests/agnostic-rules.test.ts` (10 pruebas cubriendo personajes genéricos y de campaña).
+* **Endpoint REST y Persistencia Robusta con Debouncing en Base de Datos Supabase (`/api/characters/[slug]`):**
+  * Creado el endpoint `PATCH /api/characters/[slug]` (con soporte de `POST` y fallback automático a `/api/characters/update`) en Next.js App Router para persistir mutaciones de personajes con control de acceso estricto RBAC (DM edita todos; Jugadores solo su personaje asignado).
+  * Implementada persistencia en `portal-dashboard.tsx` con cola ordenada y debouncing (400 ms) para prevenir condiciones de carrera y colisiones de estado en ráfagas rápidas de mutaciones o edición de notas.
+  * Conectado el disparador de heridas persistentes `onTriggerInjuryTable` con tirada d20 sobre Tablas A y B (`createInjuryActiveEffect`).
+  * Indicador visual interactivo y elegante en la cabecera del dashboard con estados:
+    * Spinner discreto: `"Guardando cambios..."`
+    * Check verde: `"Cambios guardados en la nube"`
+    * Aviso ámbar/rojo con botón manual: `"Modo sin conexión / Error al sincronizar" (Reintentar)`
+  * Preservado el respaldo en `localStorage` como fallback offline de contingencia sin interferir con la sincronización con Supabase.
+* **Persistencia Real de Hojas de Personaje en Supabase (`/api/characters/update`, `portal-dashboard.tsx`):**
+  * Creado el endpoint de backend `POST /api/characters/update` con autenticación mediante sesión de Supabase y control de acceso estricto RBAC (el DM puede editar cualquier personaje de la campaña; los jugadores solo pueden mutar su personaje asignado).
+  * Conectado `updateCurrentCharacter` en `portal-dashboard.tsx` para sincronizar en tiempo real cualquier cambio de estado (desequipar/equipar armaduras, armas y escudos, sintonización, puntos de golpe, ranuras de conjuro, notas, etc.) directamente en la tabla `public.characters` de Supabase.
+  * Añadida reconciliación defensiva de timestamps (`updated_at`) en `portal-dashboard.tsx` para que al recargar la página no se sobreescriban modificaciones locales recientes, preservando el estado desequipado y mutaciones offline.
+  * Incorporado un indicador visual de sincronización en la barra de héroes (`☁️ Guardando en base de datos...`, `✓ Guardado en Supabase`, `💾 Guardado local (offline)`).
+* **Opciones de Tirada en Mesa y Digital para Ataque Desarmado (`CombatConsoleView.tsx`):**
+  * Añadido el botón interactivo `🎲 Tiré en Mesa` en la tarjeta de Ataque Desarmado (tanto en versión estándar como con Artes Marciales de Monje), desplegando el selector de d20 y el campo de daño físico obtenido en la mesa, idéntico al panel de armas equipadas.
+* **Lanzamiento Interactivo de Conjuros con Consumo Automático de Ranuras y Soporte de Rituales (`CombatConsoleView.tsx`):**
+  * Habilitada la interacción de lanzamiento en las viñetas de Economía de Acciones (Acción, Acción Adicional y Reacción) con dos modalidades: `💻 Digital` y `🎲 En Mesa`.
+  * Deducción automática e inmediata de la ranura de conjuro correspondiente mediante `onUpdateSpellSlot` al lanzar conjuros de nivel 1 o superior, con validación de disponibilidad y bloqueo amigable si no quedan espacios.
+  * Opción dedicada `📖 Lanzar como Ritual (0 ranuras)` para conjuros con la propiedad Ritual (como *Identificar* o *Disco flotante de Tenser*), permitiendo lanzarlos sin consumir ranuras mágicas.
+  * Feedback visual inmediato en la propia tarjeta del conjuro (`✨ ¡Lanzado! (Ranura Nv.X Y/Z)`) y desplazamiento suave automático hacia el banner superior de tirada en vivo.
+
+### Corregido
+* **Detección de Escudo y Cálculo de Reglas de CA para Monje Multiclase (`@segadores/dnd-core/src/rules/state-evaluator.ts`):**
+  * Subsanado el falso positivo en la detección de escudos donde accesorios como el *Broche de escudo* (*Brooch of Shielding*) eran interpretados erróneamente como escudos físicos empuñados por contener la palabra "escudo" en su nombre, lo cual provocaba la desactivación indebida de *Defensa sin Armadura* y *Artes Marciales* en personajes Monje como Honiel (Mago/Monje).
+  * Corregida la normalización multiclase en `state-evaluator.ts` para detectar variantes en inglés (`monk`, `wizard`, etc.) y recursos de clase (`ki`, `artes marciales`).
+  * Al desequipar la armadura en Honiel, el sistema recalcula limpiamente la CA de Monje sin armadura (10 + DES + SAB = 14), reactiva las *Artes Marciales* y concede el bono de +10 pies de velocidad (40 pies).
+  * Incorporado test unitario específico en `apps/segadores-web/lib/campaign/characters.test.mjs` que valida este caso borde de forma estricta.
+
   * Definido el catálogo de buffs canónicos de la compañía en `@segadores/dnd-core` (`canonical-buffs.ts`) con más de 20 habilidades, conjuros y elixires para los 5 héroes (`alizar`, `eru`, `honiel`, `solaria`, `zuma`), con scopes de objetivo tipados (`self`, `allies`, `both`) y modificadores mecánicos precisos (bonificadores de CA, dados de ataque/salvación `1d4`, velocidad, etc.).
   * Motor de filtrado canónico contextual (`filterAvailableBuffs`):
     * **Jugador viendo su propia ficha:** Muestra exclusivamente los buffs propios que puede aplicarse a sí mismo (`self` o `both`).
