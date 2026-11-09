@@ -155,54 +155,104 @@ export function evaluateCharacterState(character: Character): EvaluatedCharacter
 
   // 2. Evaluar Rasgos de Clase e Interacciones de Equipo (Monje, Artífice, Druida, Multiclase)
   const classesNorm = [
-    normalizeText(character.character_class),
-    ...(character.multiclass ?? []).map(m => `${normalizeText(m.class)} ${normalizeText(m.subclass ?? '')}`)
+    normalizeText(character.character_class || ''),
+    ...(character.multiclass ?? []).map(m => `${normalizeText(m.class || '')} ${normalizeText(m.subclass ?? '')}`)
   ].join(' ');
 
-  const isMonk = classesNorm.includes('monje');
-  const isArtificer = classesNorm.includes('artifice');
+  const isMonk =
+    classesNorm.includes('monje') ||
+    classesNorm.includes('monk') ||
+    (character.class_resources ?? []).some(
+      r => normalizeText(r.name).includes('ki') ||
+           normalizeText(r.name).includes('artes marciales') ||
+           normalizeText(r.name).includes('focus')
+    );
+  const isArtificer = classesNorm.includes('artific');
   const isSporesDruid = classesNorm.includes('esporas') || (classesNorm.includes('druida') && normalizeText(character.player_notes ?? '').includes('esporas'));
 
   const dexMod = calculateAbilityModifier(character.ability_scores?.dex ?? 10);
   const wisMod = calculateAbilityModifier(character.ability_scores?.wis ?? 10);
+  const conMod = calculateAbilityModifier(character.ability_scores?.con ?? 10);
 
   const equippedArmorItem = (character.inventory ?? []).find(
     item =>
       item.equipped &&
       (item.category === 'armor' ||
-        item.armor !== undefined ||
+        (item.armor !== undefined && item.armor.armorType !== 'shield') ||
         normalizeText(item.name).includes('armadura de') ||
-        normalizeText(item.name).includes('cota de'))
+        normalizeText(item.name).includes('cota de')) &&
+      !normalizeText(item.name).startsWith('broche') &&
+      !normalizeText(item.name).startsWith('anillo') &&
+      !normalizeText(item.name).startsWith('amuleto')
   );
 
   const equippedShieldItem = (character.inventory ?? []).find(
     item =>
       item.equipped &&
-      (item.category === 'shield' || normalizeText(item.name).includes('escudo'))
+      (item.category === 'shield' ||
+        item.armor?.armorType === 'shield' ||
+        (item.category !== 'magic_item' && item.category !== 'gear' &&
+          (normalizeText(item.name) === 'escudo' || normalizeText(item.name).startsWith('escudo '))))
   );
 
-  const hasEquippedArmorOrShield = Boolean(equippedArmorItem || equippedShieldItem);
+  const hasEquippedArmor = Boolean(equippedArmorItem);
+  const hasEquippedShield = Boolean(equippedShieldItem);
+  const hasEquippedArmorOrShield = hasEquippedArmor || hasEquippedShield;
+
+  const hasMageArmor = (character.active_effects ?? []).some(e => normalizeText(e.name).includes('armadura de mago'));
 
   if (isMonk) {
     if (hasEquippedArmorOrShield) {
       blockAction(availability, 'martial_arts', 'Armadura o escudo equipado');
       blockAction(availability, 'unarmored_movement', 'Armadura o escudo equipado');
-      const baseArmorAc = equippedArmorItem?.armor?.baseAc ?? 16;
-      const shieldBonus = equippedShieldItem ? 2 : 0;
+
+      // Cálculo de CA con Armadura / Escudo equipado
+      let baseArmorAc = 10 + dexMod;
+      if (equippedArmorItem) {
+        const armor = equippedArmorItem.armor;
+        if (armor) {
+          let appliedDex = 0;
+          if (armor.armorType === 'light') appliedDex = dexMod;
+          else if (armor.armorType === 'medium') appliedDex = Math.min(dexMod, armor.maxDexBonus ?? 2);
+          else if (armor.armorType === 'heavy') appliedDex = 0;
+          baseArmorAc = armor.baseAc + appliedDex + (armor.magicalBonus ?? 0);
+        } else {
+          baseArmorAc = 16; // Fallback cota
+        }
+      }
+      const shieldBonus = equippedShieldItem ? (equippedShieldItem.armor?.magicalBonus ? 2 + equippedShieldItem.armor.magicalBonus : 2) : 0;
       effectiveAc = baseArmorAc + shieldBonus;
+
       acBreakdown.length = 0;
-      acBreakdown.push(`${equippedArmorItem?.name || 'Armadura equipada'} (CA ${effectiveAc})`);
+      if (equippedArmorItem) {
+        acBreakdown.push(`${equippedArmorItem.name} (Base CA ${baseArmorAc})`);
+      } else {
+        acBreakdown.push(`Base sin armadura con escudo (10 + DES ${formatModifier(dexMod)})`);
+      }
+      if (shieldBonus > 0) {
+        acBreakdown.push(`${equippedShieldItem?.name || 'Escudo'} (+${shieldBonus} CA)`);
+      }
+
       tacticalReminders.push(
         'Monje con Armadura/Escudo: Defensa sin Armadura, Artes Marciales (ataque desarmado con DES / 1d6 / golpe desarmado como acción adicional) y Movimiento sin Armadura (+10 pies) están desactivados. Tus Puntos de Ki (Puntos de Concentración: Ráfaga de golpes, Defensa paciente, Paso del viento) y armas siguen 100% activos.'
       );
     } else {
-      const unarmoredAc = 10 + dexMod + wisMod;
-      const hasMageArmor = (character.active_effects ?? []).some(e => normalizeText(e.name).includes('armadura de mago'));
-      effectiveAc = hasMageArmor ? Math.max(unarmoredAc, 13 + dexMod) : unarmoredAc;
+      // Monje SIN armadura ni escudo: Defensa sin Armadura de Monje (10 + DES + SAB)
+      const monkUnarmoredAc = 10 + dexMod + wisMod;
+      const mageArmorAc = 13 + dexMod;
+      const chosenBaseAc = hasMageArmor ? Math.max(monkUnarmoredAc, mageArmorAc) : monkUnarmoredAc;
+
+      effectiveAc = chosenBaseAc;
       acBreakdown.length = 0;
-      acBreakdown.push(`Defensa sin Armadura de Monje (10 + DES ${formatModifier(dexMod)} + SAB ${formatModifier(wisMod)}): ${unarmoredAc}`);
-      if (hasMageArmor && 13 + dexMod > unarmoredAc) {
-        acBreakdown.push(`Armadura de mago (13 + DES): ${13 + dexMod}`);
+
+      if (hasMageArmor && mageArmorAc > monkUnarmoredAc) {
+        acBreakdown.push(`Armadura de Mago (13 + DES ${formatModifier(dexMod)}): ${mageArmorAc}`);
+        acBreakdown.push(`Defensa sin Armadura Monje (10 + DES ${formatModifier(dexMod)} + SAB ${formatModifier(wisMod)} = ${monkUnarmoredAc}) superada`);
+      } else {
+        acBreakdown.push(`Defensa sin Armadura de Monje (10 + DES ${formatModifier(dexMod)} + SAB ${formatModifier(wisMod)}): ${monkUnarmoredAc}`);
+        if (hasMageArmor) {
+          acBreakdown.push(`Armadura de Mago activa (13 + DES = ${mageArmorAc}) no supera Defensa de Monje`);
+        }
       }
 
       effectiveSpeed = (character.speed || 30) + 10;
@@ -213,6 +263,47 @@ export function evaluateCharacterState(character: Character): EvaluatedCharacter
       tacticalReminders.push(
         `Monje sin Armadura: Defensa sin Armadura (CA ${effectiveAc}), Artes Marciales (ataques desarmados con DES 1d6${formatModifier(dexMod)} y golpe desarmado como acción adicional gratuita) y Movimiento sin Armadura (+10 pies -> ${effectiveSpeed} pies) están plenamente activos.`
       );
+    }
+  } else {
+    // Personajes que no son monje (Guerrero, Pícaro, Mago, Artífice, Clérigo, etc.)
+    if (hasEquippedArmor) {
+      const armor = equippedArmorItem?.armor;
+      let baseArmorAc = character.armor_class;
+      if (armor) {
+        let appliedDex = 0;
+        if (armor.armorType === 'light') appliedDex = dexMod;
+        else if (armor.armorType === 'medium') appliedDex = Math.min(dexMod, armor.maxDexBonus ?? 2);
+        else if (armor.armorType === 'heavy') appliedDex = 0;
+        baseArmorAc = armor.baseAc + appliedDex + (armor.magicalBonus ?? 0);
+      }
+      const shieldBonus = equippedShieldItem ? (equippedShieldItem.armor?.magicalBonus ? 2 + equippedShieldItem.armor.magicalBonus : 2) : 0;
+      effectiveAc = baseArmorAc + shieldBonus;
+
+      acBreakdown.length = 0;
+      acBreakdown.push(`${equippedArmorItem?.name || 'Armadura equipada'} (Base CA ${baseArmorAc})`);
+      if (shieldBonus > 0) acBreakdown.push(`${equippedShieldItem?.name || 'Escudo'} (+${shieldBonus} CA)`);
+    } else {
+      // Sin armadura equipada: si tiene inventario con armaduras desequipadas, calcula 10+DES; si es un mock o ficha sin inventario, respeta character.armor_class
+      const hasArmorInInventory = (character.inventory ?? []).some(
+        i => (i.category === 'armor' || (i.armor !== undefined && i.armor.armorType !== 'shield') || normalizeText(i.name).includes('armadura') || normalizeText(i.name).includes('cota')) &&
+             !normalizeText(i.name).startsWith('broche') && !normalizeText(i.name).startsWith('anillo') && !normalizeText(i.name).startsWith('amuleto')
+      );
+      const unarmoredBase = hasArmorInInventory
+        ? (hasMageArmor ? 13 + dexMod : 10 + dexMod)
+        : (character.armor_class || (hasMageArmor ? 13 + dexMod : 10 + dexMod));
+
+      const shieldBonus = equippedShieldItem ? (equippedShieldItem.armor?.magicalBonus ? 2 + equippedShieldItem.armor.magicalBonus : 2) : 0;
+      effectiveAc = unarmoredBase + shieldBonus;
+
+      acBreakdown.length = 0;
+      if (hasMageArmor) {
+        acBreakdown.push(`Armadura de Mago (13 + DES ${formatModifier(dexMod)}): ${unarmoredBase}`);
+      } else if (hasArmorInInventory) {
+        acBreakdown.push(`Sin armadura (10 + DES ${formatModifier(dexMod)}): ${unarmoredBase}`);
+      } else {
+        acBreakdown.push(`CA Base ficha: ${unarmoredBase}`);
+      }
+      if (shieldBonus > 0) acBreakdown.push(`${equippedShieldItem?.name || 'Escudo'} (+${shieldBonus} CA)`);
     }
   }
 

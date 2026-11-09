@@ -97,7 +97,7 @@ describe('Sistema de Héroes Reales de Campaña (Segadores de Orcos)', () => {
 
     // 2. Evaluar Eru con placas y baluarte
     const eruState = evaluateCharacterState(CAMPAIGN_FULL_CHARACTERS['eru']);
-    assert.equal(eruState.effectiveAc, 25);
+    assert.equal(eruState.effectiveAc, 23);
     assert.equal(eruState.effectiveSpeed, 30);
 
     // 3. Evaluar Zuma con Sa Yue y Guanteletes de Ogro
@@ -154,5 +154,38 @@ describe('Sistema de Héroes Reales de Campaña (Segadores de Orcos)', () => {
     const featureNames = preview.newFeatures.map(f => f.name);
     assert.ok(featureNames.some(f => f.includes('Puntos de Ki')));
     assert.ok(featureNames.some(f => f.includes('Ráfaga de Golpes')));
+  });
+
+  it('verifica que Honiel ("Oriel") activa Defensa sin Armadura de Monje (CA 14) y velocidad +10 pies al desequipar la armadura a pesar de portar el Broche de escudo', async () => {
+    const { CAMPAIGN_FULL_CHARACTERS } = await import('./characters.ts');
+    const honielBase = CAMPAIGN_FULL_CHARACTERS['honiel'];
+
+    // 1. Con armadura equipada: CA 16, velocidad 30, Artes Marciales bloqueadas
+    const stateArmored = evaluateCharacterState(honielBase);
+    assert.equal(stateArmored.effectiveAc, 16);
+    assert.equal(stateArmored.effectiveSpeed, 30);
+    assert.equal(stateArmored.availability.martial_arts.available, false);
+    assert.equal(stateArmored.availability.unarmored_movement.available, false);
+
+    // 2. Desequipar la Cota de Malla de Mithral, manteniendo el Broche de escudo equipado
+    const honielUnarmored = {
+      ...honielBase,
+      inventory: honielBase.inventory.map(item =>
+        item.slug === 'cota-de-malla-de-mithral'
+          ? { ...item, equipped: false }
+          : item
+      )
+    };
+
+    const stateUnarmored = evaluateCharacterState(honielUnarmored);
+    // Defensa sin Armadura Monje: 10 + DES 3 (16) + SAB 1 (13) = 14
+    assert.equal(stateUnarmored.effectiveAc, 14, 'La CA debe ser 14 por Defensa sin Armadura de Monje');
+    assert.equal(stateUnarmored.effectiveSpeed, 40, 'La velocidad debe subir a 40 pies (+10 pies Movimiento sin Armadura)');
+    assert.equal(stateUnarmored.availability.martial_arts.available, true, 'Artes Marciales deben estar plenamente activas');
+    assert.equal(stateUnarmored.availability.unarmored_movement.available, true, 'Movimiento sin Armadura debe estar activo');
+    assert.ok(
+      stateUnarmored.acBreakdown.some(b => b.includes('Defensa sin Armadura de Monje')),
+      'El desglose de CA debe indicar Defensa sin Armadura de Monje'
+    );
   });
 });

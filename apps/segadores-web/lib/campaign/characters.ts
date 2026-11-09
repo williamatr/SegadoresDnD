@@ -43,7 +43,7 @@ export const CAMPAIGN_CHARACTERS: CampaignCharacterPreview[] = [
     race: 'Alto Elfo',
     level: 8,
     maxHp: 58,
-    armorClass: 25, // 25 con placas, escudo baluarte +5 y estilo defensivo / 19 doble espada
+    armorClass: 23, // 23 con placas y escudo baluarte +5 / 21 con escudo +1 / 19 doble espada
     speed: 30,
     primaryAbilities: 'FUE 20 (+5), CON 16 (+3), DES 10 (0), SAB 10 (0), INT 8 (-1), CAR 6 (-2)',
     specialTrait: 'Prótesis arcana de FUE 20, Rúthaglar y Aerasúl (Espadas de Gorthok), Nuevas Energías, Imposición de Manos.',
@@ -273,7 +273,7 @@ export const CAMPAIGN_FULL_CHARACTERS: Record<string, Character> = {
     temp_hp: 0,
     hit_dice_total: '7d10 + 1d10',
     hit_dice_current: 8,
-    armor_class: 25,
+    armor_class: 23,
     speed: 30,
     proficiency_bonus: 3,
     passive_perception: 13,
