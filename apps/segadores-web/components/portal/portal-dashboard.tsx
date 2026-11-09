@@ -314,22 +314,22 @@ export function PortalDashboard({
 
       {/* BARRA DE SIMULACIÓN DE PERSPECTIVA DE JUGADOR (Modo de Pruebas DM) */}
       {isDm && (
-        <div className="bg-dnd-leather-dark border-b-2 border-dnd-border-antique text-dnd-ink px-4 py-2.5 sticky top-16 z-30 shadow-xl">
+        <div className="bg-dnd-leather-dark border-b-2 border-dnd-border-antique text-[#f7f1e6] px-4 py-2.5 sticky top-16 z-30 shadow-xl">
           <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
             <div className="flex items-center gap-2.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-dnd-gold animate-pulse shrink-0" />
+              <span className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse shrink-0" />
               <div>
-                <span className="font-dnd-title font-bold text-xs text-dnd-gold tracking-wider uppercase mr-2">
+                <span className="font-dnd-title font-bold text-xs text-amber-300 tracking-wider uppercase mr-2">
                   Consola de Pruebas DM:
                 </span>
-                <span className="text-xs font-dnd-body text-dnd-ink-muted">
+                <span className="text-xs font-dnd-body text-[#d8ccb8]">
                   {isSimulating ? (
                     <>
-                      Viendo el portal como: <strong className="text-dnd-ink font-dnd-title">{simulatedHeroName}</strong> (Rol Jugador)
+                      Viendo el portal como: <strong className="text-[#f7f1e6] font-dnd-title tracking-wide">{simulatedHeroName}</strong> (Rol Jugador)
                     </>
                   ) : (
                     <>
-                      Perspectiva actual: <strong className="text-dnd-crimson font-dnd-title">Master DM 🔒</strong> (Control total)
+                      Perspectiva actual: <strong className="text-amber-300 font-dnd-title">Master DM 🔒</strong> (Control total)
                     </>
                   )}
                 </span>
@@ -337,7 +337,7 @@ export function PortalDashboard({
             </div>
 
             <div className="flex items-center gap-1.5 flex-wrap">
-              <span className="text-[11px] font-dnd-body text-dnd-ink-subtle mr-1 hidden sm:inline">Probar vista de:</span>
+              <span className="text-[11px] font-dnd-body text-[#d8ccb8] mr-1 hidden sm:inline">Probar vista de:</span>
               <button
                 type="button"
                 onClick={() => {
@@ -346,8 +346,8 @@ export function PortalDashboard({
                 }}
                 className={`px-2.5 py-1 rounded-md text-xs font-dnd-title font-bold uppercase tracking-wider border transition ${
                   !isSimulating
-                    ? 'bg-dnd-crimson text-white border-dnd-gold shadow-sm'
-                    : 'bg-dnd-parchment-contrast text-dnd-ink-muted border-dnd-border-antique hover:text-dnd-ink hover:bg-dnd-parchment'
+                    ? 'bg-dnd-crimson text-white border-amber-400 shadow-sm'
+                    : 'bg-[#2b1b13] text-[#f7f1e6] border-[#5a4232] hover:text-amber-200 hover:bg-[#3d271c] hover:border-amber-400'
                 }`}
                 title="Restaurar vista completa de Dungeon Master con consola de invitaciones y edición total"
               >
@@ -366,8 +366,8 @@ export function PortalDashboard({
                     }}
                     className={`px-2.5 py-1 rounded-sm text-[11px] font-dnd-title font-medium uppercase tracking-wider border transition ${
                       isAct
-                        ? 'bg-dnd-gold text-dnd-leather-dark border-dnd-gold-light font-bold shadow-sm'
-                        : 'bg-dnd-parchment-contrast text-dnd-ink-muted border-dnd-border-antique hover:text-dnd-ink hover:bg-dnd-parchment'
+                        ? 'bg-amber-400 text-stone-900 border-amber-300 font-bold shadow-sm'
+                        : 'bg-[#2b1b13] text-[#f7f1e6] border-[#5a4232] hover:text-amber-200 hover:bg-[#3d271c] hover:border-amber-400'
                     }`}
                     title={`Simular qué vería ${c.name} al entrar al portal`}
                   >
@@ -582,6 +582,7 @@ export function PortalDashboard({
             onTabChange={setActiveSheetTab}
             readOnly={isReadOnlyForUser}
             userRole={activeRole}
+            viewerCharacterSlug={effectiveAssignedSlug}
             onUpdateHp={handleUpdateHp}
             onUpdateDeathSaves={handleUpdateDeathSaves}
             onUpdateHitDice={handleUpdateHitDice}

@@ -18,8 +18,13 @@ import {
   TABLE_A_INJURIES,
   TABLE_B_INJURIES,
   createInjuryActiveEffect,
+  CANONICAL_PARTY_BUFFS,
+  CAMPAIGN_HERO_NAMES,
+  filterAvailableBuffs,
+  createActiveEffectFromBuff,
   type ActiveEffect,
-  type StandardConditionId
+  type StandardConditionId,
+  type CharacterBuffDefinition
 } from '@segadores/dnd-core';
 
 const STANDARD_CONDITIONS_LIST: Array<{ id: StandardConditionId; name: string; description: string }> = [
@@ -40,18 +45,11 @@ const STANDARD_CONDITIONS_LIST: Array<{ id: StandardConditionId; name: string; d
   { id: 'silenciado', name: 'Silenciado', description: 'Inmune a daño de trueno y no puedes lanzar conjuros que requieran componente Verbal (V).' }
 ];
 
-const PRESET_BUFFS = [
-  { name: 'Guía', type: 'buff' as const, description: '+1d4 a una prueba de característica.', duration: '1 minuto (Concentración)' },
-  { name: 'Bendición', type: 'buff' as const, description: '+1d4 a todas las tiradas de ataque y de salvación.', duration: '1 minuto (Concentración)' },
-  { name: 'Destello de Genialidad', type: 'buff' as const, description: '+4 a una tirada de salvación o prueba por Alizar Thorne.', duration: 'Instantáneo' },
-  { name: 'Inspiración Bárdica (1d6)', type: 'buff' as const, description: 'Suma 1d6 a un ataque, salvación o habilidad por Zuma.', duration: '10 minutos' },
-  { name: 'Escudo', type: 'buff' as const, description: '+5 a la CA e inmunidad a Proyectil mágico.', duration: '1 asalto' }
-];
-
 export function ConditionsAndEffectsView({
   character,
   readOnly = false,
   userRole = 'player',
+  viewerCharacterSlug,
   onApplyEffect,
   onRemoveEffect
 }: BaseViewProps) {
@@ -62,6 +60,25 @@ export function ConditionsAndEffectsView({
   const [injuryRoll, setInjuryRoll] = useState<number | null>(null);
   const [isRolling, setIsRolling] = useState<boolean>(false);
   const [showPhysicalEntry, setShowPhysicalEntry] = useState<boolean>(false);
+
+  // Contexto del observador y objetivo
+  const isViewingSelf =
+    (viewerCharacterSlug && viewerCharacterSlug === character.slug) ||
+    (!viewerCharacterSlug && !readOnly);
+  const isViewingAlly = Boolean(
+    userRole === 'player' && viewerCharacterSlug && viewerCharacterSlug !== character.slug
+  );
+  const viewerHeroName = viewerCharacterSlug
+    ? (CAMPAIGN_HERO_NAMES[viewerCharacterSlug] || viewerCharacterSlug)
+    : null;
+
+  // Filtrado canónico contextual de buffs disponibles
+  const availableBuffs = filterAvailableBuffs(CANONICAL_PARTY_BUFFS, {
+    userRole,
+    targetCharacterSlug: character.slug,
+    viewerCharacterSlug,
+    readOnly
+  });
 
   const handleRollInjury = () => {
     setIsRolling(true);
@@ -103,18 +120,26 @@ export function ConditionsAndEffectsView({
     }
   };
 
-  const handleApplyPresetBuff = (buff: typeof PRESET_BUFFS[0]) => {
-    if (readOnly) return;
-    const newEffect: ActiveEffect = {
-      id: `buff-${Date.now()}`,
-      name: buff.name,
-      type: buff.type,
-      description: buff.description,
-      duration: buff.duration,
-      applied_by: 'Compañero Aliado',
-      created_at: new Date().toISOString()
-    };
-    onApplyEffect?.(newEffect);
+  const handleToggleBuff = (buff: CharacterBuffDefinition) => {
+    // Si no tiene permisos, retornar (los aliados y DM pueden aplicar buffs incluso en readOnly)
+    const canManageBuffs = !readOnly || userRole === 'dm' || isViewingAlly;
+    if (!canManageBuffs) return;
+
+    const existing = activeEffects.find(
+      e => e.type === 'buff' && e.name.toLowerCase() === buff.name.toLowerCase()
+    );
+
+    if (existing) {
+      onRemoveEffect?.(existing.id);
+    } else {
+      const appliedBy =
+        userRole === 'dm'
+          ? buff.ownerName
+          : (isViewingAlly ? (viewerHeroName || buff.ownerName) : character.name);
+
+      const newEffect = createActiveEffectFromBuff(buff, appliedBy);
+      onApplyEffect?.(newEffect);
+    }
   };
 
   // Obtener definición de la herida seleccionada para vista previa
@@ -169,19 +194,42 @@ export function ConditionsAndEffectsView({
                     <p className="text-xs font-dnd-body mt-1 text-dnd-ink-muted">
                       {effect.description}
                     </p>
+                    <div className="flex items-center gap-2 flex-wrap text-[11px] font-sans text-dnd-ink-muted mt-2 pt-1 border-t border-dnd-border-antique/50">
+                      {effect.applied_by && (
+                        <span>
+                          Aplicado por: <strong className="text-dnd-ink font-semibold">{effect.applied_by}</strong>
+                        </span>
+                      )}
+                      {effect.duration && (
+                        <span>• Duración: <strong className="text-dnd-ink font-semibold">{effect.duration}</strong></span>
+                      )}
+                    </div>
                   </div>
 
-                  {!readOnly && (
-                    <div className="flex justify-end pt-1">
-                      <button
-                        type="button"
-                        onClick={() => onRemoveEffect?.(effect.id)}
-                        className="text-[11px] font-dnd-title font-bold text-dnd-crimson hover:underline uppercase tracking-wider"
-                      >
-                        Eliminar Efecto
-                      </button>
-                    </div>
-                  )}
+                  {(() => {
+                    const canRemove =
+                      !readOnly ||
+                      userRole === 'dm' ||
+                      (isViewingAlly && isBuff && (
+                        effect.applied_by === viewerHeroName ||
+                        availableBuffs.some(b => b.name.toLowerCase() === effect.name.toLowerCase())
+                      ));
+
+                    if (!canRemove) return null;
+
+                    return (
+                      <div className="flex justify-end pt-1">
+                        <button
+                          type="button"
+                          onClick={() => onRemoveEffect?.(effect.id)}
+                          className="text-[11px] font-dnd-title font-bold text-dnd-crimson hover:underline uppercase tracking-wider flex items-center gap-1"
+                        >
+                          <Trash2 className="w-3 h-3 text-dnd-crimson" />
+                          <span>Eliminar Efecto</span>
+                        </button>
+                      </div>
+                    );
+                  })()}
                 </div>
               );
             })}
@@ -364,29 +412,100 @@ export function ConditionsAndEffectsView({
         </div>
       </div>
 
-      {/* 4. Inyector Rápido de Buffs de Compañeros Aliados */}
+      {/* 4. Inyector Rápido de Buffs de la Compañía (Filtrado Contextual por Personaje y Rol DM) */}
       <div className="p-5 rounded-sm bg-dnd-parchment text-dnd-ink border-2 border-dnd-border-antique dnd-notched space-y-3 shadow-md">
-        <div className="flex items-center gap-2 border-b border-dnd-border-antique/80 pb-2">
-          <Sparkles className="w-4 h-4 text-emerald-700 dark:text-emerald-400" />
-          <h4 className="font-dnd-title font-bold text-xs uppercase tracking-wider text-dnd-crimson">
-            Inyección de Buffs de la Compañía (Soporte Táctico de Aliados)
-          </h4>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-dnd-border-antique/80 pb-2">
+          <div className="flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-emerald-700 dark:text-emerald-400 shrink-0" />
+            <h4 className="font-dnd-title font-bold text-xs uppercase tracking-wider text-dnd-crimson">
+              {userRole === 'dm'
+                ? `Inyección de Buffs de la Compañía (Vista DM · ${character.name})`
+                : isViewingAlly
+                ? `Soporte de ${viewerHeroName || 'tu personaje'} ➔ ${character.name}`
+                : `Mejoras y Buffs Propios (${character.name})`}
+            </h4>
+          </div>
+          <span className="text-[11px] text-dnd-ink-muted font-dnd-title">
+            {userRole === 'dm'
+              ? 'Catálogo completo de la compañía'
+              : isViewingAlly
+              ? 'Inyección de soporte táctico'
+              : 'Auto-aplicación en combate'}
+          </span>
         </div>
 
+        <p className="text-xs text-dnd-ink-muted font-dnd-body">
+          {userRole === 'dm'
+            ? `Como Dungeon Master puedes inyectar buffs propios de ${character.name} o habilidades de soporte de los demás compañeros.`
+            : isViewingAlly
+            ? `Como ${viewerHeroName || 'compañero aliado'}, puedes otorgarle tus hechizos y habilidades de soporte a ${character.name} (haz clic para activar o retirar).`
+            : `Selecciona una de tus habilidades o conjuros preparados para activarlo sobre ti mismo en combate.`}
+        </p>
+
         <div className="flex items-center gap-2 flex-wrap pt-1 font-dnd-title">
-          {PRESET_BUFFS.map(buff => (
-            <button
-              key={buff.name}
-              type="button"
-              disabled={readOnly}
-              onClick={() => handleApplyPresetBuff(buff)}
-              className="px-3 py-1.5 rounded-sm bg-dnd-parchment-contrast hover:bg-dnd-parchment border border-dnd-border-antique hover:border-emerald-600 text-xs text-dnd-ink hover:text-emerald-700 dark:hover:text-emerald-400 font-bold uppercase tracking-wider flex items-center gap-1.5 transition shadow-xs"
-              title={buff.description}
-            >
-              <Plus className="w-3.5 h-3.5 text-emerald-700 dark:text-emerald-400" />
-              <span>{buff.name}</span>
-            </button>
-          ))}
+          {availableBuffs.map(buff => {
+            const isBuffActive = activeEffects.some(
+              e => e.type === 'buff' && e.name.toLowerCase() === buff.name.toLowerCase()
+            );
+
+            // Los aliados y el DM pueden interactuar aunque la hoja general esté en readOnly
+            const canClick = !readOnly || userRole === 'dm' || isViewingAlly;
+            const isOwnBuff = buff.ownerSlug === character.slug;
+
+            return (
+              <button
+                key={buff.id}
+                type="button"
+                disabled={!canClick}
+                onClick={() => handleToggleBuff(buff)}
+                className={`px-3 py-1.5 rounded-sm border text-xs font-bold uppercase tracking-wider flex items-center gap-2 transition shadow-xs ${
+                  isBuffActive
+                    ? 'bg-emerald-700 border-emerald-500 text-white shadow-sm'
+                    : 'bg-dnd-parchment-contrast hover:bg-dnd-parchment border-dnd-border-antique hover:border-emerald-600 text-dnd-ink hover:text-emerald-700 dark:hover:text-emerald-400'
+                } ${!canClick ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                title={`${buff.name}: ${buff.description} (${buff.duration}) — Propietario: ${buff.ownerName}`}
+              >
+                {isBuffActive ? (
+                  <CheckCircle2 className="w-3.5 h-3.5 text-white shrink-0" />
+                ) : (
+                  <Plus className="w-3.5 h-3.5 text-emerald-700 dark:text-emerald-400 shrink-0" />
+                )}
+                <span>{buff.name}</span>
+
+                {/* Badge de Propietario para DM */}
+                {userRole === 'dm' && (
+                  <span
+                    className={`text-[9px] px-1.5 py-0.5 rounded-xs font-sans font-bold uppercase tracking-normal ${
+                      isOwnBuff
+                        ? 'bg-amber-500/20 text-amber-800 dark:text-amber-200 border border-amber-600/30'
+                        : 'bg-blue-500/20 text-blue-800 dark:text-blue-200 border border-blue-600/30'
+                    }`}
+                  >
+                    {isOwnBuff ? `Propio · ${buff.ownerName}` : buff.ownerName}
+                  </span>
+                )}
+
+                {/* Badge en Vista de Compañero */}
+                {isViewingAlly && (
+                  <span className="text-[9px] px-1.5 py-0.5 rounded-xs bg-emerald-500/20 text-emerald-800 dark:text-emerald-200 border border-emerald-600/30 font-sans font-bold uppercase tracking-normal">
+                    Tu soporte
+                  </span>
+                )}
+
+                {isBuffActive && (
+                  <span className="text-[9px] px-1 rounded-xs bg-white/25 text-white font-mono font-bold">
+                    ACTIVO
+                  </span>
+                )}
+              </button>
+            );
+          })}
+
+          {availableBuffs.length === 0 && (
+            <p className="text-xs text-dnd-ink-muted font-dnd-body italic">
+              No hay buffs o habilidades de soporte disponibles para aplicar en este contexto.
+            </p>
+          )}
         </div>
       </div>
     </div>

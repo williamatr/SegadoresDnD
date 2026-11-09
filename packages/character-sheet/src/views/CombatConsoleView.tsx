@@ -845,10 +845,8 @@ export function CombatConsoleView({
         </div>
       )}
 
-      {/* 4. Economía de Acciones Oficial (4 Secciones: Principal, Adicional, Reacción, Objeto) */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-      {/* 4. Economía de Acciones Oficial (4 Secciones Reactivas: Principal, Adicional, Reacción, Objeto) */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* 4. Economía de Acciones Oficial (4 Secciones Reactivas: Principal, Adicional, Reacción, Interacción Entorno) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 items-start w-full">
         {/* Columna 1: Acción Principal */}
         <div className={`p-4 rounded-sm bg-dnd-parchment text-dnd-ink border-2 space-y-3 dnd-notched shadow-md transition ${
           isActionBlocked ? 'opacity-40 border-dnd-crimson' : 'border-dnd-border-antique'
@@ -904,10 +902,10 @@ export function CombatConsoleView({
               {actionSpells.map(sp => (
                 <div
                   key={sp.slug}
-                  className="p-2 rounded-sm bg-dnd-parchment-dark border border-dnd-border-antique space-y-1 hover:border-dnd-gold transition text-xs"
+                  className="p-2 rounded-sm bg-dnd-parchment-dark border border-dnd-border-antique space-y-1 hover:border-dnd-gold transition text-xs min-w-0"
                 >
                   <div className="flex items-start justify-between gap-1.5">
-                    <span className="font-dnd-title font-bold text-dnd-crimson leading-tight">
+                    <span className="font-dnd-title font-bold text-dnd-crimson leading-tight break-words">
                       {sp.name}
                     </span>
                     <span className="text-[9px] px-1.5 py-0.5 rounded-sm bg-dnd-parchment-contrast border border-dnd-border-antique text-dnd-ink font-dnd-title font-semibold shrink-0">
@@ -934,7 +932,7 @@ export function CombatConsoleView({
                     )}
                   </div>
 
-                  <p className="text-[10px] text-dnd-ink font-dnd-body leading-snug line-clamp-2">
+                  <p className="text-[10px] text-dnd-ink font-dnd-body leading-snug line-clamp-2 break-words">
                     {sp.effectSummary}
                   </p>
 
@@ -1097,10 +1095,10 @@ export function CombatConsoleView({
                 {bonusActionSpells.map(sp => (
                   <div
                     key={sp.slug}
-                    className="p-2 rounded-sm bg-dnd-parchment-dark border border-dnd-border-antique space-y-1 hover:border-dnd-gold transition text-xs"
+                    className="p-2 rounded-sm bg-dnd-parchment-dark border border-dnd-border-antique space-y-1 hover:border-dnd-gold transition text-xs min-w-0"
                   >
                     <div className="flex items-start justify-between gap-1.5">
-                      <span className="font-dnd-title font-bold text-dnd-crimson leading-tight">
+                      <span className="font-dnd-title font-bold text-dnd-crimson leading-tight break-words">
                         {sp.name}
                       </span>
                       <span className="text-[9px] px-1.5 py-0.5 rounded-sm bg-dnd-parchment-contrast border border-dnd-border-antique text-dnd-ink font-dnd-title font-semibold shrink-0">
@@ -1110,7 +1108,7 @@ export function CombatConsoleView({
                     <div className="text-[10px] text-dnd-ink-muted font-sans">
                       {sp.range} {sp.concentration ? '• Conc.' : ''}
                     </div>
-                    <p className="text-[10px] text-dnd-ink font-dnd-body leading-snug">
+                    <p className="text-[10px] text-dnd-ink font-dnd-body leading-snug break-words">
                       {sp.effectSummary}
                     </p>
                   </div>
@@ -1188,10 +1186,10 @@ export function CombatConsoleView({
                 {reactionSpells.map(sp => (
                   <div
                     key={sp.slug}
-                    className="p-2 rounded-sm bg-dnd-parchment-dark border border-dnd-border-antique space-y-1 hover:border-dnd-gold transition text-xs"
+                    className="p-2 rounded-sm bg-dnd-parchment-dark border border-dnd-border-antique space-y-1 hover:border-dnd-gold transition text-xs min-w-0"
                   >
                     <div className="flex items-start justify-between gap-1.5">
-                      <span className="font-dnd-title font-bold text-dnd-crimson leading-tight">
+                      <span className="font-dnd-title font-bold text-dnd-crimson leading-tight break-words">
                         {sp.name}
                       </span>
                       <span className="text-[9px] px-1.5 py-0.5 rounded-sm bg-dnd-parchment-contrast border border-dnd-border-antique text-dnd-ink font-dnd-title font-semibold shrink-0">
@@ -1201,7 +1199,7 @@ export function CombatConsoleView({
                     <div className="text-[10px] text-dnd-ink-muted font-sans">
                       {sp.castingTime}
                     </div>
-                    <p className="text-[10px] text-dnd-ink font-dnd-body leading-snug">
+                    <p className="text-[10px] text-dnd-ink font-dnd-body leading-snug break-words">
                       {sp.effectSummary}
                     </p>
                   </div>
@@ -1210,32 +1208,6 @@ export function CombatConsoleView({
             </div>
           )}
         </div>
-
-        {/* Columna 4: Interacción con Objetos */}
-        <div className="p-4 rounded-sm bg-dnd-parchment text-dnd-ink border-2 border-dnd-border-antique space-y-3 dnd-notched shadow-md">
-          <div className="flex items-center justify-between border-b border-dnd-border-antique/80 pb-2">
-            <span className="font-dnd-title font-bold text-xs uppercase tracking-wider text-dnd-crimson">
-              Interacción Entorno
-            </span>
-            <span className="text-[10px] text-dnd-ink-muted font-dnd-title font-semibold">1 libre / turno</span>
-          </div>
-
-          <ul className="space-y-1.5 text-xs text-dnd-ink font-dnd-body">
-            <li className="p-2 rounded-sm bg-dnd-parchment-dark border border-dnd-border-antique">
-              <span>Desenvainar o enfundar un arma</span>
-            </li>
-            <li className="p-2 rounded-sm bg-dnd-parchment-dark border border-dnd-border-antique">
-              <span>Abrir o cerrar una puerta / compuerta</span>
-            </li>
-            <li className="p-2 rounded-sm bg-dnd-parchment-dark border border-dnd-border-antique">
-              <span>Sacar un objeto de la mochila</span>
-            </li>
-            <li className="p-2 rounded-sm bg-dnd-parchment-dark border border-dnd-border-antique">
-              <span>Recoger un objeto del suelo</span>
-            </li>
-          </ul>
-        </div>
-      </div>
 
         {/* Columna 4: Interacción con Objetos */}
         <div className="p-4 rounded-sm bg-dnd-parchment text-dnd-ink border-2 border-dnd-border-antique space-y-3 dnd-notched shadow-md">

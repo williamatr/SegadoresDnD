@@ -33,6 +33,7 @@ export function CharacterSheet({
   onTabChange,
   readOnly = false,
   userRole = 'player',
+  viewerCharacterSlug,
   evaluatedState: externalEvaluatedState,
   className = '',
   onUpdateHp,
@@ -415,6 +416,7 @@ export function CharacterSheet({
             character={character}
             readOnly={readOnly}
             userRole={userRole}
+            viewerCharacterSlug={viewerCharacterSlug}
             evaluatedState={evaluatedState}
             onApplyEffect={onApplyEffect}
             onRemoveEffect={onRemoveEffect}
