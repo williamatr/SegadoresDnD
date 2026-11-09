@@ -95,7 +95,10 @@ flowchart LR
 * **PROHIBICIÓN TOTAL DE `git push`:** Los agentes **NUNCA** deben ejecutar `git push` bajo ninguna circunstancia. El usuario es el **único** autorizado y encargado de realizar pushes a los repositorios remotos.
 * **Confirmación Previa Obligatoria para `git commit` y `git add`:** Los agentes pueden preparar cambios con `git add` y proponer mensajes de commit semánticos, pero **SIEMPRE deben solicitar aprobación explícita al usuario ANTES de ejecutar el commit**, detallando claramente los archivos afectados y el mensaje que se va a utilizar.
 * **Protección Automática Pre-Commit de Secretos:** El repositorio implementa un hook de pre-commit (`.githooks/pre-commit` ejecutando `scripts/verify-secrets.mjs`) que audita en el stage la presencia de tokens (GitHub, Supabase, JWTs, AWS), archivos `.env*` o credenciales quemadas. **Prohibido el uso de `--no-verify`** para saltarse estas protecciones.
-* **Git Flow:** Ramas `feature/*` / `fix/*` $\rightarrow$ `develop` $\rightarrow$ `main`. Prohibido hacer commits directos a `main`.
+* **Git Flow y Backport Automático (`main` $\rightarrow$ `develop`):**
+  * Flujo de trabajo: Ramas `feature/*` / `fix/*` nacen siempre de `develop` $\rightarrow$ PR a `develop` $\rightarrow$ PR de `develop` a `main`. Prohibido hacer commits directos a `main`.
+  * **Regla de Merge en GitHub (`develop` $\rightarrow$ `main`):** Al fusionar un PR de `develop` hacia `main`, usar **siempre "Create a merge commit"** (evitar *"Squash and merge"* entre ramas de larga vida como `develop` y `main` para preservar el ancestro común y evitar conflictos o código duplicado).
+  * **Backport Automático (`.github/workflows/sync-main-to-develop.yml`):** Cada vez que ingresa un commit a `main`, GitHub Actions ejecuta automáticamente el backport hacia `develop` para mantener ambas ramas alineadas en historial de commits.
 
 ---
 
