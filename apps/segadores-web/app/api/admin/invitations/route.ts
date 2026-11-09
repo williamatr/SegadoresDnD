@@ -214,8 +214,11 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const origin = request.nextUrl.origin;
-    const invitationLink = `${origin}/login?invited=true`;
+    const rawOrigin = request.nextUrl.origin;
+    const canonicalOrigin =
+      process.env.NEXT_PUBLIC_SITE_URL ||
+      (rawOrigin.includes('vercel.app') ? 'https://www.segadoresdnd.com' : rawOrigin);
+    const invitationLink = `${canonicalOrigin}/login?invited=true`;
 
     return NextResponse.json({
       success: true,

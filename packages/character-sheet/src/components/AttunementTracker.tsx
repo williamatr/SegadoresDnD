@@ -16,21 +16,21 @@ export function AttunementTracker({
   const isAtLimit = attunedCount === maxSlots;
 
   return (
-    <div className={`p-4 rounded-2xl bg-dnd-card border border-dnd-border space-y-2.5 shadow-md ${className}`}>
+    <div className={`p-4 rounded-sm bg-dnd-parchment text-dnd-ink border-2 border-dnd-border-antique dnd-notched space-y-2.5 shadow-md ${className}`}>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Sparkles className={`w-4 h-4 ${isOverLimit ? 'text-red-400 animate-bounce' : 'text-purple-400'}`} />
-          <h4 className="font-fantasy font-semibold text-xs text-slate-200 uppercase tracking-wider">
+          <Sparkles className={`w-4 h-4 ${isOverLimit ? 'text-dnd-crimson animate-bounce' : 'text-dnd-gold'}`} />
+          <h4 className="font-dnd-title font-bold text-xs text-dnd-crimson uppercase tracking-wider">
             Sintonización Mágica (Attunement)
           </h4>
         </div>
         <span
-          className={`font-mono text-xs font-bold px-2 py-0.5 rounded-full border ${
+          className={`font-dnd-title text-xs font-bold px-2 py-0.5 rounded-sm border ${
             isOverLimit
-              ? 'bg-red-950 border-red-700 text-red-300'
+              ? 'bg-dnd-crimson border-dnd-crimson-hover text-white'
               : isAtLimit
-              ? 'bg-amber-950 border-amber-700 text-amber-300'
-              : 'bg-purple-950 border-purple-700 text-purple-300'
+              ? 'bg-dnd-gold-surface border-dnd-gold text-dnd-gold'
+              : 'bg-dnd-parchment-contrast border-dnd-border-antique text-dnd-crimson'
           }`}
         >
           {attunedCount} / {maxSlots} Ranuras
@@ -47,9 +47,9 @@ export function AttunementTracker({
               className={`flex-1 h-2 rounded-full border transition-all ${
                 isSlotFilled
                   ? isOverLimit
-                    ? 'bg-red-500 border-red-400 shadow-sm shadow-red-900'
-                    : 'bg-purple-500 border-purple-400 shadow-sm shadow-purple-900'
-                  : 'bg-slate-900 border-slate-700'
+                    ? 'bg-dnd-crimson border-dnd-crimson-hover shadow-sm'
+                    : 'bg-dnd-gold border-dnd-gold-light shadow-sm'
+                  : 'bg-dnd-parchment-contrast border-dnd-border-antique'
               }`}
             />
           );
@@ -57,14 +57,14 @@ export function AttunementTracker({
       </div>
 
       {isOverLimit ? (
-        <div className="p-2 rounded-xl bg-red-950/60 border border-red-800/60 text-[11px] text-red-200 flex items-center gap-2">
-          <AlertTriangle className="w-3.5 h-3.5 shrink-0 text-red-400" />
+        <div className="p-2 rounded-md bg-dnd-crimson border border-dnd-crimson-hover text-xs text-white flex items-center gap-2 font-dnd-title font-bold">
+          <AlertTriangle className="w-3.5 h-3.5 shrink-0 text-dnd-gold-light" />
           <span>
             ¡Límite excedido! Solo puedes mantener sintonizados {maxSlots} objetos simultáneamente.
           </span>
         </div>
       ) : (
-        <p className="text-[11px] text-slate-400 leading-tight">
+        <p className="text-[11px] text-dnd-ink-muted font-dnd-body leading-tight">
           Sintonizarse requiere 1 descanso corto. Los objetos que requieren sintonización pero no están activos funcionan como equipo mundano.
         </p>
       )}

@@ -15,6 +15,7 @@ import {
   Lock,
   UserCheck
 } from 'lucide-react';
+import { TaperedRule, DndBadge } from '@segadores/ui';
 import type { CharacterSheetProps, CharacterSheetTab, TabConfig } from './types.ts';
 import { evaluateCharacterState } from '@segadores/dnd-core';
 import { CoreStatsView } from './views/CoreStatsView.tsx';
@@ -134,22 +135,23 @@ export function CharacterSheet({
 
   return (
     <div className={`space-y-6 max-w-6xl w-full mx-auto ${className}`}>
-      {/* 1. Encabezado Táctico del Personaje */}
-      <header className="p-5 sm:p-6 rounded-3xl bg-gradient-to-r from-dnd-card via-slate-900 to-dnd-card border border-dnd-border shadow-xl space-y-4">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      {/* 1. Encabezado Táctico del Personaje - Estilo Pergamino Editorial D&D 5e */}
+      <header className="relative bg-dnd-parchment text-dnd-ink border border-dnd-border-antique shadow-lg p-5 sm:p-7 rounded-lg dnd-notched space-y-4">
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
+            {/* Cintillas de Rasgos de Personaje */}
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-xs px-2.5 py-0.5 rounded-full bg-amber-950/70 border border-amber-800/50 text-dnd-gold font-semibold font-fantasy uppercase">
+              <DndBadge variant="parchment" size="sm">
                 {character.race}
-              </span>
-              <span className="text-xs px-2.5 py-0.5 rounded-full bg-slate-900 border border-slate-700 text-slate-300 font-mono">
+              </DndBadge>
+              <DndBadge variant="crimson" size="sm">
                 {character.character_class}
-              </span>
-              <span className="text-xs px-2 py-0.5 rounded-full bg-dnd-surface border border-dnd-gold/60 text-dnd-gold-light font-bold">
+              </DndBadge>
+              <DndBadge variant="gold" size="sm">
                 Nivel {character.level}
-              </span>
+              </DndBadge>
               <span
-                className="text-xs px-2.5 py-0.5 rounded-full bg-slate-900 border border-amber-600/50 text-amber-300 font-mono flex items-center gap-1 font-semibold"
+                className="text-xs px-2.5 py-0.5 rounded-md bg-dnd-parchment-contrast border border-dnd-border-antique text-dnd-crimson font-dnd-title font-bold flex items-center gap-1"
                 title={`Puntos de Experiencia: ${(character.experience_points || 0).toLocaleString()} PX`}
               >
                 <Sparkles className="w-3 h-3 text-dnd-gold" />
@@ -157,26 +159,33 @@ export function CharacterSheet({
               </span>
             </div>
 
-            <h1 className="text-2xl sm:text-4xl font-extrabold text-slate-100 font-fantasy tracking-wide mt-1.5">
+            {/* Nombre del Personaje en Cinzel Carmesí Profundo */}
+            <h1 className="text-3xl sm:text-4xl font-dnd-title font-black text-dnd-crimson tracking-wide mt-2 drop-shadow-sm uppercase">
               {character.name}
             </h1>
 
-            <p className="text-xs text-slate-400 mt-0.5">
-              {character.background} &bull;{' '}
-              <span className={character.alignment.toLowerCase().includes('pendiente') ? 'text-amber-400 italic' : 'text-slate-300'}>
+            {/* Trasfondo y Alineamiento con serifa clásica */}
+            <p className="text-xs text-dnd-ink-muted font-dnd-body mt-0.5">
+              <span className="font-semibold text-dnd-ink">{character.background}</span> &bull;{' '}
+              <span
+                className={
+                  character.alignment.toLowerCase().includes('pendiente')
+                    ? 'text-dnd-terracotta italic font-semibold'
+                    : 'text-dnd-ink-muted'
+                }
+              >
                 {character.alignment}
               </span>
             </p>
           </div>
 
-          {/* Medidores rápidos de Encabezado: Inspiración, Concentración, Rol */}
-          <div className="flex items-center gap-2.5 flex-wrap">
-            {/* Botón de Subir de Nivel */}
+          {/* Medidores rápidos: Inspiración, Subir Nivel, Rol */}
+          <div className="relative z-10 flex items-center gap-2.5 flex-wrap">
             {!readOnly && (
               <button
                 type="button"
                 onClick={() => setIsLevelUpModalOpen(true)}
-                className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-600 via-amber-500 to-yellow-500 hover:from-amber-500 hover:to-yellow-400 text-slate-950 font-fantasy font-bold text-xs uppercase tracking-wide flex items-center gap-1.5 shadow-md shadow-amber-950/40 transition active:scale-95"
+                className="px-3.5 py-1.5 rounded-md bg-gradient-to-r from-dnd-terracotta to-dnd-gold hover:from-[#a34712] hover:to-[#a88225] text-white font-dnd-title font-bold text-xs uppercase tracking-wider flex items-center gap-1.5 shadow-md border border-dnd-gold transition active:scale-95"
                 title="Abrir motor de subida de nivel y multiclase al 50%"
               >
                 <Zap className="w-3.5 h-3.5 fill-current" />
@@ -184,70 +193,77 @@ export function CharacterSheet({
               </button>
             )}
 
-            {/* Toggle de Inspiración */}
+            {/* Sello de Inspiración */}
             <button
               disabled={readOnly}
               onClick={() => onToggleInspiration?.(!character.inspiration)}
-              className={`px-3 py-1.5 rounded-xl border text-xs font-semibold flex items-center gap-1.5 transition ${
+              className={`px-3 py-1.5 rounded-md border text-xs font-dnd-title font-bold flex items-center gap-1.5 transition ${
                 character.inspiration
-                  ? 'bg-amber-500/20 border-dnd-gold text-dnd-gold shadow-md'
-                  : 'bg-slate-900 border-slate-800 text-slate-500 hover:text-slate-300'
+                  ? 'bg-dnd-gold/20 border-dnd-gold text-dnd-gold font-bold shadow-sm'
+                  : 'bg-dnd-parchment-contrast border-dnd-border-antique text-dnd-ink-muted hover:text-dnd-ink'
               }`}
               title="Inspiración del Dungeon Master (otorga ventaja en 1 tirada de d20)"
             >
-              <Star className={`w-3.5 h-3.5 ${character.inspiration ? 'fill-dnd-gold' : ''}`} />
+              <Star
+                className={`w-3.5 h-3.5 ${
+                  character.inspiration ? 'fill-current text-dnd-gold' : ''
+                }`}
+              />
               <span>Inspiración</span>
             </button>
 
             {/* Distintivo de Rol */}
             {userRole === 'dm' ? (
-              <span className="px-2.5 py-1.5 rounded-xl bg-red-950/80 border border-red-700 text-red-300 font-bold text-xs flex items-center gap-1">
-                <Lock className="w-3 h-3 text-red-400" /> Máster 🔒
+              <span className="px-2.5 py-1.5 rounded-md bg-dnd-crimson border border-dnd-crimson-hover text-white font-dnd-title font-bold text-xs flex items-center gap-1 shadow-sm">
+                <Lock className="w-3 h-3 text-dnd-gold-light" /> Máster 🔒
               </span>
             ) : (
-              <span className="px-2.5 py-1.5 rounded-xl bg-amber-950/40 border border-amber-800/40 text-dnd-gold-light font-semibold text-xs flex items-center gap-1">
+              <span className="px-2.5 py-1.5 rounded-md bg-dnd-parchment-contrast border border-dnd-border-antique text-dnd-crimson font-dnd-title font-bold text-xs flex items-center gap-1">
                 <UserCheck className="w-3 h-3 text-dnd-gold" /> Jugador
               </span>
             )}
           </div>
         </div>
 
+        {/* Línea divisoria cónica canónica */}
+        <TaperedRule variant="crimson" className="my-2" />
+
         {/* Barra Rápida de Salud y Defensas en el Encabezado */}
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 pt-2 border-t border-dnd-border/60 text-xs">
-          <div className="flex items-center gap-2 text-slate-300">
-            <Heart className="w-4 h-4 text-red-400 shrink-0" />
+        <div className="relative z-10 grid grid-cols-2 sm:grid-cols-5 gap-2 pt-1 font-dnd-body text-xs text-dnd-ink">
+          <div className="flex items-center gap-2">
+            <Heart className="w-4 h-4 text-dnd-crimson shrink-0" />
             <span>
-              PG: <strong className="text-emerald-400 font-mono">{character.current_hp}</strong>/{character.max_hp}
-              {character.temp_hp > 0 && <span className="text-cyan-400 font-mono"> (+{character.temp_hp})</span>}
+              PG: <strong className="font-dnd-title text-dnd-crimson text-sm">{character.current_hp}</strong>/{character.max_hp}
+              {character.temp_hp > 0 && <span className="text-cyan-600 dark:text-cyan-400 font-semibold"> (+{character.temp_hp})</span>}
             </span>
           </div>
 
-          <div className="flex items-center gap-2 text-slate-300">
+          <div className="flex items-center gap-2">
             <Shield className="w-4 h-4 text-dnd-gold shrink-0" />
             <span>
-              CA Efectiva: <strong className="text-amber-300 font-mono">{evaluatedState.effectiveAc}</strong>
+              CA Efectiva: <strong className="font-dnd-title text-dnd-crimson text-sm">{evaluatedState.effectiveAc}</strong>
             </span>
           </div>
 
-          <div className="flex items-center gap-2 text-slate-300">
-            <Zap className="w-4 h-4 text-amber-400 shrink-0" />
+          <div className="flex items-center gap-2">
+            <Zap className="w-4 h-4 text-dnd-terracotta shrink-0" />
             <span>
-              Velocidad: <strong className="text-slate-200 font-mono">{evaluatedState.effectiveSpeed} pies</strong>
+              Velocidad: <strong className="font-dnd-title text-sm">{evaluatedState.effectiveSpeed} pies</strong>
             </span>
           </div>
 
-          <div className="flex items-center gap-2 text-slate-300">
+          <div className="flex items-center gap-2">
             <Sparkles className="w-4 h-4 text-dnd-gold shrink-0" />
             <span>
-              Experiencia: <strong className="text-amber-300 font-mono">{(character.experience_points || 0).toLocaleString()}</strong> PX
+              Iniciativa: <strong className="font-dnd-title text-dnd-crimson text-sm">{character.initiative_modifier >= 0 ? `+${character.initiative_modifier}` : character.initiative_modifier}</strong>
             </span>
           </div>
 
-          <div className="flex items-center gap-2 text-slate-300">
-            <Flame className="w-4 h-4 text-amber-500 shrink-0" />
+          <div className="flex items-center gap-2">
+            <Flame className="w-4 h-4 text-dnd-terracotta shrink-0" />
             <span>
               Agotamiento:{' '}
-              <strong className={exhaustion > 0 ? 'text-red-400 font-mono' : 'text-slate-400 font-mono'}>
+              <strong className={`font-dnd-title text-sm ${exhaustion > 0 ? 'text-dnd-crimson' : 'text-dnd-ink-muted'}`}>
                 {exhaustion}/6
               </strong>
             </span>
@@ -255,7 +271,7 @@ export function CharacterSheet({
         </div>
       </header>
 
-      {/* 2. Selector Responsivo de las 7 Pestañas A–G */}
+      {/* 2. Selector Responsivo de las 7 Pestañas A–G (Estilo Pestañas de Tomo de Cuero/Pergamino) */}
       <nav className="flex items-center gap-1.5 overflow-x-auto pb-2 scrollbar-thin">
         {TABS.map(tab => {
           const isSelected = tab.id === currentTab;
@@ -264,18 +280,18 @@ export function CharacterSheet({
             <button
               key={tab.id}
               onClick={() => handleTabSelect(tab.id)}
-              className={`px-3.5 py-2.5 rounded-2xl border text-left transition flex items-center gap-2.5 shrink-0 relative ${
+              className={`px-3.5 py-2.5 rounded-t-md border-t-2 text-left transition flex items-center gap-2.5 shrink-0 relative select-none ${
                 isSelected
-                  ? 'bg-dnd-surface border-dnd-gold ring-1 ring-dnd-gold shadow-lg shadow-amber-950/20'
-                  : 'bg-dnd-card border-dnd-border text-slate-400 hover:text-slate-200 hover:border-slate-700'
+                  ? 'bg-dnd-parchment text-dnd-crimson border-t-dnd-gold border-x border-dnd-border-antique shadow-md z-10'
+                  : 'bg-dnd-leather/90 hover:bg-dnd-leather text-dnd-ink-muted hover:text-dnd-ink border-t-transparent border-x border-dnd-leather-dark'
               }`}
             >
               {/* Letra de Vista (A–G) */}
               <div
-                className={`w-6 h-6 rounded-lg flex items-center justify-center font-fantasy font-extrabold text-xs shrink-0 ${
+                className={`w-6 h-6 rounded-md flex items-center justify-center font-dnd-title font-black text-xs shrink-0 ${
                   isSelected
-                    ? 'bg-dnd-gold text-slate-950 shadow-inner'
-                    : 'bg-slate-900 border border-slate-700 text-slate-400'
+                    ? 'bg-dnd-crimson text-white shadow-sm'
+                    : 'bg-dnd-leather-dark text-dnd-gold border border-dnd-gold/30'
                 }`}
               >
                 {tab.letter}
@@ -283,13 +299,17 @@ export function CharacterSheet({
 
               <div>
                 <span
-                  className={`text-xs font-bold block leading-tight ${
-                    isSelected ? 'text-slate-100 font-fantasy' : 'text-slate-300'
+                  className={`text-xs font-dnd-title font-bold block leading-tight ${
+                    isSelected ? 'text-dnd-crimson' : 'text-dnd-ink'
                   }`}
                 >
                   {tab.label}
                 </span>
-                <span className="text-[10px] text-slate-500 block leading-tight">
+                <span
+                  className={`text-xs block leading-tight font-dnd-body ${
+                    isSelected ? 'text-dnd-ink-muted' : 'text-dnd-ink-subtle'
+                  }`}
+                >
                   {tab.subtitle}
                 </span>
               </div>
@@ -297,14 +317,14 @@ export function CharacterSheet({
               {/* Badges reactivos */}
               {tab.badge && (
                 <span
-                  className={`px-1.5 py-0.2 rounded-full text-[10px] font-mono font-bold shrink-0 ${
+                  className={`px-2 py-0.5 rounded-md text-xs font-dnd-title font-bold shrink-0 ${
                     tab.badgeVariant === 'red'
-                      ? 'bg-red-950 border border-red-700 text-red-300'
+                      ? 'bg-dnd-crimson text-white shadow-xs'
                       : tab.badgeVariant === 'purple'
-                      ? 'bg-purple-950 border border-purple-700 text-purple-300'
-                      : tab.badgeVariant === 'emerald'
-                      ? 'bg-emerald-950 border border-emerald-700 text-emerald-300'
-                      : 'bg-amber-950 border border-amber-700 text-dnd-gold-light'
+                        ? 'bg-purple-900 text-purple-200'
+                        : tab.badgeVariant === 'emerald'
+                          ? 'bg-emerald-800 text-emerald-100'
+                          : 'bg-dnd-gold text-dnd-leather-dark font-bold'
                   }`}
                 >
                   {tab.badge}
