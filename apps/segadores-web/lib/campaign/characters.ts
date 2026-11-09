@@ -433,7 +433,7 @@ export const CAMPAIGN_FULL_CHARACTERS: Record<string, Character> = {
     race: 'Elfo Lunar',
     background: 'Erudito / Sabio',
     alignment: 'Legal Bueno',
-    experience_points: 48000,
+    experience_points: 9650,
     max_hp: 58,
     current_hp: 58,
     temp_hp: 0,

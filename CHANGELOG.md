@@ -9,6 +9,27 @@ y este proyecto se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ## [Unreleased]
 
+### Corregido
+* **Coherencia y Claridad Visual en la Barra de Nivel y Experiencia (PX) (`CoreStatsView.tsx`, `multiclass.ts`):**
+  * Resuelta la discrepancia visual entre la insignia superior de experiencia sobre el nombre del personaje (`character.experience_points`) y los valores renderizados en la barra de progreso de nivel.
+  * `getCharacterXpProgress` ahora discrimina limpiamente entre:
+    * `currentAvailableXp`: Puntos de experiencia poseídos y disponibles dentro del escalón de nivel actual (ej. 3.600 PX de Alizar).
+    * `totalAccumulatedXp`: Experiencia acumulada histórica total a lo largo de la trayectoria del héroe (ej. 26.600 PX de Alizar).
+    * `xpNeededForNextLevel`: Coste del escalón del siguiente nivel (ej. 11.000 PX para Nivel 8).
+    * `remainingXp`: Puntos faltantes para subir de nivel (0 si el personaje ya dispone de PX suficientes, como Eru con 16.960 PX).
+  * La barra táctica de `CoreStatsView.tsx` ahora presenta de forma destacada los PX disponibles respecto al coste del nivel (`3.600 / 11.000 PX del nivel`), acompañados del cálculo acumulado total `(26.600 / 34.000 PX acumulados totales)`, garantizando total consistencia visual e intuitiva para los jugadores.
+  * Corregido el valor de `experience_points` de Honiel Spellbinder en `apps/segadores-web/lib/campaign/characters.ts`, fijándolo en sus **9.650 PX** reales en sincronía con su ficha canónica en Obsidian.
+
+### Cambiado
+* **Actualización Canónica de la Regla de Mesa de Multiclase (Desbloqueo a Nivel 7 y Límite hasta Nivel 7):**
+  * Se formalizan las condiciones de la regla casera de *Catch-Up* (descuento del 50% de PX):
+    1. **Desbloqueo obligatorio:** Solo se activa si el personaje ha alcanzado al menos el **Nivel 7 con su clase principal**.
+    2. **Exclusividad para multiclase:** Solo aplica para clases secundarias; la clase principal siempre sube al 100% normal.
+    3. **Adquisición bajo reglas oficiales:** Requiere cumplir las exigencias oficiales de D&D (puntuaciones de característica de 13+ en ambas clases).
+    4. **Expiración a Nivel 7:** La regla de descuento al 50% es válida únicamente mientras la clase secundaria sea inferior a Nivel 7 (subir a niveles 1, 2, 3, 4, 5, 6 y 7). Al alcanzar Nivel 7 en la multiclase, la regla expira y subir a Nivel 8 o posterior requiere el 100% del coste normal de PX.
+  * Actualizada la lógica matemática en `packages/dnd-core/src/rules/multiclass.ts` (`calculateMulticlassLevelUpCost`) y el simulador de `ContextualRulesView.tsx`.
+  * Sincronizadas las fuentes maestras del lore y reglas en Obsidian (`02_Reglas_de_Mesa_y_Combate.md`, `Reglas_de_Multiclase.md`, `Reglas_de_Subir_de_Nivel.md`) e incorporado diagrama explicativo Mermaid en la documentación.
+
 ### Añadido
 * **Arquitectura 100% Agnóstica de UI en `@segadores/character-sheet` y `@segadores/dnd-core`:**
   * Eliminado todo acoplamiento por slug (`character.slug === '...'`) en las vistas del paquete `@segadores/character-sheet`:

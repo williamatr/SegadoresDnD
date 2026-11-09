@@ -254,16 +254,50 @@ describe('@segadores/dnd-core - Reglas de Mesa: Heridas (Tablas A y B) y Multicl
     assert.equal(equalizedLvl.isCatchUpHalfCost, false);
     assert.equal(equalizedLvl.xpCost, 21000);
 
+    // Regla de desbloqueo a Nivel 7: Si la clase principal no ha alcanzado Nivel 7, la regla está bloqueada (100% normal)
+    const lockedPrimary6 = calculateMulticlassLevelUpCost(2, 6, 7);
+    assert.equal(lockedPrimary6.isCatchUpHalfCost, false, 'Clase principal < 7 no debe desbloquear descuento de multiclase');
+    assert.equal(lockedPrimary6.xpCost, lockedPrimary6.officialRawCost);
+
+    // Subida de clase secundaria de Nivel 6 a 7 con primaria >= 7: aplica el 50% (último nivel con descuento)
+    const monkTo7 = calculateMulticlassLevelUpCost(7, 8, 14);
+    assert.equal(monkTo7.isCatchUpHalfCost, true, 'Subir multiclase a Nivel 7 aún debe disfrutar del 50%');
+    assert.equal(monkTo7.xpCost, Math.floor(monkTo7.officialRawCost * 0.5));
+
+    // Expiración a Nivel 7: Una vez que la multiclase alcanza Nivel 7, subir a Nivel 8 vuelve al 100% oficial
+    const monkTo8 = calculateMulticlassLevelUpCost(8, 8, 15);
+    assert.equal(monkTo8.isCatchUpHalfCost, false, 'Multiclase en Nivel 7 que pasa a 8 debe pagar el 100% completo');
+    assert.equal(monkTo8.xpCost, monkTo8.officialRawCost);
+
     // Progreso de PX de personajes (Alizar: Nivel 7 con 3.600 PX hacia nivel 8)
     const alizarProgress = getCharacterXpProgress(7, 3600);
     assert.equal(alizarProgress.currentLevel, 7);
     assert.equal(alizarProgress.nextLevel, 8);
     assert.equal(alizarProgress.currentXp, 26600);
+    assert.equal(alizarProgress.currentAvailableXp, 3600);
+    assert.equal(alizarProgress.totalAccumulatedXp, 26600);
     assert.equal(alizarProgress.currentLevelThreshold, 23000);
     assert.equal(alizarProgress.nextLevelThreshold, 34000);
     assert.equal(alizarProgress.xpNeededForNextLevel, 11000);
     assert.equal(alizarProgress.progressPercent, 33);
     assert.equal(alizarProgress.remainingXp, 7400);
+
+    // Eru: Nivel 8 con 16.960 PX disponibles (supera los 14.000 necesarios para subir a nivel 9)
+    const eruProgress = getCharacterXpProgress(8, 16960);
+    assert.equal(eruProgress.currentLevel, 8);
+    assert.equal(eruProgress.nextLevel, 9);
+    assert.equal(eruProgress.currentAvailableXp, 16960);
+    assert.equal(eruProgress.totalAccumulatedXp, 50960);
+    assert.equal(eruProgress.xpNeededForNextLevel, 14000);
+    assert.equal(eruProgress.remainingXp, 0, 'Eru tiene PX suficientes, no faltan PX');
+    assert.equal(eruProgress.progressPercent, 100);
+
+    // Zuma: Nivel 8 con 0 PX
+    const zumaProgress = getCharacterXpProgress(8, 0);
+    assert.equal(zumaProgress.currentAvailableXp, 0);
+    assert.equal(zumaProgress.totalAccumulatedXp, 34000);
+    assert.equal(zumaProgress.remainingXp, 14000);
+    assert.equal(zumaProgress.progressPercent, 0);
 
     // Nivel de lanzador multiclase: Pícaro (Embaucador Arcano) 4 (floor(4/3)=1) + Bardo 1 (1) = Nivel 2 -> 3 espacios Nv.1
     const casterLvl = calculateMulticlassCasterLevel([
