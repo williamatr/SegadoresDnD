@@ -71,6 +71,10 @@ y este proyecto se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
   * Modernizadas las 7 vistas de la hoja de personaje (`packages/character-sheet/src/views/*`) y sus componentes complementarios (`HpTracker`, `HitDiceTracker`, `DeathSavesTracker`, `ExhaustionSelector`, `AttunementTracker`, `LevelUpModal`).
 
 ### Corregido
+* **Corrección de Merge Duplicado en `SpellsAndAbilitiesView.tsx`, Passthrough de Variables en `turbo.json` y Backport Automático (`main` -> `develop`):**
+  * Resuelta la colisión de merge de Git en la rama `develop` (`502faef`) donde `renderSlotTracker` se había duplicado al fusionar `main` hacia `develop`.
+  * Añadidas a `turbo.json` (`tasks.build.env`) las variables de entorno de servidor de Vercel (`SUPABASE_*`, `POSTGRES_*`, `ADMIN_EMAILS`, `ALLOWED_EMAILS`) para evitar que Turborepo 2.x las filtre en modo estricto durante el build.
+  * Creado el workflow de GitHub Actions `.github/workflows/sync-main-to-develop.yml` para ejecutar automáticamente el backport de `main` hacia `develop` en cada push a `main`, manteniendo ambas ramas alineadas en historial de commits.
 * **Contraste y Legibilidad en Elementos Interactivos Carmesí (`bg-dnd-crimson`):**
   * Desacopladas las variables `--dnd-crimson-btn` (fondo de botón interactivo de alto impacto) y `--dnd-crimson-fg` / `--dnd-on-crimson` (`#FFFFFF`), resolviendo el problema de texto lavado o ilegible en temas oscuros.
   * Corregidos todos los botones primarios, selectores y badges con fondo carmesí a lo largo de `apps/segadores-web` (`header.tsx`, `portal-dashboard.tsx`, `dm-invitations-console.tsx`, `login/page.tsx`, `acceso-denegado/page.tsx`, `demo/page.tsx`, `hero-action-buttons.tsx`) y `packages/character-sheet`.

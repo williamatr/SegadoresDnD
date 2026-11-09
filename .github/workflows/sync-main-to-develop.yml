@@ -1,0 +1,48 @@
+name: Backport Main to Develop
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+concurrency:
+  group: backport-main-to-develop
+  cancel-in-progress: false
+
+jobs:
+  backport:
+    name: Sincronizar main -> develop
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repositorio con historial completo
+        uses: actions/checkout@v4
+        with:
+          ref: develop
+          fetch-depth: 0
+          submodules: false
+
+      - name: Configurar autor de Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Backport de main hacia develop
+        run: |
+          git fetch origin main:main
+
+          if git merge-base --is-ancestor main HEAD; then
+            echo "✅ La rama develop ya contiene todos los commits de main."
+            exit 0
+          fi
+
+          if git merge --ff-only main; then
+            echo "✅ Fast-forward limpio de main hacia develop."
+          else
+            echo "🔄 Fusionando nuevos commits de main hacia develop..."
+            git merge main --no-edit -m "chore(git): backport automático de main hacia develop"
+          fi
+
+          git push origin develop
