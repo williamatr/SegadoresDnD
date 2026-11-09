@@ -91,73 +91,73 @@ export function HpTracker({
     onUpdateHp?.(currentHp, 0);
   };
 
-  // Color de la barra de vida reactivo
-  let barColor = 'bg-emerald-500';
-  if (currentHp === 0) barColor = 'bg-red-900';
-  else if (hpPercent <= 25) barColor = 'bg-red-500';
-  else if (hpPercent <= 50) barColor = 'bg-amber-500';
+  // Color de la barra de vida reactivo (Carmesí profundo con gradiente de vitalidad)
+  let barColor = 'bg-gradient-to-r from-[#58180D] to-[#7a2021]';
+  if (currentHp === 0) barColor = 'bg-red-950';
+  else if (hpPercent <= 25) barColor = 'bg-red-800 animate-pulse';
+  else if (hpPercent <= 50) barColor = 'bg-[#c45b1d]';
 
   return (
-    <div className="p-4 sm:p-5 rounded-2xl bg-dnd-card border border-dnd-border space-y-4 shadow-md">
+    <div className="p-4 sm:p-5 rounded-sm bg-[#fdf6ea] text-[#242528] border-2 border-[#d4c2a5] dnd-notched space-y-4 shadow-md">
       {/* Encabezado de Puntos de Golpe */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Heart className={`w-5 h-5 ${currentHp === 0 ? 'text-red-500 animate-pulse' : 'text-red-400'}`} />
-          <h3 className="font-fantasy font-bold text-base text-slate-100 tracking-wide">
+          <Heart className={`w-5 h-5 ${currentHp === 0 ? 'text-[#58180D] animate-pulse' : 'text-[#58180D]'}`} />
+          <h3 className="font-dnd-title font-bold text-base text-[#58180D] tracking-wide">
             Puntos de Golpe (PG)
           </h3>
         </div>
         <div className="flex items-center gap-2 text-xs">
           {tempHp > 0 && (
-            <span className="px-2.5 py-0.5 rounded-full bg-cyan-950/70 border border-cyan-700/60 text-cyan-300 font-bold font-mono">
+            <span className="px-2.5 py-0.5 rounded-sm bg-[#ede2cb] border border-[#d4c2a5] text-cyan-800 font-bold font-dnd-title">
               +{tempHp} Temp
             </span>
           )}
-          <span className="font-mono text-sm font-bold text-slate-200">
-            <span className={currentHp === 0 ? 'text-red-400 font-extrabold' : 'text-emerald-400'}>
+          <span className="font-dnd-title text-base font-bold text-[#242528]">
+            <span className={currentHp === 0 ? 'text-[#58180D] font-black' : 'text-[#58180D] font-black'}>
               {currentHp}
             </span>
-            <span className="text-slate-500"> / </span>
-            <span className="text-slate-400">{maxHp}</span>
+            <span className="text-[#58544d]"> / </span>
+            <span className="text-[#58544d]">{maxHp}</span>
           </span>
         </div>
       </div>
 
       {/* Barra de Progreso de Salud */}
       <div className="space-y-1">
-        <div className="h-3 w-full bg-slate-900 rounded-full overflow-hidden border border-slate-800 p-0.5 relative">
+        <div className="h-3.5 w-full bg-[#ede2cb] rounded-full overflow-hidden border border-[#d4c2a5] p-0.5 relative">
           <div
             className={`h-full rounded-full transition-all duration-300 ${barColor}`}
             style={{ width: `${hpPercent}%` }}
           />
         </div>
-        <div className="flex items-center justify-between text-[11px] text-slate-400 px-1">
+        <div className="flex items-center justify-between text-[11px] text-[#58544d] px-1 font-dnd-body">
           <span>{currentHp === 0 ? '💀 Inconsciente (0 PG)' : hpPercent <= 50 ? '⚠️ Malherido (< 50%)' : 'En buen estado'}</span>
-          <span className="font-mono">{hpPercent}%</span>
+          <span className="font-dnd-title font-bold">{hpPercent}%</span>
         </div>
       </div>
 
       {/* Alerta de Herida Reactiva */}
       {lastDamageAlert && (
         <div
-          className={`p-3 rounded-xl border flex items-start justify-between gap-3 text-xs animate-in fade-in ${
+          className={`p-3 rounded-sm border flex items-start justify-between gap-3 text-xs animate-in fade-in ${
             lastDamageAlert.type === 'zero'
-              ? 'bg-red-950/60 border-red-700/70 text-red-200'
-              : 'bg-amber-950/60 border-amber-700/70 text-amber-200'
+              ? 'bg-[#58180D] text-[#fdf6ea] border-[#7a2021]'
+              : 'bg-[#ede2cb] text-[#58180D] border-[#c45b1d]'
           }`}
         >
           <div className="flex items-start gap-2">
-            <ShieldAlert className="w-4 h-4 shrink-0 mt-0.5 text-red-400" />
+            <ShieldAlert className="w-4 h-4 shrink-0 mt-0.5 text-[#e5b960]" />
             <div>
-              <p className="font-semibold">{lastDamageAlert.message}</p>
-              <span className="text-[10px] text-slate-300 block mt-0.5">
+              <p className="font-dnd-title font-bold">{lastDamageAlert.message}</p>
+              <span className="text-[10px] opacity-90 block mt-0.5 font-dnd-body">
                 Regla de mesa: Las heridas graves o estrés masivo alteran el combate.
               </span>
             </div>
           </div>
           <button
             onClick={() => onTriggerInjuryTable?.(lastDamageAlert.table)}
-            className="px-2.5 py-1 rounded-lg bg-red-900/80 hover:bg-red-800 border border-red-600 text-[11px] font-bold text-white shrink-0 transition"
+            className="px-2.5 py-1 rounded-sm bg-[#c29b38] hover:bg-[#a88225] text-[#1b120e] text-[11px] font-dnd-title font-bold shrink-0 transition shadow-sm"
           >
             Tirar Tabla {lastDamageAlert.table}
           </button>
@@ -166,32 +166,32 @@ export function HpTracker({
 
       {/* Botones de Control Táctil Rápido */}
       {!readOnly && (
-        <div className="space-y-3 pt-1 border-t border-dnd-border/60">
+        <div className="space-y-3 pt-1 border-t border-[#d4c2a5]/80">
           <div className="grid grid-cols-4 gap-1.5 text-xs">
             <button
               onClick={() => handleApplyDamage(5)}
-              className="py-1.5 px-2 rounded-lg bg-red-950/50 hover:bg-red-900/60 border border-red-800/50 text-red-300 font-mono font-semibold flex items-center justify-center gap-1 transition"
+              className="py-1.5 px-2 rounded-sm bg-[#ede2cb] hover:bg-[#d4c2a5] border border-[#d4c2a5] text-[#58180D] font-dnd-title font-bold flex items-center justify-center gap-1 transition shadow-sm"
               title="Recibir 5 de daño"
             >
               <Minus className="w-3 h-3" /> 5 Daño
             </button>
             <button
               onClick={() => handleApplyDamage(1)}
-              className="py-1.5 px-2 rounded-lg bg-red-950/30 hover:bg-red-900/50 border border-red-800/40 text-red-300 font-mono font-semibold flex items-center justify-center gap-1 transition"
+              className="py-1.5 px-2 rounded-sm bg-[#ede2cb] hover:bg-[#d4c2a5] border border-[#d4c2a5] text-[#58180D] font-dnd-title font-bold flex items-center justify-center gap-1 transition shadow-sm"
               title="Recibir 1 de daño"
             >
               <Minus className="w-3 h-3" /> 1 Daño
             </button>
             <button
               onClick={() => handleApplyHeal(1)}
-              className="py-1.5 px-2 rounded-lg bg-emerald-950/30 hover:bg-emerald-900/50 border border-emerald-800/40 text-emerald-300 font-mono font-semibold flex items-center justify-center gap-1 transition"
+              className="py-1.5 px-2 rounded-sm bg-[#ede2cb] hover:bg-[#d4c2a5] border border-[#d4c2a5] text-[#15803d] font-dnd-title font-bold flex items-center justify-center gap-1 transition shadow-sm"
               title="Curar 1 PG"
             >
               <Plus className="w-3 h-3" /> 1 Cura
             </button>
             <button
               onClick={() => handleApplyHeal(5)}
-              className="py-1.5 px-2 rounded-lg bg-emerald-950/50 hover:bg-emerald-900/60 border border-emerald-800/50 text-emerald-300 font-mono font-semibold flex items-center justify-center gap-1 transition"
+              className="py-1.5 px-2 rounded-sm bg-[#ede2cb] hover:bg-[#d4c2a5] border border-[#d4c2a5] text-[#15803d] font-dnd-title font-bold flex items-center justify-center gap-1 transition shadow-sm"
               title="Curar 5 PG"
             >
               <Plus className="w-3 h-3" /> 5 Cura
@@ -207,7 +207,7 @@ export function HpTracker({
               placeholder="Cantidad..."
               value={customAmount}
               onChange={e => setCustomAmount(e.target.value)}
-              className="w-24 px-2.5 py-1.5 rounded-lg bg-slate-900 border border-dnd-border text-slate-100 text-xs font-mono focus:outline-none focus:border-dnd-gold"
+              className="w-24 px-2.5 py-1.5 rounded-sm bg-[#fdf6ea] border border-[#d4c2a5] text-[#242528] text-xs font-dnd-title font-bold focus:outline-none focus:border-[#58180D]"
             />
             <button
               onClick={() => {
@@ -215,7 +215,7 @@ export function HpTracker({
                 if (!isNaN(val) && val > 0) handleApplyDamage(val);
               }}
               disabled={!customAmount}
-              className="flex-1 py-1.5 px-2.5 rounded-lg bg-red-950/70 hover:bg-red-900 border border-red-700/60 text-red-200 text-xs font-semibold disabled:opacity-40 disabled:cursor-not-allowed transition"
+              className="flex-1 py-1.5 px-2.5 rounded-sm bg-[#58180D] hover:bg-[#7a2021] text-[#fdf6ea] text-xs font-dnd-title font-bold disabled:opacity-40 disabled:cursor-not-allowed transition shadow-sm"
             >
               Dañar
             </button>
@@ -225,28 +225,28 @@ export function HpTracker({
                 if (!isNaN(val) && val > 0) handleApplyHeal(val);
               }}
               disabled={!customAmount}
-              className="flex-1 py-1.5 px-2.5 rounded-lg bg-emerald-950/70 hover:bg-emerald-900 border border-emerald-700/60 text-emerald-200 text-xs font-semibold disabled:opacity-40 disabled:cursor-not-allowed transition"
+              className="flex-1 py-1.5 px-2.5 rounded-sm bg-[#15803d] hover:bg-[#166534] text-[#fdf6ea] text-xs font-dnd-title font-bold disabled:opacity-40 disabled:cursor-not-allowed transition shadow-sm"
             >
               Curar
             </button>
             <button
               onClick={() => {
                 const val = parseInt(customAmount, 10);
-                if (!isNaN(val) && val > 0) handleApplyTempHp(val);
+                if (!isNaN(val) && val >= 0) handleApplyTempHp(val);
               }}
               disabled={!customAmount}
-              className="py-1.5 px-2.5 rounded-lg bg-cyan-950/70 hover:bg-cyan-900 border border-cyan-700/60 text-cyan-200 text-xs font-semibold disabled:opacity-40 disabled:cursor-not-allowed transition"
-              title="Añadir PG Temporales"
+              className="py-1.5 px-2.5 rounded-sm bg-[#ede2cb] hover:bg-[#d4c2a5] border border-[#d4c2a5] text-cyan-800 text-xs font-dnd-title font-bold disabled:opacity-40 disabled:cursor-not-allowed transition shadow-sm"
+              title="Establecer PG Temporales (no se acumulan, toma el mayor)"
             >
               +Temp
             </button>
             {tempHp > 0 && (
               <button
                 onClick={handleClearTempHp}
-                className="py-1.5 px-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs transition"
+                className="py-1.5 px-2 rounded-sm bg-[#ede2cb] hover:bg-[#d4c2a5] text-[#58180D] text-xs font-dnd-title font-bold transition"
                 title="Quitar PG Temporales"
               >
-                ✕
+                Limpiar
               </button>
             )}
           </div>

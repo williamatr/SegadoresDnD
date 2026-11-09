@@ -3,15 +3,16 @@ import {
   Sparkles,
   BookOpen,
   Search,
-  Filter,
   CheckCircle2,
   TrendingUp,
-  Layers,
   Flame,
   Shield,
   HeartHandshake,
-  Compass
+  Compass,
+  Zap,
+  RotateCcw
 } from 'lucide-react';
+import { DndBadge, TaperedRule } from '@segadores/ui';
 import type { BaseViewProps } from '../types.ts';
 
 interface SpellDisplayItem {
@@ -359,7 +360,9 @@ const SPELL_CATALOG: Record<string, Omit<SpellDisplayItem, 'name' | 'prepared'>>
 
 export function SpellsAndAbilitiesView({
   character,
-  readOnly = false
+  readOnly = false,
+  onUpdateSpellSlot,
+  onToggleConcentration
 }: BaseViewProps) {
   const [subTab, setSubTab] = useState<'learned' | 'progression'>('learned');
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -413,71 +416,126 @@ export function SpellsAndAbilitiesView({
     return true;
   });
 
-  // Agrupar por nivel
+  // Agrupar por nivel ordenado
   const spellsByLevel = filteredSpells.reduce((acc, sp) => {
-    const key = sp.level === 0 ? 'Trucos (Cantrips)' : `Nivel ${sp.level}`;
+    const key = sp.level === 0 ? 'Trucos (Cantrips)' : `Conjuros de Nivel ${sp.level}`;
     if (!acc[key]) acc[key] = [];
     acc[key].push(sp);
     return acc;
   }, {} as Record<string, SpellDisplayItem[]>);
 
+  // Helper para renderizar espacios de conjuro por nivel
+  const renderSlotTracker = (levelNum: number) => {
+    if (levelNum === 0) return null;
+    const levelKey = String(levelNum);
+    const slotPool = character.spell_slots?.[levelKey];
+    if (!slotPool || slotPool.total === 0) return null;
+
+    const total = slotPool.total;
+    const used = slotPool.used || 0;
+    const available = Math.max(0, total - used);
+
+    return (
+      <div className="flex items-center gap-2 bg-[#ede2cb] px-2.5 py-1 rounded-sm border border-[#d4c2a5] shadow-xs">
+        <span className="text-[10px] font-dnd-title font-bold text-[#58180D] uppercase tracking-wider">
+          Espacios:
+        </span>
+        <div className="flex items-center gap-1.5">
+          {Array.from({ length: total }).map((_, idx) => {
+            const isSlotAvailable = idx < available;
+            return (
+              <button
+                key={idx}
+                type="button"
+                disabled={readOnly || !onUpdateSpellSlot}
+                onClick={() => {
+                  if (readOnly || !onUpdateSpellSlot) return;
+                  const newUsed = isSlotAvailable ? used + 1 : Math.max(0, used - 1);
+                  onUpdateSpellSlot(levelKey, newUsed);
+                }}
+                title={
+                  isSlotAvailable
+                    ? `Espacio ${idx + 1} disponible (clic para consumir)`
+                    : `Espacio ${idx + 1} consumido (clic para recuperar)`
+                }
+                className={`w-3.5 h-3.5 rounded-full border transition flex items-center justify-center text-[9px] font-bold ${
+                  isSlotAvailable
+                    ? 'bg-[#15803d] border-[#166534] text-white shadow-xs hover:scale-110 cursor-pointer'
+                    : 'bg-[#d4c2a5] border-[#a89b88] text-[#58544d] opacity-60 hover:opacity-100 cursor-pointer'
+                }`}
+              >
+                {isSlotAvailable ? '●' : '○'}
+              </button>
+            );
+          })}
+        </div>
+        <span className="text-[10px] font-dnd-body font-bold text-[#58544d]">
+          ({available}/{total})
+        </span>
+      </div>
+    );
+  };
+
   return (
     <div className="space-y-6">
-      {/* Selector de Sub-Pestaña: Aprendidas vs Progresión */}
-      <div className="flex items-center justify-between border-b border-dnd-border/60 pb-3">
+      {/* 1. Selector de Sub-Pestaña: Grimorio vs Árbol de Progresión */}
+      <div className="flex items-center justify-between border-b border-[#d4c2a5]/80 pb-3">
         <div className="flex items-center gap-2">
           <button
+            type="button"
             onClick={() => setSubTab('learned')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-fantasy font-bold transition border ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-sm text-xs font-dnd-title font-bold transition border ${
               subTab === 'learned'
-                ? 'bg-dnd-surface border-dnd-gold text-dnd-gold shadow-sm'
-                : 'bg-dnd-card border-dnd-border text-slate-400 hover:text-slate-200'
+                ? 'bg-[#fdf6ea] border-[#b45309] text-[#58180D] shadow-sm'
+                : 'bg-[#ede2cb] border-[#d4c2a5] text-[#58544d] hover:text-[#242528]'
             }`}
           >
-            <BookOpen className="w-4 h-4 text-dnd-gold" />
-            Conjuros y Rasgos Adquiridos ({knownSpells.length})
+            <BookOpen className="w-4 h-4 text-[#b45309]" />
+            Grimorio y Conjuros Adquiridos ({knownSpells.length})
           </button>
           <button
+            type="button"
             onClick={() => setSubTab('progression')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-fantasy font-bold transition border ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-sm text-xs font-dnd-title font-bold transition border ${
               subTab === 'progression'
-                ? 'bg-dnd-surface border-dnd-gold text-dnd-gold shadow-sm'
-                : 'bg-dnd-card border-dnd-border text-slate-400 hover:text-slate-200'
+                ? 'bg-[#fdf6ea] border-[#b45309] text-[#58180D] shadow-sm'
+                : 'bg-[#ede2cb] border-[#d4c2a5] text-[#58544d] hover:text-[#242528]'
             }`}
           >
-            <TrendingUp className="w-4 h-4 text-purple-400" />
-            Árbol de Aprendizaje & Subidas de Nivel
+            <TrendingUp className="w-4 h-4 text-[#78350f]" />
+            Árbol de Aprendizaje & Progresión
           </button>
         </div>
       </div>
 
       {subTab === 'learned' ? (
-        <div className="space-y-5">
-          {/* Barra de Búsqueda y Filtros */}
-          <div className="p-4 rounded-2xl bg-dnd-card border border-dnd-border space-y-3 shadow-md">
+        <div className="space-y-6">
+          {/* 2. Barra de Búsqueda y Filtros de Manual */}
+          <div className="p-4 rounded-sm bg-[#fdf6ea] text-[#242528] border-2 border-[#d4c2a5] dnd-notched space-y-3 shadow-md">
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
               {/* Búsqueda por Texto */}
               <div className="relative flex-1">
-                <Search className="w-4 h-4 absolute left-3 top-2.5 text-slate-400" />
+                <Search className="w-4 h-4 absolute left-3 top-2.5 text-[#8a7f72]" />
                 <input
                   type="text"
-                  placeholder="Buscar conjuro o rasgo..."
+                  placeholder="Buscar en el grimorio (nombre, escuela)..."
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
-                  className="w-full pl-9 pr-3 py-1.5 rounded-xl bg-slate-900 border border-slate-700 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-dnd-gold"
+                  className="w-full pl-9 pr-3 py-1.5 rounded-sm bg-[#ede2cb] border border-[#d4c2a5] text-xs text-[#242528] placeholder-[#8a7f72] font-dnd-body focus:outline-none focus:border-[#b45309]"
                 />
               </div>
 
-              {/* Filtro por Nivel */}
+              {/* Filtro por Nivel de Conjuro */}
               <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
                 {['all', '0', '1', '2', '3', '4'].map(lvl => (
                   <button
                     key={lvl}
+                    type="button"
                     onClick={() => setSelectedLevel(lvl)}
-                    className={`px-2.5 py-1 rounded-lg text-xs font-mono font-semibold border transition ${
+                    className={`px-2.5 py-1 rounded-sm text-xs font-dnd-title font-bold border transition ${
                       selectedLevel === lvl
-                        ? 'bg-dnd-gold/20 border-dnd-gold text-dnd-gold-light'
-                        : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-slate-200'
+                        ? 'bg-[#58180D] border-[#7a2021] text-[#fdf6ea] shadow-xs'
+                        : 'bg-[#ede2cb] border-[#d4c2a5] text-[#58544d] hover:text-[#242528]'
                     }`}
                   >
                     {lvl === 'all' ? 'Todos' : lvl === '0' ? 'Trucos' : `Nv ${lvl}`}
@@ -486,13 +544,13 @@ export function SpellsAndAbilitiesView({
               </div>
             </div>
 
-            {/* Filtros Secundarios: Función y Componentes */}
-            <div className="flex items-center justify-between flex-wrap gap-2 pt-2 border-t border-dnd-border/60 text-xs">
+            {/* Filtros Secundarios: Función y Sellos de Componente */}
+            <div className="flex items-center justify-between flex-wrap gap-2 pt-2 border-t border-[#d4c2a5]/80 text-xs">
               {/* Filtro por Rol / Función */}
               <div className="flex items-center gap-1">
-                <span className="text-[11px] text-slate-500 mr-1">Función:</span>
+                <span className="text-[11px] text-[#58544d] font-dnd-title mr-1 uppercase">Rol:</span>
                 {[
-                  { id: 'all', label: 'Cualquiera' },
+                  { id: 'all', label: 'Todos' },
                   { id: 'daño', label: 'Daño' },
                   { id: 'soporte', label: 'Soporte' },
                   { id: 'control', label: 'Control' },
@@ -500,11 +558,12 @@ export function SpellsAndAbilitiesView({
                 ].map(r => (
                   <button
                     key={r.id}
+                    type="button"
                     onClick={() => setSelectedRole(r.id)}
-                    className={`px-2 py-0.5 rounded text-[11px] border capitalize ${
+                    className={`px-2 py-0.5 rounded-sm text-[11px] font-dnd-body border capitalize ${
                       selectedRole === r.id
-                        ? 'bg-purple-950 border-purple-600 text-purple-200'
-                        : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-slate-200'
+                        ? 'bg-[#78350f] border-[#451a03] text-[#fdf6ea] font-bold'
+                        : 'bg-[#ede2cb] border-[#d4c2a5] text-[#58544d] hover:text-[#242528]'
                     }`}
                   >
                     {r.label}
@@ -514,7 +573,7 @@ export function SpellsAndAbilitiesView({
 
               {/* Filtro por Componentes Mágicos V, S, M, C, R */}
               <div className="flex items-center gap-1">
-                <span className="text-[11px] text-slate-500 mr-1">Comp:</span>
+                <span className="text-[11px] text-[#58544d] font-dnd-title mr-1 uppercase">Sellos:</span>
                 {[
                   { id: 'all', label: 'Todos' },
                   { id: 'v', label: 'V' },
@@ -525,11 +584,12 @@ export function SpellsAndAbilitiesView({
                 ].map(cmp => (
                   <button
                     key={cmp.id}
+                    type="button"
                     onClick={() => setFilterComponent(cmp.id)}
-                    className={`px-2 py-0.5 rounded text-[11px] font-mono border ${
+                    className={`px-2 py-0.5 rounded-sm text-[11px] font-mono border ${
                       filterComponent === cmp.id
-                        ? 'bg-amber-950 border-amber-600 text-amber-200'
-                        : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-slate-200'
+                        ? 'bg-[#b45309] border-[#92400e] text-[#fdf6ea] font-bold'
+                        : 'bg-[#ede2cb] border-[#d4c2a5] text-[#58544d] hover:text-[#242528]'
                     }`}
                   >
                     {cmp.label}
@@ -539,135 +599,181 @@ export function SpellsAndAbilitiesView({
             </div>
           </div>
 
-          {/* Grilla de Conjuros Agrupados */}
+          {/* 3. Secciones de Conjuros Agrupados por Nivel */}
           {Object.keys(spellsByLevel).length > 0 ? (
-            Object.entries(spellsByLevel).map(([groupTitle, spells]) => (
-              <div key={groupTitle} className="space-y-3">
-                <div className="flex items-center gap-2 border-b border-dnd-border/60 pb-1.5">
-                  <Sparkles className="w-3.5 h-3.5 text-dnd-gold" />
-                  <h4 className="font-fantasy font-bold text-xs uppercase tracking-wider text-slate-200">
-                    {groupTitle}
-                  </h4>
-                  <span className="text-[10px] text-slate-500 font-mono">({spells.length})</span>
-                </div>
+            Object.entries(spellsByLevel).map(([groupTitle, spells]) => {
+              const sampleLevel = spells[0]?.level ?? 0;
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {spells.map(spell => (
-                    <div
-                      key={spell.name}
-                      className="p-3.5 rounded-2xl bg-dnd-card border border-dnd-border flex flex-col justify-between space-y-2.5 hover:border-dnd-gold/60 transition"
-                    >
-                      <div>
-                        <div className="flex items-start justify-between gap-2">
-                          <div>
-                            <span className="font-fantasy font-bold text-sm text-slate-100 block">
-                              {spell.name}
-                            </span>
-                            <span className="text-[11px] text-purple-300 block">
-                              {spell.school} &bull; <span className="capitalize">{spell.role}</span>
-                            </span>
+              return (
+                <div key={groupTitle} className="space-y-4">
+                  {/* Encabezado Editorial con TaperedRule y Contador de Slots */}
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="flex items-center gap-2">
+                        <Sparkles className="w-4 h-4 text-[#b45309]" />
+                        <h4 className="font-dnd-title font-bold text-sm uppercase tracking-wider text-[#58180D]">
+                          {groupTitle}
+                        </h4>
+                        <span className="text-[11px] text-[#58544d] font-dnd-body font-semibold">
+                          ({spells.length} {spells.length === 1 ? 'conjuro' : 'conjuros'})
+                        </span>
+                      </div>
+
+                      {/* Gestor interactivo de espacios del nivel */}
+                      {renderSlotTracker(sampleLevel)}
+                    </div>
+                    <TaperedRule variant="crimson" />
+                  </div>
+
+                  {/* Tarjetas de Conjuros en Estilo Manual Oficial */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {spells.map(spell => (
+                      <div
+                        key={spell.name}
+                        className="p-4 rounded-sm bg-[#fdf6ea] text-[#242528] border-2 border-[#d4c2a5] dnd-notched-sm flex flex-col justify-between space-y-3 shadow-sm hover:border-[#b45309] transition"
+                      >
+                        <div>
+                          <div className="flex items-start justify-between gap-2 border-b border-[#d4c2a5]/80 pb-2">
+                            <div>
+                              <span className="font-dnd-title font-bold text-sm text-[#58180D] block">
+                                {spell.name}
+                              </span>
+                              <span className="text-[11px] text-[#78350f] font-dnd-body italic block">
+                                {spell.school} &bull; <span className="capitalize">{spell.role}</span>
+                              </span>
+                            </div>
+
+                            {/* Sellos de Componentes V, S, M, C, R */}
+                            <div className="flex items-center gap-1">
+                              {spell.components.v && (
+                                <span
+                                  className="px-1.5 py-0.5 rounded-sm bg-[#ede2cb] border border-[#d4c2a5] text-[#58544d] text-[10px] font-mono font-bold"
+                                  title="Componente Verbal"
+                                >
+                                  V
+                                </span>
+                              )}
+                              {spell.components.s && (
+                                <span
+                                  className="px-1.5 py-0.5 rounded-sm bg-[#ede2cb] border border-[#d4c2a5] text-[#58544d] text-[10px] font-mono font-bold"
+                                  title="Componente Somático"
+                                >
+                                  S
+                                </span>
+                              )}
+                              {spell.components.m && (
+                                <span
+                                  className="px-1.5 py-0.5 rounded-sm bg-[#ede2cb] border border-[#d4c2a5] text-[#58544d] text-[10px] font-mono font-bold"
+                                  title="Componente Material"
+                                >
+                                  M
+                                </span>
+                              )}
+                              {spell.components.c && (
+                                <span
+                                  className="w-5 h-5 rounded-full bg-[#fef3c7] text-[#92400e] border border-[#d97706] text-[10px] font-mono font-black flex items-center justify-center shadow-xs"
+                                  title="Requiere Concentración (C)"
+                                >
+                                  C
+                                </span>
+                              )}
+                              {spell.components.r && (
+                                <span
+                                  className="w-5 h-5 rounded-full bg-[#e0f2fe] text-[#0369a1] border border-[#0284c7] text-[10px] font-mono font-black flex items-center justify-center shadow-xs"
+                                  title="Puede lanzarse como Ritual (R)"
+                                >
+                                  R
+                                </span>
+                              )}
+                            </div>
                           </div>
 
-                          {/* Componentes V, S, M, C, R */}
-                          <div className="flex items-center gap-1 font-mono text-[10px]">
-                            {spell.components.v && (
-                              <span className="px-1.5 py-0.2 rounded bg-slate-800 text-slate-300" title="Verbal">V</span>
-                            )}
-                            {spell.components.s && (
-                              <span className="px-1.5 py-0.2 rounded bg-slate-800 text-slate-300" title="Somático">S</span>
-                            )}
-                            {spell.components.m && (
-                              <span className="px-1.5 py-0.2 rounded bg-slate-800 text-slate-300" title="Material">M</span>
-                            )}
-                            {spell.components.c && (
-                              <span className="px-1.5 py-0.2 rounded bg-amber-950 border border-amber-700 text-amber-300 font-bold" title="Concentración">C</span>
-                            )}
-                            {spell.components.r && (
-                              <span className="px-1.5 py-0.2 rounded bg-blue-950 border border-blue-700 text-blue-300 font-bold" title="Ritual">R</span>
-                            )}
-                          </div>
+                          {/* Descripción con tipografía editorial */}
+                          <p className="text-xs text-[#242528]/90 mt-2 font-dnd-body leading-relaxed">
+                            {spell.description}
+                          </p>
                         </div>
 
-                        <p className="text-xs text-slate-300 mt-2 leading-relaxed">
-                          {spell.description}
-                        </p>
-                      </div>
-
-                      <div className="flex items-center justify-between pt-2 border-t border-dnd-border/60 text-[11px]">
-                        <span className="text-slate-500 font-mono">
-                          {spell.level === 0 ? 'Truco a voluntad' : `Espacio de Nivel ${spell.level}`}
-                        </span>
-                        {spell.prepared ? (
-                          <span className="text-emerald-400 font-medium flex items-center gap-1">
-                            <CheckCircle2 className="w-3 h-3" /> Preparado
+                        {/* Pie de Tarjeta */}
+                        <div className="flex items-center justify-between pt-2 border-t border-[#d4c2a5]/80 text-[11px]">
+                          <span className="text-[#58544d] font-dnd-title uppercase tracking-wider text-[10px]">
+                            {spell.level === 0 ? 'Truco a Voluntad' : `Espacio de Nivel ${spell.level}`}
                           </span>
-                        ) : (
-                          <span className="text-slate-500">Conocido</span>
-                        )}
+                          {spell.prepared ? (
+                            <DndBadge variant="gold" size="sm" icon={<CheckCircle2 className="w-3 h-3 text-[#15803d]" />}>
+                              Preparado
+                            </DndBadge>
+                          ) : (
+                            <span className="text-[#58544d] font-dnd-body italic text-xs">Conocido</span>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
-              </div>
-            ))
+              );
+            })
           ) : (
-            <div className="p-8 rounded-2xl bg-dnd-card border border-dnd-border text-center text-xs text-slate-500">
-              No se encontraron conjuros que coincidan con los filtros seleccionados.
+            <div className="p-8 rounded-sm bg-[#fdf6ea] border-2 border-[#d4c2a5] dnd-notched text-center text-xs text-[#58544d] font-dnd-body">
+              No se encontraron conjuros en el grimorio que coincidan con los filtros seleccionados.
             </div>
           )}
         </div>
       ) : (
-        /* Sub-Pestaña: Árbol de Aprendizaje / Subida de Nivel */
-        <div className="p-6 rounded-2xl bg-dnd-card border border-dnd-border space-y-6 shadow-md">
-          <div className="border-b border-dnd-border/60 pb-3">
-            <h3 className="font-fantasy font-bold text-base text-slate-100 flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-dnd-gold" />
-              Progresión y Árbol de Aprendizaje Futuro
-            </h3>
-            <p className="text-xs text-slate-400 mt-1">
-              Planificación táctica de mejoras de característica, dotes y rasgos para los niveles siguientes (Nivel 8, 9 y 10).
+        /* 4. Sub-Pestaña: Árbol de Progresión y Subidas de Nivel */
+        <div className="p-6 rounded-sm bg-[#fdf6ea] text-[#242528] border-2 border-[#d4c2a5] dnd-notched space-y-6 shadow-md">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <TrendingUp className="w-5 h-5 text-[#b45309]" />
+              <h3 className="font-dnd-title font-bold text-base text-[#58180D] uppercase tracking-wide">
+                Progresión y Árbol de Aprendizaje Futuro
+              </h3>
+            </div>
+            <p className="text-xs text-[#58544d] font-dnd-body">
+              Planificación táctica de mejoras de característica, dotes y rasgos para los siguientes niveles de campaña (Niveles 8, 9 y 10).
             </p>
+            <TaperedRule variant="crimson" />
           </div>
 
           <div className="space-y-4">
-            <div className="p-4 rounded-xl bg-dnd-surface border border-dnd-border space-y-2">
+            <div className="p-4 rounded-sm bg-[#ede2cb] border border-[#d4c2a5] space-y-2">
               <div className="flex items-center justify-between">
-                <span className="font-fantasy font-bold text-sm text-dnd-gold-light">
+                <span className="font-dnd-title font-bold text-xs text-[#58180D] uppercase tracking-wider">
                   Nivel 8 (Hito Actual / Próximo)
                 </span>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-900 border border-slate-700 text-slate-300">
+                <DndBadge variant="gold" size="sm">
                   Mejora de Característica o Dote
-                </span>
+                </DndBadge>
               </div>
-              <p className="text-xs text-slate-300 leading-relaxed">
+              <p className="text-xs text-[#242528]/90 font-dnd-body leading-relaxed">
                 Aumento de Puntuación de Característica (+2 a un atributo o +1 a dos atributos) o elección de una dote general de D&D 5.5e (ej. <em>Combatiente con dos armas</em>, <em>Resiliente</em>, <em>Iniciativa Rápida</em>, <em>Alerta</em>).
               </p>
             </div>
 
-            <div className="p-4 rounded-xl bg-dnd-surface border border-dnd-border space-y-2">
+            <div className="p-4 rounded-sm bg-[#ede2cb] border border-[#d4c2a5] space-y-2">
               <div className="flex items-center justify-between">
-                <span className="font-fantasy font-bold text-sm text-purple-300">
+                <span className="font-dnd-title font-bold text-xs text-[#58180D] uppercase tracking-wider">
                   Nivel 9
                 </span>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-900 border border-slate-700 text-slate-300">
+                <DndBadge variant="parchment" size="sm">
                   Bonificador de Competencia +4
-                </span>
+                </DndBadge>
               </div>
-              <p className="text-xs text-slate-300 leading-relaxed">
-                Tu bonificador por competencia asciende automáticamente a <strong className="text-dnd-gold">+4</strong>, incrementando todas tus tiradas de salvación competentes, habilidades, CD de conjuros y ataques con armas.
+              <p className="text-xs text-[#242528]/90 font-dnd-body leading-relaxed">
+                Tu bonificador por competencia asciende automáticamente a <strong className="text-[#58180D] font-dnd-title">+4</strong>, incrementando todas tus tiradas de salvación competentes, habilidades, CD de conjuros y tiradas de ataque con armas.
               </p>
             </div>
 
-            <div className="p-4 rounded-xl bg-dnd-surface border border-dnd-border space-y-2">
+            <div className="p-4 rounded-sm bg-[#ede2cb] border border-[#d4c2a5] space-y-2">
               <div className="flex items-center justify-between">
-                <span className="font-fantasy font-bold text-sm text-emerald-300">
+                <span className="font-dnd-title font-bold text-xs text-[#58180D] uppercase tracking-wider">
                   Nivel 10
                 </span>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-900 border border-slate-700 text-slate-300">
+                <DndBadge variant="crimson" size="sm">
                   Rasgos Avanzados de Subclase
-                </span>
+                </DndBadge>
               </div>
-              <p className="text-xs text-slate-300 leading-relaxed">
+              <p className="text-xs text-[#242528]/90 font-dnd-body leading-relaxed">
                 {character.slug === 'alizar' && 'Artificiero: Tu límite de sintonización mágica aumenta de 3 a 4 objetos mágicos simultáneos.'}
                 {character.slug === 'eru' && 'Guerrero: Rasgo marcial adicional de arquetipo e inmunidad a condiciones adicionales.'}
                 {character.slug === 'honiel' && 'Mago: Magia potenciada de la Escuela de Evocación (suma modificador de Inteligencia al daño de conjuros).'}

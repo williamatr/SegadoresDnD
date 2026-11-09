@@ -105,4 +105,24 @@ Una espada rúnica de hoja afilada y oscura envuelta en ráfagas de viento.`;
     assert.ok(acelerar);
     assert.equal(acelerar.school, 'Transmutación');
   });
+
+  it('carga compendio en modo fallback usando mocks SRD cuando la wiki privada no existe', async () => {
+    const rootDir = process.cwd().includes('packages/obsidian-engine')
+      ? path.resolve(process.cwd(), '../..')
+      : process.cwd();
+    const mockDir = path.resolve(rootDir, 'content/mocks');
+    const compendium = await loadCompendium('/directorio/inexistente', mockDir);
+
+    assert.equal(compendium.isFallback, true);
+    assert.ok(compendium.totalSpells >= 1);
+    assert.ok(compendium.totalItems >= 1);
+
+    const projectile = compendium.spells.find(s => s.slug === 'proyectil-magico');
+    assert.ok(projectile);
+    assert.equal(projectile.level, 1);
+
+    const potion = compendium.items.find(i => i.slug === 'pocion-de-curacion');
+    assert.ok(potion);
+    assert.equal(potion.category, 'consumable');
+  });
 });

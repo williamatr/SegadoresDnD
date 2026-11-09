@@ -10,6 +10,15 @@ y este proyecto se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 ## [Unreleased]
 
 ### Añadido
+* **Refactor Visual Integral de la Hoja de Personaje D&D 5e (`@segadores/character-sheet`) (TASK-10):**
+  * **Cabecera y Pestañas:** Marco superior de pergamino envejecido (`#fdf6ea`), bordes biselados `dnd-notched`, cintillas en `Cinzel` (`#58180D`), insignias para clase, nivel y especie, y pestañas de libro encuadernado en cuero repujado (`#2c1e18`).
+  * **Escudo Heráldico de CA y Tríada de Combate:** Silueta de escudo medieval clásico (`HeraldicShield`) para la Clase de Armadura (CA), cajas biseladas `dnd-notched` para Iniciativa y Velocidad.
+  * **Cajas de Características Notched:** Bloques de atributos FUE, DES, CON, INT, SAB, CAR con recorte biselado, puntuación base reducida, modificador protagónico en óvalo central (`+3`) y tiradas de salvación con indicadores de maestría `●`/`○`.
+  * **Salvaciones contra la Muerte (`DeathSavesTracker`):** Tríada canónica de 3 orbes circulares encadenados `○─○─○` para éxitos (verde bosque) y fallos (carmesí) con línea conectora horizontal.
+  * **Puntos de Golpe (`HpTracker`):** Contenedor de pergamino biselado, barra de vitalidad en carmesí degradado (`#58180D`) y botones táctiles en crema de manual.
+  * **Sintonización y Monedero Canónico de 5 Divisas (`InventoryView`):** Gestor de sintonización mágica y monedero de 5 compartimentos apilados: **PC**, **PP**, **PE**, **PO**, **PPT**.
+  * **Tarjetas de Objetos Mágicos:** Formato editorial de suplementos con texto de propiedades en cursiva con *lead-in* en negrita (`***Propiedad.***`) y pie de página en versalitas.
+  * **Grimorio de Conjuros y Espacios Interactivos (`SpellsAndAbilitiesView`):** Encabezados por nivel de conjuro con `TaperedRule` cónica, gemas interactivas de espacios de conjuro (`●`/`○`) para consumir o recuperar con un clic, sellos circulares clásicos de Concentración (`C`) y Ritual (`R`), y vista de Árbol de Progresión.
 * **Sistema de Diseño Editorial D&D 5e (`@segadores/ui` & Tailwind) (TASK-09):**
   * Configurada la paleta canónica de manual de D&D 5e en `tailwind.config.ts`: pergamino claro (`#fdf6ea`), pergamino envejecido (`#f4ebe1`), carmesí oficial (`#58180D`), terracota (`#c45b1d`), oro viejo (`#c29b38`), tinta de imprenta (`#242528`) y lomo de cuero (`#2c1e18`).
   * Integrada la tipografía oficial `Cinzel` (encabezados y rótulos) y `Spectral` (cuerpo editorial de libro de rol) con fallbacks sólidos y clases `.font-dnd-title` y `.font-dnd-body`.

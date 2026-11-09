@@ -11,6 +11,7 @@ import {
   Info,
   Filter
 } from 'lucide-react';
+import { DndBadge, TaperedRule } from '@segadores/ui';
 import type { BaseViewProps } from '../types.ts';
 import type { InventoryItem, InventoryCategory } from '@segadores/dnd-core';
 import { AttunementTracker } from '../components/AttunementTracker.tsx';
@@ -44,7 +45,7 @@ export function InventoryView({
 
   return (
     <div className="space-y-6">
-      {/* 1. Panel Superior: Sintonización y Monedero Personal */}
+      {/* 1. Panel Superior: Sintonización y Monedero Personal Canónico */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
         {/* Gestor de Sintonización Mágica */}
         <div className="lg:col-span-2">
@@ -54,45 +55,45 @@ export function InventoryView({
           />
         </div>
 
-        {/* Monedero de Monedas */}
-        <div className="p-4 rounded-2xl bg-dnd-card border border-dnd-border space-y-3 shadow-md">
-          <div className="flex items-center justify-between border-b border-dnd-border/60 pb-2">
+        {/* Monedero de 5 Divisas Canónicas D&D 5e */}
+        <div className="p-4 rounded-sm bg-[#fdf6ea] text-[#242528] border-2 border-[#d4c2a5] dnd-notched space-y-3 shadow-md">
+          <div className="flex items-center justify-between border-b border-[#d4c2a5]/80 pb-2">
             <div className="flex items-center gap-2">
-              <Coins className="w-4 h-4 text-dnd-gold" />
-              <h4 className="font-fantasy font-semibold text-xs text-slate-200 uppercase tracking-wider">
-                Monedero Personal
+              <Coins className="w-4 h-4 text-[#c29b38]" />
+              <h4 className="font-dnd-title font-bold text-xs text-[#58180D] uppercase tracking-wider">
+                Monedero Canónico
               </h4>
             </div>
-            <span className="text-[10px] text-slate-400 font-mono">Bolsa del Aventurero</span>
+            <span className="text-[10px] text-[#58544d] font-dnd-title uppercase">5 Divisas</span>
           </div>
 
           <div className="grid grid-cols-5 gap-1.5 text-center">
-            <div className="p-2 rounded-xl bg-dnd-surface border border-dnd-border">
-              <span className="text-[9px] text-amber-700 font-bold block uppercase">PC</span>
-              <span className="text-xs font-mono font-bold text-amber-600">{currency.cp}</span>
+            <div className="p-2 rounded-sm bg-[#ede2cb] border border-[#d4c2a5]">
+              <span className="text-[10px] text-[#b45309] font-dnd-title font-black block uppercase">PC</span>
+              <span className="text-xs font-dnd-title font-bold text-[#78350f]">{currency.cp}</span>
             </div>
-            <div className="p-2 rounded-xl bg-dnd-surface border border-dnd-border">
-              <span className="text-[9px] text-slate-400 font-bold block uppercase">PP</span>
-              <span className="text-xs font-mono font-bold text-slate-300">{currency.sp}</span>
+            <div className="p-2 rounded-sm bg-[#ede2cb] border border-[#d4c2a5]">
+              <span className="text-[10px] text-[#64748b] font-dnd-title font-black block uppercase">PP</span>
+              <span className="text-xs font-dnd-title font-bold text-[#334155]">{currency.sp}</span>
             </div>
-            <div className="p-2 rounded-xl bg-dnd-surface border border-dnd-border">
-              <span className="text-[9px] text-blue-400 font-bold block uppercase">PE</span>
-              <span className="text-xs font-mono font-bold text-blue-300">{currency.ep}</span>
+            <div className="p-2 rounded-sm bg-[#ede2cb] border border-[#d4c2a5]">
+              <span className="text-[10px] text-[#0284c7] font-dnd-title font-black block uppercase">PE</span>
+              <span className="text-xs font-dnd-title font-bold text-[#0369a1]">{currency.ep}</span>
             </div>
-            <div className="p-2 rounded-xl bg-dnd-surface border border-dnd-border ring-1 ring-dnd-gold/40">
-              <span className="text-[9px] text-dnd-gold font-bold block uppercase">PO</span>
-              <span className="text-xs font-mono font-extrabold text-dnd-gold">{currency.gp}</span>
+            <div className="p-2 rounded-sm bg-[#fef9c3] border-2 border-[#ca8a04] shadow-sm">
+              <span className="text-[10px] text-[#854d0e] font-dnd-title font-black block uppercase">PO</span>
+              <span className="text-xs font-dnd-title font-black text-[#854d0e]">{currency.gp}</span>
             </div>
-            <div className="p-2 rounded-xl bg-dnd-surface border border-dnd-border">
-              <span className="text-[9px] text-cyan-400 font-bold block uppercase">PPT</span>
-              <span className="text-xs font-mono font-bold text-cyan-300">{currency.pp}</span>
+            <div className="p-2 rounded-sm bg-[#ede2cb] border border-[#d4c2a5]">
+              <span className="text-[10px] text-[#0f766e] font-dnd-title font-black block uppercase">PPT</span>
+              <span className="text-xs font-dnd-title font-bold text-[#115e59]">{currency.pp}</span>
             </div>
           </div>
         </div>
       </div>
 
       {/* 2. Filtros de Categoría de Inventario */}
-      <div className="flex items-center justify-between flex-wrap gap-2 pt-2 border-t border-dnd-border/60">
+      <div className="flex items-center justify-between flex-wrap gap-2 pt-2 border-t border-[#d4c2a5]/80">
         <div className="flex items-center gap-1.5 flex-wrap">
           {[
             { id: 'all', label: 'Todos los Objetos', count: items.length },
@@ -105,14 +106,14 @@ export function InventoryView({
             <button
               key={cat.id}
               onClick={() => setSelectedCategory(cat.id)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-medium transition flex items-center gap-1.5 border ${
+              className={`px-3 py-1.5 rounded-sm text-xs font-dnd-title font-bold transition flex items-center gap-1.5 border ${
                 selectedCategory === cat.id
-                  ? 'bg-dnd-gold/20 border-dnd-gold text-dnd-gold-light shadow-sm'
-                  : 'bg-dnd-surface border-dnd-border text-slate-400 hover:text-slate-200 hover:border-slate-700'
+                  ? 'bg-[#58180D] border-[#7a2021] text-[#fdf6ea] shadow-sm'
+                  : 'bg-[#f4ebe1] border-[#d4c2a5] text-[#58544d] hover:text-[#242528] hover:border-[#c29b38]'
               }`}
             >
               <span>{cat.label}</span>
-              <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-900 font-mono">
+              <span className="text-[10px] px-1.5 py-0.2 rounded-sm bg-[#ede2cb] text-[#58180D] font-bold">
                 {cat.count}
               </span>
             </button>
@@ -120,7 +121,7 @@ export function InventoryView({
         </div>
       </div>
 
-      {/* 3. Lista de Objetos del Inventario */}
+      {/* 3. Lista de Objetos del Inventario (Tarjetas de Objeto Mágico D&D 5e) */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {filteredItems.map(item => {
           const isAttuned = item.requires_attunement && item.attuned;
@@ -129,29 +130,29 @@ export function InventoryView({
           return (
             <div
               key={item.slug}
-              className={`p-4 rounded-2xl border transition flex flex-col justify-between space-y-3 relative overflow-hidden ${
+              className={`p-4 rounded-sm border-2 transition flex flex-col justify-between space-y-3 relative dnd-notched shadow-sm ${
                 isAttuned
-                  ? 'bg-gradient-to-br from-purple-950/20 via-dnd-surface to-dnd-card border-purple-800/60 shadow-md'
+                  ? 'bg-[#fef9c3]/50 border-[#ca8a04]'
                   : isEquipped
-                  ? 'bg-dnd-surface border-amber-800/50 shadow-md'
-                  : 'bg-dnd-card border-dnd-border text-slate-400'
+                  ? 'bg-[#fdf6ea] border-[#c45b1d]'
+                  : 'bg-[#fdf6ea] border-[#d4c2a5] text-[#242528]'
               }`}
             >
               <div>
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="font-fantasy font-bold text-sm text-slate-100">
+                      <span className="font-dnd-title font-bold text-sm text-[#58180D] uppercase tracking-wide">
                         {item.name}
                       </span>
                       {item.qty > 1 && (
-                        <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-800 text-slate-300">
+                        <span className="text-[10px] font-dnd-title font-bold px-1.5 py-0.5 rounded bg-[#ede2cb] text-[#58180D]">
                           x{item.qty}
                         </span>
                       )}
                     </div>
-                    <span className="text-[11px] text-slate-400 block mt-0.5 capitalize">
-                      {item.category === 'weapon'
+                    <span className="text-[11px] text-[#58544d] font-dnd-title uppercase tracking-wider block mt-0.5">
+                      • {item.category === 'weapon'
                         ? 'Arma'
                         : item.category === 'armor'
                         ? 'Armadura'
@@ -159,35 +160,30 @@ export function InventoryView({
                         ? 'Escudo'
                         : item.category === 'magic_item'
                         ? 'Objeto Mágico'
-                        : 'Equipo de aventura'}
+                        : 'Equipo de Aventura'} •
                     </span>
                   </div>
 
                   {/* Badges de Estado */}
                   <div className="flex items-center gap-1.5 shrink-0">
                     {item.requires_attunement && (
-                      <span
-                        className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
-                          isAttuned
-                            ? 'bg-purple-950/80 border-purple-600 text-purple-300'
-                            : 'bg-slate-900 border-slate-700 text-slate-400'
-                        }`}
-                      >
+                      <DndBadge variant={isAttuned ? 'gold' : 'parchment'} size="sm">
                         {isAttuned ? 'Sintonizado ✨' : 'Sin sintonizar'}
-                      </span>
+                      </DndBadge>
                     )}
 
                     {isEquipped && (
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-950/80 border border-amber-600 text-dnd-gold-light">
+                      <DndBadge variant="crimson" size="sm">
                         Equipado
-                      </span>
+                      </DndBadge>
                     )}
                   </div>
                 </div>
 
-                {/* Notas y Descripción */}
+                {/* Notas y Descripción Canónica */}
                 {item.notes && (
-                  <p className="text-xs text-slate-300 mt-2 leading-relaxed">
+                  <p className="text-xs text-[#242528] font-dnd-body mt-2 leading-relaxed italic bg-[#f4ebe1]/80 p-2.5 rounded-sm border border-[#d4c2a5]/60">
+                    <strong className="font-dnd-title not-italic font-bold text-[#58180D]">Propiedad. </strong>
                     {item.notes}
                   </p>
                 )}
@@ -195,15 +191,15 @@ export function InventoryView({
 
               {/* Botones de Acción (Equipar / Sintonizar) */}
               {!readOnly && (
-                <div className="flex items-center justify-end gap-2 pt-2 border-t border-dnd-border/60 text-xs">
+                <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#d4c2a5]/60 text-xs">
                   {/* Botón de Equipar/Desequipar (Armas y Armaduras) */}
                   {(item.category === 'weapon' || item.category === 'armor' || item.category === 'shield') && (
                     <button
                       onClick={() => onToggleEquipped?.(item.slug)}
-                      className={`px-3 py-1 rounded-lg border font-medium transition ${
+                      className={`px-3 py-1 rounded-sm border font-dnd-title font-bold text-xs uppercase tracking-wider transition shadow-sm ${
                         isEquipped
-                          ? 'bg-amber-950/40 border-amber-700/60 text-amber-300 hover:bg-amber-900/40'
-                          : 'bg-slate-900 border-slate-700 text-slate-300 hover:border-slate-500'
+                          ? 'bg-[#58180D] border-[#7a2021] text-[#fdf6ea] hover:bg-[#7a2021]'
+                          : 'bg-[#ede2cb] border-[#d4c2a5] text-[#58180D] hover:bg-[#d4c2a5]'
                       }`}
                     >
                       {isEquipped ? 'Desequipar' : 'Equipar'}
@@ -214,13 +210,13 @@ export function InventoryView({
                   {item.requires_attunement && (
                     <button
                       onClick={() => onToggleAttunement?.(item.slug)}
-                      className={`px-3 py-1 rounded-lg border font-medium flex items-center gap-1.5 transition ${
+                      className={`px-3 py-1 rounded-sm border font-dnd-title font-bold text-xs uppercase tracking-wider flex items-center gap-1.5 transition shadow-sm ${
                         isAttuned
-                          ? 'bg-purple-950/60 border-purple-600 text-purple-200 hover:bg-purple-900/60'
-                          : 'bg-slate-900 border-slate-700 text-slate-300 hover:border-purple-600'
+                          ? 'bg-[#c29b38] border-[#ca8a04] text-[#1b120e] hover:bg-[#a88225]'
+                          : 'bg-[#ede2cb] border-[#d4c2a5] text-[#58180D] hover:bg-[#d4c2a5]'
                       }`}
                     >
-                      <Sparkles className="w-3 h-3 text-purple-400" />
+                      <Sparkles className="w-3 h-3" />
                       {isAttuned ? 'Desintonizar' : 'Sintonizar'}
                     </button>
                   )}
