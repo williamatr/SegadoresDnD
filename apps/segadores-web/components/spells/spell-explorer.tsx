@@ -64,18 +64,18 @@ const LEVELS = [
 
 function getLevelBadgeStyle(level: number): { bg: string; text: string; border: string } {
   if (level === 0) {
-    return { bg: 'bg-slate-800/80', text: 'text-slate-300', border: 'border-slate-700' };
+    return { bg: 'bg-dnd-parchment-contrast', text: 'text-dnd-ink-muted', border: 'border-dnd-border-antique' };
   }
   if (level <= 2) {
-    return { bg: 'bg-emerald-950/60', text: 'text-emerald-300', border: 'border-emerald-700/50' };
+    return { bg: 'bg-emerald-900/20', text: 'text-emerald-700 dark:text-emerald-400', border: 'border-emerald-600/40' };
   }
   if (level <= 4) {
-    return { bg: 'bg-sky-950/60', text: 'text-sky-300', border: 'border-sky-700/50' };
+    return { bg: 'bg-dnd-parchment-contrast', text: 'text-dnd-crimson', border: 'border-dnd-crimson/40' };
   }
   if (level <= 6) {
-    return { bg: 'bg-indigo-950/60', text: 'text-indigo-300', border: 'border-indigo-700/50' };
+    return { bg: 'bg-dnd-crimson-surface', text: 'text-dnd-crimson', border: 'border-dnd-crimson' };
   }
-  return { bg: 'bg-amber-950/60', text: 'text-dnd-gold-light', border: 'border-dnd-gold/50' };
+  return { bg: 'bg-dnd-gold-surface', text: 'text-dnd-gold', border: 'border-dnd-gold' };
 }
 
 export function SpellExplorer({ initialSpells, isFallback, initialClass }: SpellExplorerProps) {
@@ -182,27 +182,27 @@ export function SpellExplorer({ initialSpells, isFallback, initialClass }: Spell
       )}
 
       {/* Barra de Filtros y Búsqueda */}
-      <div className="p-5 rounded-2xl bg-dnd-card border border-dnd-border space-y-4 shadow-lg">
+      <div className="p-5 rounded-sm bg-dnd-parchment border-2 border-dnd-border-antique dnd-notched space-y-4 shadow-md text-dnd-ink">
         {/* Input de Búsqueda */}
         <div className="relative">
-          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-dnd-ink-subtle" />
           <input
             type="text"
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="Buscar por nombre, escuela o descripción (ej: Fuego, Curar, Acelerar)..."
-            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-dnd-surface border border-dnd-border text-slate-100 placeholder:text-slate-500 text-sm focus:outline-none focus:border-dnd-gold/60 transition"
+            className="w-full pl-10 pr-4 py-2.5 rounded-sm bg-dnd-parchment-contrast border border-dnd-border-antique text-dnd-ink placeholder:text-dnd-ink-subtle text-sm focus:outline-none focus:border-dnd-gold transition"
           />
         </div>
 
         {/* Selectores de Nivel, Escuela y Clase */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
           <div>
-            <label className="block text-slate-400 font-medium mb-1">Nivel de Conjuro</label>
+            <label className="block text-dnd-crimson font-dnd-title font-bold text-xs uppercase tracking-wider mb-1">Nivel de Conjuro</label>
             <select
               value={selectedLevel}
               onChange={e => setSelectedLevel(Number(e.target.value))}
-              className="w-full px-3 py-2 rounded-lg bg-dnd-surface border border-dnd-border text-slate-200 focus:outline-none focus:border-dnd-gold/60"
+              className="w-full px-3 py-2 rounded-sm bg-dnd-parchment-contrast border border-dnd-border-antique text-dnd-ink focus:outline-none focus:border-dnd-gold font-dnd-body"
             >
               {LEVELS.map(lvl => (
                 <option key={lvl.value} value={lvl.value}>
@@ -213,11 +213,11 @@ export function SpellExplorer({ initialSpells, isFallback, initialClass }: Spell
           </div>
 
           <div>
-            <label className="block text-slate-400 font-medium mb-1">Escuela de Magia</label>
+            <label className="block text-dnd-crimson font-dnd-title font-bold text-xs uppercase tracking-wider mb-1">Escuela de Magia</label>
             <select
               value={selectedSchool}
               onChange={e => setSelectedSchool(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg bg-dnd-surface border border-dnd-border text-slate-200 focus:outline-none focus:border-dnd-gold/60"
+              className="w-full px-3 py-2 rounded-sm bg-dnd-parchment-contrast border border-dnd-border-antique text-dnd-ink focus:outline-none focus:border-dnd-gold font-dnd-body"
             >
               {SCHOOLS.map(sch => (
                 <option key={sch} value={sch}>
@@ -228,11 +228,11 @@ export function SpellExplorer({ initialSpells, isFallback, initialClass }: Spell
           </div>
 
           <div>
-            <label className="block text-slate-400 font-medium mb-1">Clase de Conjurador</label>
+            <label className="block text-dnd-crimson font-dnd-title font-bold text-xs uppercase tracking-wider mb-1">Clase de Conjurador</label>
             <select
               value={selectedClass}
               onChange={e => setSelectedClass(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg bg-dnd-surface border border-dnd-border text-slate-200 focus:outline-none focus:border-dnd-gold/60"
+              className="w-full px-3 py-2 rounded-sm bg-dnd-parchment-contrast border border-dnd-border-antique text-dnd-ink focus:outline-none focus:border-dnd-gold font-dnd-body"
             >
               {CLASSES.map(cls => (
                 <option key={cls} value={cls}>
@@ -244,41 +244,41 @@ export function SpellExplorer({ initialSpells, isFallback, initialClass }: Spell
         </div>
 
         {/* Toggles Rápidos */}
-        <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-dnd-border/60">
+        <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-dnd-border-antique">
           <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={() => setFilterConcentration(!filterConcentration)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition flex items-center gap-1.5 ${
+              className={`px-3 py-1.5 rounded-sm text-xs font-dnd-title uppercase tracking-wider font-semibold border transition flex items-center gap-1.5 ${
                 filterConcentration
-                  ? 'bg-amber-950/60 border-amber-600 text-amber-300'
-                  : 'bg-dnd-surface border-dnd-border text-slate-400 hover:text-slate-200'
+                  ? 'bg-dnd-gold-surface border-dnd-gold text-dnd-gold shadow-xs'
+                  : 'bg-dnd-parchment-contrast border-dnd-border-antique text-dnd-ink-muted hover:text-dnd-ink'
               }`}
             >
-              <Zap className="w-3 h-3 text-amber-400" />
+              <Zap className="w-3 h-3 text-dnd-gold" />
               Concentración
             </button>
 
             <button
               onClick={() => setFilterRitual(!filterRitual)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition flex items-center gap-1.5 ${
+              className={`px-3 py-1.5 rounded-sm text-xs font-dnd-title uppercase tracking-wider font-semibold border transition flex items-center gap-1.5 ${
                 filterRitual
-                  ? 'bg-sky-950/60 border-sky-600 text-sky-300'
-                  : 'bg-dnd-surface border-dnd-border text-slate-400 hover:text-slate-200'
+                  ? 'bg-dnd-parchment-contrast border-dnd-crimson text-dnd-crimson shadow-xs'
+                  : 'bg-dnd-parchment-contrast border-dnd-border-antique text-dnd-ink-muted hover:text-dnd-ink'
               }`}
             >
-              <BookOpen className="w-3 h-3 text-sky-400" />
+              <BookOpen className="w-3 h-3 text-dnd-gold" />
               Ritual
             </button>
 
             <button
               onClick={() => setFilterMaterial(!filterMaterial)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition flex items-center gap-1.5 ${
+              className={`px-3 py-1.5 rounded-sm text-xs font-dnd-title uppercase tracking-wider font-semibold border transition flex items-center gap-1.5 ${
                 filterMaterial
-                  ? 'bg-indigo-950/60 border-indigo-600 text-indigo-300'
-                  : 'bg-dnd-surface border-dnd-border text-slate-400 hover:text-slate-200'
+                  ? 'bg-dnd-crimson-surface border-dnd-crimson text-dnd-crimson shadow-xs'
+                  : 'bg-dnd-parchment-contrast border-dnd-border-antique text-dnd-ink-muted hover:text-dnd-ink'
               }`}
             >
-              <Sparkles className="w-3 h-3 text-indigo-400" />
+              <Sparkles className="w-3 h-3 text-dnd-terracotta" />
               Requiere Material (M)
             </button>
           </div>
@@ -286,7 +286,7 @@ export function SpellExplorer({ initialSpells, isFallback, initialClass }: Spell
           {hasActiveFilters && (
             <button
               onClick={resetFilters}
-              className="inline-flex items-center gap-1 text-xs text-slate-400 hover:text-dnd-gold transition"
+              className="inline-flex items-center gap-1 text-xs text-dnd-crimson hover:text-dnd-gold font-dnd-title font-bold uppercase tracking-wider transition"
             >
               <RotateCcw className="w-3 h-3" /> Limpiar filtros
             </button>
@@ -295,24 +295,24 @@ export function SpellExplorer({ initialSpells, isFallback, initialClass }: Spell
       </div>
 
       {/* Contador de Resultados */}
-      <div className="flex items-center justify-between text-xs text-slate-400 px-1">
+      <div className="flex items-center justify-between text-xs text-dnd-ink-muted px-1 font-dnd-body">
         <span>
-          Mostrando <strong className="text-slate-200">{filteredSpells.length}</strong> de{' '}
-          <strong className="text-slate-200">{initialSpells.length}</strong> hechizos catalogados
+          Mostrando <strong className="text-dnd-crimson font-dnd-title font-bold">{filteredSpells.length}</strong> de{' '}
+          <strong className="text-dnd-crimson font-dnd-title font-bold">{initialSpells.length}</strong> hechizos catalogados
         </span>
       </div>
 
       {/* Grid de Hechizos */}
       {filteredSpells.length === 0 ? (
-        <div className="text-center py-16 bg-dnd-card border border-dnd-border rounded-2xl p-8 space-y-3">
-          <BookOpen className="w-10 h-10 text-slate-600 mx-auto" />
-          <h3 className="text-lg font-bold text-slate-200">No se encontraron hechizos</h3>
-          <p className="text-xs text-slate-400 max-w-sm mx-auto">
+        <div className="text-center py-16 bg-dnd-parchment border-2 border-dnd-border-antique rounded-sm dnd-notched p-8 space-y-3 shadow-md">
+          <BookOpen className="w-10 h-10 text-dnd-ink-subtle mx-auto" />
+          <h3 className="text-lg font-bold text-dnd-crimson font-dnd-title uppercase">No se encontraron hechizos</h3>
+          <p className="text-xs text-dnd-ink-muted max-w-sm mx-auto font-dnd-body">
             Prueba a relajar los términos de búsqueda o limpiar los filtros seleccionados.
           </p>
           <button
             onClick={resetFilters}
-            className="mt-2 px-4 py-2 rounded-xl bg-dnd-surface border border-dnd-border text-dnd-gold text-xs font-medium hover:bg-slate-800 transition"
+            className="mt-2 px-4 py-2 rounded-sm bg-dnd-parchment-contrast border border-dnd-border-antique text-dnd-crimson font-dnd-title font-bold uppercase tracking-wider text-xs hover:bg-dnd-parchment transition shadow-xs"
           >
             Restablecer todos los filtros
           </button>
@@ -326,26 +326,26 @@ export function SpellExplorer({ initialSpells, isFallback, initialClass }: Spell
             return (
               <div
                 key={spell.slug}
-                className="p-5 rounded-2xl bg-dnd-card border border-dnd-border hover:border-dnd-gold/40 transition flex flex-col justify-between shadow-md space-y-4"
+                className="p-5 rounded-sm bg-dnd-parchment text-dnd-ink border-2 border-dnd-border-antique dnd-notched hover:border-dnd-gold transition flex flex-col justify-between shadow-md space-y-4"
               >
                 {/* Header de la Tarjeta */}
                 <div className="space-y-2">
                   <div className="flex items-start justify-between gap-3">
-                    <h3 className="text-base font-bold text-slate-100 font-fantasy leading-snug">
+                    <h3 className="text-base font-bold text-dnd-crimson font-dnd-title leading-snug">
                       {spell.name}
                     </h3>
                     <span
-                      className={`text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full border shrink-0 ${badge.bg} ${badge.text} ${badge.border}`}
+                      className={`text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-sm border shrink-0 font-dnd-title ${badge.bg} ${badge.text} ${badge.border}`}
                     >
                       {spell.levelLabel}
                     </span>
                   </div>
 
-                  <div className="flex flex-wrap items-center gap-2 text-xs text-slate-400">
-                    <span className="text-dnd-gold-light font-medium">{spell.school}</span>
+                  <div className="flex flex-wrap items-center gap-2 text-xs text-dnd-ink-muted font-dnd-body">
+                    <span className="text-dnd-gold font-dnd-title font-bold">{spell.school}</span>
                     <span>&bull;</span>
                     <span className="flex items-center gap-1">
-                      <Clock className="w-3 h-3 text-slate-500" />
+                      <Clock className="w-3 h-3 text-dnd-ink-subtle" />
                       {spell.castingTime}
                     </span>
                     <span>&bull;</span>
@@ -356,7 +356,7 @@ export function SpellExplorer({ initialSpells, isFallback, initialClass }: Spell
                 {/* Etiquetas de Propiedades y Componentes */}
                 <div className="flex flex-wrap items-center gap-1.5 text-[11px]">
                   {/* Componentes V, S, M */}
-                  <span className="px-2 py-0.5 rounded bg-slate-900 border border-slate-800 text-slate-300 font-mono">
+                  <span className="px-2 py-0.5 rounded-sm bg-dnd-parchment-contrast border border-dnd-border-antique text-dnd-ink font-mono">
                     {[
                       spell.components.verbal && 'V',
                       spell.components.somatic && 'S',
@@ -367,45 +367,45 @@ export function SpellExplorer({ initialSpells, isFallback, initialClass }: Spell
                   </span>
 
                   {spell.concentration && (
-                    <span className="px-2 py-0.5 rounded bg-amber-950/70 border border-amber-800/50 text-amber-300 flex items-center gap-1 font-medium">
+                    <span className="px-2 py-0.5 rounded-sm bg-dnd-gold-surface border border-dnd-gold text-dnd-gold flex items-center gap-1 font-dnd-title font-bold text-[10px] uppercase">
                       <Zap className="w-2.5 h-2.5" /> Concentración
                     </span>
                   )}
 
                   {spell.ritual && (
-                    <span className="px-2 py-0.5 rounded bg-sky-950/70 border border-sky-800/50 text-sky-300 flex items-center gap-1 font-medium">
+                    <span className="px-2 py-0.5 rounded-sm bg-dnd-parchment-contrast border border-dnd-border-antique text-dnd-crimson flex items-center gap-1 font-dnd-title font-bold text-[10px] uppercase">
                       <BookOpen className="w-2.5 h-2.5" /> Ritual
                     </span>
                   )}
                 </div>
 
                 {/* Descripción Corta / Expandida */}
-                <div className="text-xs text-slate-300 leading-relaxed font-sans">
+                <div className="text-xs text-dnd-ink leading-relaxed font-dnd-body">
                   {isExpanded ? (
-                    <div className="space-y-3 mt-2 pt-2 border-t border-dnd-border/80">
+                    <div className="space-y-3 mt-2 pt-2 border-t border-dnd-border-antique/80">
                       <p className="whitespace-pre-wrap">{spell.description}</p>
 
                       {spell.components.materialDescription && (
-                        <div className="p-2.5 rounded-lg bg-dnd-surface border border-slate-800 text-slate-400 text-[11px]">
-                          <strong className="text-slate-200">Componente Material:</strong>{' '}
+                        <div className="p-2.5 rounded-sm bg-dnd-parchment-contrast border border-dnd-border-antique text-dnd-ink-muted text-[11px]">
+                          <strong className="text-dnd-ink font-dnd-title">Componente Material:</strong>{' '}
                           {spell.components.materialDescription}
                         </div>
                       )}
 
                       {spell.higherLevels && (
-                        <div className="p-2.5 rounded-lg bg-amber-950/20 border border-amber-900/40 text-amber-200 text-[11px]">
-                          <strong className="text-dnd-gold">A niveles superiores:</strong>{' '}
+                        <div className="p-2.5 rounded-sm bg-dnd-gold-surface/30 border border-dnd-gold/40 text-dnd-ink text-[11px]">
+                          <strong className="text-dnd-gold font-dnd-title">A niveles superiores:</strong>{' '}
                           {spell.higherLevels}
                         </div>
                       )}
 
                       {spell.classes.length > 0 && (
-                        <div className="flex flex-wrap items-center gap-1 pt-1 text-[11px] text-slate-400">
-                          <span className="text-slate-500">Clases:</span>
+                        <div className="flex flex-wrap items-center gap-1 pt-1 text-[11px] text-dnd-ink-muted">
+                          <span className="text-dnd-ink-subtle font-dnd-title">Clases:</span>
                           {spell.classes.map(cls => (
                             <span
                               key={cls}
-                              className="px-1.5 py-0.5 rounded bg-slate-900 text-slate-300 border border-slate-800"
+                              className="px-1.5 py-0.5 rounded-sm bg-dnd-parchment-contrast text-dnd-ink border border-dnd-border-antique font-dnd-title text-[10px]"
                             >
                               {cls}
                             </span>
@@ -414,17 +414,17 @@ export function SpellExplorer({ initialSpells, isFallback, initialClass }: Spell
                       )}
                     </div>
                   ) : (
-                    <p className="line-clamp-2 text-slate-400">{spell.description}</p>
+                    <p className="line-clamp-2 text-dnd-ink-muted">{spell.description}</p>
                   )}
                 </div>
 
                 {/* Botón Ver Más */}
-                <div className="pt-2 border-t border-dnd-border/60 flex items-center justify-between text-xs">
-                  <span className="text-slate-500 text-[11px]">{spell.duration}</span>
+                <div className="pt-2 border-t border-dnd-border-antique flex items-center justify-between text-xs">
+                  <span className="text-dnd-ink-subtle text-[11px] font-dnd-body">{spell.duration}</span>
 
                   <button
                     onClick={() => setExpandedSpell(isExpanded ? null : spell.slug)}
-                    className="inline-flex items-center gap-1 text-dnd-gold hover:text-dnd-gold-light font-medium transition"
+                    className="inline-flex items-center gap-1 text-dnd-crimson hover:text-dnd-gold font-dnd-title font-bold text-xs uppercase tracking-wider transition"
                   >
                     {isExpanded ? (
                       <>

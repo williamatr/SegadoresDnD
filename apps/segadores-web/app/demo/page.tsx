@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
+import { TaperedRule, DndBadge } from '@segadores/ui';
 import { CharacterSheet, type CharacterSheetTab } from '@segadores/character-sheet';
 import {
   PUBLIC_DEMO_PREVIEWS,
@@ -264,41 +265,47 @@ export default function DemoPage() {
 
       <main className="flex-1 max-w-6xl w-full mx-auto p-4 sm:p-8 space-y-8">
         {/* Encabezado */}
-        <section className="space-y-3">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-dnd-gold/10 border border-dnd-gold/30 text-dnd-gold-light text-xs font-medium">
-            <Dices className="w-3.5 h-3.5" />
-            Demostración Pública Interactiva &bull; D&D 5.5e (SRD 5.2.1 + Campaña)
+        <section className="space-y-4 text-center sm:text-left">
+          <div className="inline-flex items-center gap-2">
+            <DndBadge variant="parchment" size="sm" icon={<Dices className="w-3.5 h-3.5 text-dnd-gold" />}>
+              Demostración Pública Interactiva &bull; D&D 5.5e (SRD 5.2.1 + Campaña)
+            </DndBadge>
           </div>
-          <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-slate-100 font-fantasy">
-            Suite Interactiva de Demostración
-          </h1>
-          <p className="text-sm text-slate-400 max-w-2xl leading-relaxed">
-            Explora la experiencia completa de <strong className="text-slate-200">@segadores/character-sheet</strong> en vivo. Modifica Puntos de Golpe, activa heridas de las Tablas A y B, gasta ranuras de conjuro, sintoniza objetos y navega las 7 vistas tácticas.
+          <div className="space-y-2">
+            <h1 className="text-3xl sm:text-5xl font-bold tracking-wide text-dnd-ink font-dnd-title uppercase leading-tight drop-shadow-sm">
+              Suite Interactiva de Demostración
+            </h1>
+            <TaperedRule variant="gold" />
+          </div>
+          <p className="text-sm sm:text-base text-dnd-ink-muted font-dnd-body max-w-3xl leading-relaxed">
+            Explora la experiencia completa de <strong className="text-dnd-crimson font-dnd-title">@segadores/character-sheet</strong> en vivo. Modifica Puntos de Golpe, activa heridas de las Tablas A y B, gasta ranuras de conjuro, sintoniza objetos y navega las 7 vistas tácticas de la hoja oficial.
           </p>
         </section>
 
         {/* Selector de Modo: Suite 7 Vistas vs Arquetipos Nivel 1 */}
-        <div className="flex items-center gap-2 border-b border-dnd-border/80 pb-3">
+        <div className="flex flex-wrap items-center gap-3 border-b border-dnd-border-antique pb-3 font-dnd-title">
           <button
+            type="button"
             onClick={() => setViewMode('sheet')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-fantasy font-bold transition border ${
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-md text-xs font-bold uppercase tracking-wider transition border ${
               viewMode === 'sheet'
-                ? 'bg-dnd-surface border-dnd-gold text-dnd-gold shadow-md shadow-amber-950/20'
-                : 'bg-dnd-card border-dnd-border text-slate-400 hover:text-slate-200'
+                ? 'bg-dnd-crimson border-dnd-gold text-white shadow-md'
+                : 'bg-dnd-parchment-contrast border-dnd-border-antique text-dnd-ink-muted hover:text-dnd-ink hover:bg-dnd-parchment'
             }`}
           >
             <Sparkles className="w-4 h-4 text-dnd-gold" />
             Hojas de Personaje Interactivas (7 Vistas A–G)
           </button>
           <button
+            type="button"
             onClick={() => setViewMode('archetypes')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-fantasy font-bold transition border ${
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-md text-xs font-bold uppercase tracking-wider transition border ${
               viewMode === 'archetypes'
-                ? 'bg-dnd-surface border-dnd-gold text-dnd-gold shadow-md shadow-amber-950/20'
-                : 'bg-dnd-card border-dnd-border text-slate-400 hover:text-slate-200'
+                ? 'bg-dnd-crimson border-dnd-gold text-white shadow-md'
+                : 'bg-dnd-parchment-contrast border-dnd-border-antique text-dnd-ink-muted hover:text-dnd-ink hover:bg-dnd-parchment'
             }`}
           >
-            <Layers className="w-4 h-4 text-purple-400" />
+            <Layers className="w-4 h-4 text-dnd-gold" />
             Arquetipos Canónicos Nivel 1 (SRD 5.2.1)
           </button>
         </div>
@@ -309,10 +316,10 @@ export default function DemoPage() {
             {/* Barra de Selección de Héroes de Muestra Públicos (SRD 5.2.1) */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider block">
+                <span className="text-xs font-bold text-dnd-gold font-dnd-title uppercase tracking-wider block">
                   Selecciona un Héroe de Muestra (SRD 5.2.1) para Probar su Ficha:
                 </span>
-                <span className="text-[11px] text-dnd-gold-light font-mono px-2 py-0.5 rounded bg-dnd-card border border-dnd-border">
+                <span className="text-[11px] text-dnd-gold font-dnd-title px-2 py-0.5 rounded-sm bg-dnd-crimson-surface border border-dnd-gold/40">
                   Licencia CC-BY-4.0 SRD
                 </span>
               </div>
@@ -322,28 +329,36 @@ export default function DemoPage() {
                   return (
                     <button
                       key={c.slug}
+                      type="button"
                       onClick={() => selectHero(c.slug)}
-                      className={`p-3.5 rounded-2xl border text-left transition flex flex-col justify-between space-y-2 ${
+                      className={`p-4 rounded-sm border-2 text-left transition flex flex-col justify-between space-y-2.5 dnd-notched ${
                         isSelected
-                          ? 'bg-dnd-surface border-dnd-gold ring-1 ring-dnd-gold shadow-md'
-                          : 'bg-dnd-card border-dnd-border text-slate-400 hover:border-slate-700 hover:text-slate-200'
+                          ? 'bg-dnd-parchment text-dnd-ink border-dnd-gold ring-1 ring-dnd-gold shadow-md'
+                          : 'bg-dnd-parchment-contrast hover:bg-dnd-parchment text-dnd-ink border-dnd-border-antique hover:border-dnd-gold shadow-xs'
                       }`}
                     >
                       <div>
-                        <span className="font-fantasy font-bold text-sm text-slate-100 block">
-                          {c.name}
-                        </span>
-                        <span className="text-[11px] text-dnd-gold-light block font-mono">
+                        <div className="flex items-center justify-between">
+                          <span className="font-dnd-title font-bold text-sm text-dnd-crimson block uppercase tracking-wide">
+                            {c.name}
+                          </span>
+                          {isSelected && (
+                            <span className="text-[10px] font-dnd-title uppercase tracking-widest text-dnd-gold bg-dnd-gold-surface px-1.5 py-0.5 rounded border border-dnd-gold">
+                              Activo
+                            </span>
+                          )}
+                        </div>
+                        <span className="text-xs text-dnd-terracotta block font-dnd-title font-semibold mt-0.5">
                           Nv. {c.level} &bull; {c.characterClass} ({c.subclass})
                         </span>
                       </div>
-                      <p className="text-[11px] text-slate-400 line-clamp-2">
+                      <p className="text-xs text-dnd-ink-muted font-dnd-body line-clamp-2 leading-relaxed">
                         {c.specialTrait}
                       </p>
-                      <div className="flex items-center justify-between text-[10px] pt-1.5 border-t border-dnd-border/60 text-slate-400 font-mono">
-                        <span className="text-emerald-400 font-semibold">{c.maxHp} PG</span>
-                        <span className="text-amber-300 font-semibold">{c.armorClass} CA</span>
-                        <span>{c.race}</span>
+                      <div className="flex items-center justify-between text-[11px] pt-2 border-t border-dnd-border-antique text-dnd-ink-muted font-dnd-title">
+                        <span className="text-dnd-crimson font-bold">{c.maxHp} PG</span>
+                        <span className="text-dnd-gold font-bold">{c.armorClass} CA</span>
+                        <span className="text-dnd-ink-subtle font-semibold">{c.race}</span>
                       </div>
                     </button>
                   );
@@ -437,7 +452,7 @@ export default function DemoPage() {
           /* MODO B: ARQUETIPOS CANÓNICOS DE NIVEL 1 */
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
             <div className="lg:col-span-2 space-y-4">
-              <h2 className="text-sm font-semibold text-slate-300 uppercase tracking-wider">
+              <h2 className="text-xs font-bold text-dnd-gold font-dnd-title uppercase tracking-wider">
                 Elige una Clase para Explorar
               </h2>
 
@@ -447,26 +462,27 @@ export default function DemoPage() {
                   return (
                     <button
                       key={cls.id}
+                      type="button"
                       onClick={() => setSelectedClassId(cls.id)}
-                      className={`p-4 rounded-xl border text-left transition relative flex flex-col justify-between h-28 shadow-sm ${
+                      className={`p-3.5 rounded-sm border-2 text-left transition relative flex flex-col justify-between h-28 dnd-notched ${
                         isSelected
-                          ? 'bg-dnd-surface border-dnd-gold text-slate-100 ring-1 ring-dnd-gold shadow-amber-950/30'
-                          : 'bg-dnd-card border-dnd-border text-slate-400 hover:text-slate-200 hover:border-slate-600'
+                          ? 'bg-dnd-parchment border-dnd-gold text-dnd-ink ring-1 ring-dnd-gold shadow-md'
+                          : 'bg-dnd-parchment-contrast hover:bg-dnd-parchment border-dnd-border-antique hover:border-dnd-gold text-dnd-ink shadow-xs'
                       }`}
                     >
                       <div>
                         <div className="flex items-center justify-between">
-                          <span className="font-fantasy font-bold text-sm text-slate-100">
+                          <span className="font-dnd-title font-bold text-sm text-dnd-crimson uppercase tracking-wide">
                             {cls.name}
                           </span>
                           {isSelected && <CheckCircle2 className="w-4 h-4 text-dnd-gold" />}
                         </div>
-                        <span className="text-[11px] text-slate-500 block mt-1">
-                          Dado: <strong className="text-slate-300">{cls.hitDie}</strong>
+                        <span className="text-[11px] text-dnd-ink-muted font-dnd-body block mt-0.5">
+                          Dado de Golpe: <strong className="text-dnd-crimson font-semibold">{cls.hitDie}</strong>
                         </span>
                       </div>
 
-                      <span className="text-[10px] text-dnd-gold-light truncate block">
+                      <span className="text-[10px] text-dnd-terracotta font-dnd-title font-bold truncate block uppercase tracking-wider">
                         {cls.primaryStat}
                       </span>
                     </button>
@@ -475,48 +491,48 @@ export default function DemoPage() {
               </div>
             </div>
 
-            <div className="p-6 rounded-2xl bg-dnd-card border border-dnd-border space-y-6 shadow-xl sticky top-24">
-              <div className="border-b border-dnd-border/80 pb-4 space-y-1">
-                <span className="text-[11px] uppercase tracking-wider text-dnd-gold font-semibold">
+            <div className="p-6 rounded-sm bg-dnd-parchment text-dnd-ink border-2 border-dnd-border-antique dnd-notched space-y-6 shadow-xl sticky top-24">
+              <div className="border-b border-dnd-border-antique pb-4 space-y-1">
+                <span className="text-[10px] uppercase tracking-wider text-dnd-terracotta font-dnd-title font-bold">
                   Arquetipo Seleccionado
                 </span>
-                <h3 className="text-2xl font-bold text-slate-100 font-fantasy">
+                <h3 className="text-2xl font-bold text-dnd-crimson font-dnd-title uppercase tracking-wide">
                   {currentClass.name} Nivel 1
                 </h3>
-                <p className="text-xs text-slate-400">{currentClass.role}</p>
+                <p className="text-xs text-dnd-ink-muted font-dnd-body">{currentClass.role}</p>
               </div>
 
               <div className="grid grid-cols-3 gap-2 text-center text-xs">
-                <div className="p-3 rounded-xl bg-dnd-surface border border-dnd-border">
-                  <span className="text-slate-500 block text-[10px]">Puntos de Golpe</span>
-                  <span className="text-lg font-bold text-emerald-400 flex items-center justify-center gap-1">
-                    <Heart className="w-3.5 h-3.5" /> {currentClass.startingHp}
+                <div className="p-3 rounded-sm bg-dnd-parchment-contrast border border-dnd-border-antique">
+                  <span className="text-dnd-ink-muted block text-[10px] font-dnd-title uppercase">Puntos Golpe</span>
+                  <span className="text-lg font-bold text-dnd-crimson font-dnd-title flex items-center justify-center gap-1">
+                    <Heart className="w-3.5 h-3.5 text-dnd-crimson" /> {currentClass.startingHp}
                   </span>
                 </div>
 
-                <div className="p-3 rounded-xl bg-dnd-surface border border-dnd-border">
-                  <span className="text-slate-500 block text-[10px]">Clase Armadura</span>
-                  <span className="text-lg font-bold text-amber-300 flex items-center justify-center gap-1">
-                    <Shield className="w-3.5 h-3.5" /> {currentClass.startingAc}
+                <div className="p-3 rounded-sm bg-dnd-parchment-contrast border border-dnd-border-antique">
+                  <span className="text-dnd-ink-muted block text-[10px] font-dnd-title uppercase">Clase Armadura</span>
+                  <span className="text-lg font-bold text-dnd-gold font-dnd-title flex items-center justify-center gap-1">
+                    <Shield className="w-3.5 h-3.5 text-dnd-gold" /> {currentClass.startingAc}
                   </span>
                 </div>
 
-                <div className="p-3 rounded-xl bg-dnd-surface border border-dnd-border">
-                  <span className="text-slate-500 block text-[10px]">Dado de Golpe</span>
-                  <span className="text-lg font-bold text-sky-400 flex items-center justify-center gap-1">
-                    <Dices className="w-3.5 h-3.5" /> {currentClass.hitDie}
+                <div className="p-3 rounded-sm bg-dnd-parchment-contrast border border-dnd-border-antique">
+                  <span className="text-dnd-ink-muted block text-[10px] font-dnd-title uppercase">Dado Golpe</span>
+                  <span className="text-lg font-bold text-dnd-ink font-dnd-title flex items-center justify-center gap-1">
+                    <Dices className="w-3.5 h-3.5 text-dnd-gold" /> {currentClass.hitDie}
                   </span>
                 </div>
               </div>
 
               <div className="space-y-3 text-xs">
                 <div className="space-y-1">
-                  <span className="text-slate-500">Salvaciones Competentes:</span>
+                  <span className="text-dnd-ink-muted font-dnd-title uppercase text-[10px] tracking-wide block">Salvaciones Competentes:</span>
                   <div className="flex gap-1.5">
                     {currentClass.savingThrows.map(s => (
                       <span
                         key={s}
-                        className="px-2 py-0.5 rounded bg-slate-900 border border-slate-800 text-slate-200 font-medium"
+                        className="px-2 py-0.5 rounded-sm bg-dnd-parchment-contrast border border-dnd-border-antique text-dnd-crimson font-dnd-title font-bold text-[11px]"
                       >
                         {s}
                       </span>
@@ -525,16 +541,16 @@ export default function DemoPage() {
                 </div>
 
                 <div className="space-y-1">
-                  <span className="text-slate-500">Equipo Inicial Destacado:</span>
-                  <p className="text-slate-300 font-medium">{currentClass.featuredWeapon}</p>
+                  <span className="text-dnd-ink-muted font-dnd-title uppercase text-[10px] tracking-wide block">Equipo Inicial Destacado:</span>
+                  <p className="text-dnd-ink font-dnd-body text-xs font-semibold">{currentClass.featuredWeapon}</p>
                 </div>
 
                 <div className="space-y-1">
-                  <span className="text-slate-500">Rasgo Emblemático:</span>
-                  <p className="text-dnd-gold font-medium">{currentClass.signatureFeature}</p>
+                  <span className="text-dnd-ink-muted font-dnd-title uppercase text-[10px] tracking-wide block">Rasgo Emblemático:</span>
+                  <p className="text-dnd-crimson font-dnd-title font-bold text-xs">{currentClass.signatureFeature}</p>
                 </div>
 
-                <p className="text-slate-400 leading-relaxed pt-2 border-t border-dnd-border/80">
+                <p className="text-dnd-ink-muted font-dnd-body leading-relaxed pt-2 border-t border-dnd-border-antique">
                   {currentClass.description}
                 </p>
               </div>
@@ -542,9 +558,9 @@ export default function DemoPage() {
               <div className="pt-2">
                 <Link
                   href={`/hechizos?clase=${encodeURIComponent(currentClass.name)}`}
-                  className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-dnd-surface border border-dnd-border text-slate-200 text-xs font-semibold hover:border-dnd-gold transition"
+                  className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-md bg-dnd-crimson hover:bg-dnd-crimson-hover border border-dnd-gold text-white text-xs font-dnd-title font-bold uppercase tracking-wider shadow-sm transition"
                 >
-                  <BookOpen className="w-3.5 h-3.5 text-sky-400" />
+                  <BookOpen className="w-3.5 h-3.5 text-dnd-gold" />
                   Consultar Hechizos de {currentClass.name}
                 </Link>
               </div>

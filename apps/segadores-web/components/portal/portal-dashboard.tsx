@@ -20,6 +20,8 @@ import {
 } from 'lucide-react';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
+import { ThemeToggle } from '@/components/theme/theme-toggle';
+import { TaperedRule, DndBadge } from '@segadores/ui';
 import {
   CAMPAIGN_CHARACTERS,
   CAMPAIGN_FULL_CHARACTERS,
@@ -277,22 +279,22 @@ export function PortalDashboard({ userEmail, player, initialPlayers = [] }: Port
 
       {/* BARRA DE SIMULACIÓN DE PERSPECTIVA DE JUGADOR (Modo de Pruebas DM) */}
       {isDm && (
-        <div className="bg-gradient-to-r from-amber-950/95 via-slate-900/95 to-amber-950/95 border-b border-amber-600/50 text-amber-100 px-4 py-2.5 sticky top-16 z-30 shadow-xl backdrop-blur-md">
+        <div className="bg-dnd-leather-dark border-b-2 border-dnd-border-antique text-dnd-ink px-4 py-2.5 sticky top-16 z-30 shadow-xl">
           <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
             <div className="flex items-center gap-2.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse shrink-0" />
+              <span className="w-2.5 h-2.5 rounded-full bg-dnd-gold animate-pulse shrink-0" />
               <div>
-                <span className="font-fantasy font-bold text-xs text-dnd-gold tracking-wide uppercase mr-2">
+                <span className="font-dnd-title font-bold text-xs text-dnd-gold tracking-wider uppercase mr-2">
                   Consola de Pruebas DM:
                 </span>
-                <span className="text-xs text-slate-200">
+                <span className="text-xs font-dnd-body text-dnd-ink-muted">
                   {isSimulating ? (
                     <>
-                      Viendo el portal como: <strong className="text-dnd-gold-light">{simulatedHeroName}</strong> (Rol Jugador)
+                      Viendo el portal como: <strong className="text-dnd-ink font-dnd-title">{simulatedHeroName}</strong> (Rol Jugador)
                     </>
                   ) : (
                     <>
-                      Perspectiva actual: <strong className="text-red-400">Master DM 🔒</strong> (Control total)
+                      Perspectiva actual: <strong className="text-dnd-crimson font-dnd-title">Master DM 🔒</strong> (Control total)
                     </>
                   )}
                 </span>
@@ -300,16 +302,17 @@ export function PortalDashboard({ userEmail, player, initialPlayers = [] }: Port
             </div>
 
             <div className="flex items-center gap-1.5 flex-wrap">
-              <span className="text-[11px] text-slate-400 mr-1 hidden sm:inline">Probar vista de:</span>
+              <span className="text-[11px] font-dnd-body text-dnd-ink-subtle mr-1 hidden sm:inline">Probar vista de:</span>
               <button
+                type="button"
                 onClick={() => {
                   setSimulatedHeroSlug(null);
                   setDmPreviewAsPlayer(false);
                 }}
-                className={`px-2.5 py-1 rounded-lg text-[11px] font-bold border transition ${
+                className={`px-2.5 py-1 rounded-md text-xs font-dnd-title font-bold uppercase tracking-wider border transition ${
                   !isSimulating
-                    ? 'bg-red-950 text-red-200 border-red-600 shadow ring-1 ring-red-500'
-                    : 'bg-dnd-surface text-slate-300 border-dnd-border hover:text-slate-100'
+                    ? 'bg-dnd-crimson text-white border-dnd-gold shadow-sm'
+                    : 'bg-dnd-parchment-contrast text-dnd-ink-muted border-dnd-border-antique hover:text-dnd-ink hover:bg-dnd-parchment'
                 }`}
                 title="Restaurar vista completa de Dungeon Master con consola de invitaciones y edición total"
               >
@@ -320,15 +323,16 @@ export function PortalDashboard({ userEmail, player, initialPlayers = [] }: Port
                 return (
                   <button
                     key={c.slug}
+                    type="button"
                     onClick={() => {
                       setSimulatedHeroSlug(c.slug);
                       setSelectedSlug(c.slug);
                       setDmPreviewAsPlayer(false);
                     }}
-                    className={`px-2.5 py-1 rounded-lg text-[11px] font-medium border transition ${
+                    className={`px-2.5 py-1 rounded-sm text-[11px] font-dnd-title font-medium uppercase tracking-wider border transition ${
                       isAct
-                        ? 'bg-amber-900/90 text-amber-200 border-amber-500 shadow-md ring-1 ring-amber-400 font-bold'
-                        : 'bg-dnd-surface text-slate-300 border-dnd-border hover:text-slate-100 hover:border-slate-600'
+                        ? 'bg-dnd-gold text-dnd-leather-dark border-dnd-gold-light font-bold shadow-sm'
+                        : 'bg-dnd-parchment-contrast text-dnd-ink-muted border-dnd-border-antique hover:text-dnd-ink hover:bg-dnd-parchment'
                     }`}
                     title={`Simular qué vería ${c.name} al entrar al portal`}
                   >
@@ -344,31 +348,35 @@ export function PortalDashboard({ userEmail, player, initialPlayers = [] }: Port
       <main className="flex-1 max-w-6xl w-full mx-auto p-4 sm:p-8 space-y-10">
         {/* Encabezado y Perfil de Jugador Autenticado */}
         <section className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 pb-2">
-          <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-950/40 border border-amber-800/40 text-dnd-gold-light text-xs font-medium">
-              <Shield className="w-3.5 h-3.5" />
-              Compañía Mercenaria &bull; Phandalin
+          <div className="space-y-3">
+            <div className="inline-flex items-center gap-2">
+              <DndBadge variant="parchment" size="sm" icon={<Shield className="w-3.5 h-3.5 text-dnd-crimson" />}>
+                Compañía Mercenaria &bull; Phandalin
+              </DndBadge>
             </div>
-            <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-slate-100 font-fantasy">
-              Portal de Campaña
-            </h1>
-            <p className="text-sm text-slate-400 max-w-xl">
-              Consola táctica de los miembros de <strong className="text-slate-200">Segadores de Orcos</strong>. Suite completa de hojas de personaje reactivas (TASK-06) e inventario del baúl de provisiones.
+            <div className="space-y-2">
+              <h1 className="text-3xl sm:text-5xl font-bold tracking-wider text-dnd-ink font-dnd-title uppercase drop-shadow-md">
+                Portal de <span className="text-dnd-gold">Campaña</span>
+              </h1>
+              <TaperedRule variant="gold" />
+            </div>
+            <p className="text-sm sm:text-base text-dnd-ink-muted font-dnd-body max-w-xl leading-relaxed">
+              Consola táctica de los miembros de <strong className="text-dnd-crimson font-dnd-title">Segadores de Orcos</strong>. Suite completa de hojas de personaje reactivas e inventario del baúl de provisiones.
             </p>
           </div>
 
           {/* Tarjeta de Sesión Activa */}
-          <div className="p-4 rounded-2xl bg-dnd-card border border-dnd-border space-y-3 shrink-0 shadow-lg">
-            <div className="flex items-center justify-between gap-4 border-b border-dnd-border/60 pb-2.5">
+          <div className="p-4 rounded-sm bg-dnd-parchment text-dnd-ink border-2 border-dnd-border-antique dnd-notched space-y-3 shrink-0 shadow-md">
+            <div className="flex items-center justify-between gap-4 border-b border-dnd-border-antique/80 pb-2.5">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-dnd-gold to-amber-700 flex items-center justify-center text-slate-950 font-bold text-xs shadow-inner">
+                <div className="w-8 h-8 rounded-sm bg-dnd-crimson border border-dnd-gold flex items-center justify-center text-dnd-gold font-dnd-title font-bold text-xs shadow-sm">
                   {displayName.charAt(0).toUpperCase()}
                 </div>
                 <div>
-                  <span className="text-xs font-bold text-slate-100 block leading-tight">
+                  <span className="text-xs font-dnd-title font-bold text-dnd-crimson block leading-tight">
                     {displayName}
                   </span>
-                  <span className="text-[10px] text-slate-400 font-mono block">
+                  <span className="text-[10px] text-dnd-ink-muted font-mono block">
                     {userEmail || 'Sesión Local'}
                   </span>
                 </div>
@@ -376,42 +384,47 @@ export function PortalDashboard({ userEmail, player, initialPlayers = [] }: Port
 
               {/* Distintivo de Rol */}
               {isDm ? (
-                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-red-950/80 border border-red-700/60 text-red-300 font-bold text-[11px] shadow-sm">
-                  <Lock className="w-3 h-3 text-red-400" /> Máster 🔒
-                </span>
+                <DndBadge variant="crimson" size="sm" icon={<Lock className="w-3 h-3 text-white" />}>
+                  Máster 🔒
+                </DndBadge>
               ) : (
-                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-950/50 border border-amber-800/40 text-dnd-gold-light font-semibold text-[11px]">
-                  <UserCheck className="w-3 h-3 text-dnd-gold" /> Jugador
-                </span>
+                <DndBadge variant="parchment" size="sm" icon={<UserCheck className="w-3 h-3 text-dnd-crimson" />}>
+                  Jugador
+                </DndBadge>
               )}
             </div>
 
-            {/* Controles de Sesión y Toggle DM */}
+            {/* Controles de Sesión y Toggle DM / Tema */}
             <div className="flex items-center justify-between gap-2 pt-1 text-xs">
-              {isDm ? (
-                <button
-                  onClick={() => setDmPreviewAsPlayer(!dmPreviewAsPlayer)}
-                  className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-[11px] transition ${
-                    dmPreviewAsPlayer
-                      ? 'bg-amber-950/40 text-amber-300 border-amber-800/50'
-                      : 'bg-dnd-surface text-slate-300 border-dnd-border hover:text-slate-100'
-                  }`}
-                  title="Permite al Dungeon Master verificar la experiencia visual de un jugador ordinario"
-                >
-                  <Eye className="w-3 h-3" />
-                  {dmPreviewAsPlayer ? 'Volver a Vista Máster' : 'Simular Vista Jugador'}
-                </button>
-              ) : (
-                <span className="text-[11px] text-slate-500 flex items-center gap-1">
-                  <Shield className="w-3 h-3 text-slate-600" /> Rol asignado en BD
-                </span>
-              )}
+              <div className="flex items-center gap-2">
+                {isDm ? (
+                  <button
+                    type="button"
+                    onClick={() => setDmPreviewAsPlayer(!dmPreviewAsPlayer)}
+                    className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border text-xs font-dnd-title uppercase tracking-wider transition ${
+                      dmPreviewAsPlayer
+                        ? 'bg-dnd-crimson text-white border-dnd-crimson-hover'
+                        : 'bg-dnd-parchment-contrast text-dnd-ink-muted border-dnd-border-antique hover:text-dnd-ink'
+                    }`}
+                    title="Permite al Dungeon Master verificar la experiencia visual de un jugador ordinario"
+                  >
+                    <Eye className="w-3 h-3" />
+                    {dmPreviewAsPlayer ? 'Volver a Máster' : 'Simular Jugador'}
+                  </button>
+                ) : (
+                  <span className="text-[11px] text-dnd-ink-muted font-dnd-body flex items-center gap-1">
+                    <Shield className="w-3 h-3 text-dnd-gold" /> Rol en BD
+                  </span>
+                )}
+
+                <ThemeToggle size="sm" />
+              </div>
 
               {/* Botón de Cerrar Sesión */}
               <form action="/auth/signout" method="POST">
                 <button
                   type="submit"
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-dnd-surface hover:bg-red-950/50 border border-dnd-border hover:border-red-800/60 text-slate-300 hover:text-red-200 transition text-[11px] font-medium"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-sm bg-dnd-parchment-contrast hover:bg-dnd-parchment border border-dnd-border-antique hover:border-dnd-crimson text-dnd-ink-muted hover:text-dnd-crimson transition text-[11px] font-dnd-title font-semibold uppercase tracking-wider"
                 >
                   <LogOut className="w-3 h-3" />
                   Cerrar sesión
@@ -431,25 +444,26 @@ export function PortalDashboard({ userEmail, player, initialPlayers = [] }: Port
 
         {/* TARJETA INFORMATIVA PARA JUGADOR INVITADO SIN PERSONAJE ASIGNADO AÚN */}
         {activeRole === 'player' && !hasAssignedCharacter && (
-          <section className="p-6 sm:p-7 rounded-3xl bg-gradient-to-br from-amber-950/50 via-slate-900 to-purple-950/30 border border-amber-600/50 shadow-2xl space-y-4 animate-in fade-in">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-amber-800/40 pb-4">
+          <section className="p-6 sm:p-7 rounded-sm bg-dnd-parchment border-2 border-dnd-gold dnd-notched shadow-lg space-y-4 animate-in fade-in text-dnd-ink">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-dnd-border-antique pb-4">
               <div className="flex items-center gap-3.5">
-                <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-dnd-gold to-amber-700 flex items-center justify-center text-slate-950 shadow-lg shrink-0">
+                <div className="w-11 h-11 rounded-sm bg-dnd-crimson border-2 border-dnd-gold flex items-center justify-center text-dnd-gold shadow-md shrink-0">
                   <Sparkles className="w-6 h-6" />
                 </div>
                 <div>
-                  <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-950/80 border border-amber-700/60 text-dnd-gold-light text-[11px] font-semibold">
-                    <Compass className="w-3 h-3 text-dnd-gold" />
-                    Nuevo Aventurero en la Mesa
+                  <div className="inline-flex items-center gap-1.5">
+                    <DndBadge variant="gold" size="sm">
+                      Nuevo Aventurero en la Mesa
+                    </DndBadge>
                   </div>
-                  <h2 className="text-xl sm:text-2xl font-bold font-fantasy text-slate-100 tracking-wide mt-1">
+                  <h2 className="text-xl sm:text-2xl font-bold font-dnd-title text-dnd-crimson tracking-wide mt-1 uppercase">
                     Bienvenido a Segadores de Orcos, {displayName}
                   </h2>
                 </div>
               </div>
             </div>
 
-            <p className="text-sm text-slate-200 leading-relaxed max-w-3xl">
+            <p className="text-sm text-dnd-ink-muted font-dnd-body leading-relaxed max-w-3xl">
               Bienvenido Aventurero. William te ha dado acceso a la mesa. Puedes consultar e interactuar con cualquiera de las hojas de tus compañeros a continuación, o solicitar al DM que te vincule formalmente a tu héroe.
             </p>
           </section>
@@ -457,16 +471,19 @@ export function PortalDashboard({ userEmail, player, initialPlayers = [] }: Port
 
         {/* Selector de los 5 Héroes Reales de la Campaña */}
         <section className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-sm font-semibold text-slate-300 uppercase tracking-wider flex items-center gap-2">
-              <Swords className="w-4 h-4 text-dnd-gold" />
-              Héroes Oficiales de la Compañía (Niveles 7 y 8)
-            </h2>
-            {isReadOnlyForUser && (
-              <span className="text-[11px] text-slate-400 font-mono">
-                👀 Modo Lectura (Ficha de Compañero)
-              </span>
-            )}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <h2 className="text-sm font-bold text-dnd-gold font-dnd-title uppercase tracking-wider flex items-center gap-2">
+                <Swords className="w-4 h-4 text-dnd-gold" />
+                Héroes Oficiales de la Compañía (Niveles 7 y 8)
+              </h2>
+              {isReadOnlyForUser && (
+                <span className="text-[11px] text-dnd-ink-muted font-dnd-title font-semibold">
+                  👀 Modo Lectura (Ficha de Compañero)
+                </span>
+              )}
+            </div>
+            <TaperedRule variant="gold" />
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
@@ -477,37 +494,39 @@ export function PortalDashboard({ userEmail, player, initialPlayers = [] }: Port
               return (
                 <button
                   key={c.slug}
+                  type="button"
                   onClick={() => setSelectedSlug(c.slug)}
-                  className={`p-3.5 rounded-2xl border text-left transition flex flex-col justify-between space-y-2 relative overflow-hidden ${
+                  className={`p-3.5 rounded-lg border text-left transition flex flex-col justify-between gap-2.5 relative overflow-hidden ${
                     isSelected
-                      ? 'bg-dnd-surface border-dnd-gold ring-1 ring-dnd-gold shadow-lg shadow-amber-950/30'
-                      : 'bg-dnd-card border-dnd-border text-slate-400 hover:border-slate-600 hover:text-slate-200'
+                      ? 'bg-dnd-parchment border-dnd-gold ring-2 ring-dnd-gold/60 shadow-md text-dnd-ink'
+                      : 'bg-dnd-parchment-contrast border-dnd-border-antique text-dnd-ink-muted hover:border-dnd-gold/60 hover:bg-dnd-parchment'
                   }`}
                 >
-                  {isUserAssigned && (
-                    <span className="absolute top-2 right-2 inline-flex items-center gap-1 px-1.5 py-0.2 rounded-full bg-amber-950/90 border border-amber-600/60 text-dnd-gold-light text-[9px] font-bold shadow-sm">
-                      <Star className="w-2.5 h-2.5 text-dnd-gold fill-dnd-gold" /> Tu Héroe
-                    </span>
-                  )}
+                  <div className="space-y-1 w-full">
+                    {isUserAssigned && (
+                      <div className="pb-0.5">
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-dnd-crimson border border-dnd-gold text-white text-[10px] font-sans font-bold uppercase tracking-wider shadow-xs">
+                          <Star className="w-2.5 h-2.5 text-dnd-gold fill-dnd-gold shrink-0" />
+                          <span>Tu Héroe</span>
+                        </span>
+                      </div>
+                    )}
 
-                  <div>
-                    <div className="flex items-center justify-between">
-                      <span className="font-fantasy font-bold text-sm text-slate-100">
-                        {c.name}
-                      </span>
+                    <div className="font-dnd-title font-bold text-sm text-dnd-crimson leading-snug break-words">
+                      {c.name}
                     </div>
-                    <span className="text-[11px] text-dnd-gold-light font-semibold block mt-0.5">
+                    <span className="text-xs text-dnd-terracotta font-sans font-semibold block">
                       Nv. {c.level} &bull; {c.characterClass}
                     </span>
-                    <span className="text-[10px] text-slate-500 block truncate">
+                    <span className="text-xs text-dnd-ink-muted font-dnd-body block truncate">
                       {c.subclass}
                     </span>
                   </div>
 
-                  <div className="flex items-center justify-between text-[11px] pt-1.5 border-t border-dnd-border/60">
-                    <span className="text-emerald-400 font-semibold font-mono">{c.maxHp} PG</span>
-                    <span className="text-amber-300 font-semibold font-mono">{c.armorClass} CA</span>
-                    <span className="text-slate-500 font-mono">{c.race.split(' ')[0]}</span>
+                  <div className="flex items-center justify-between text-xs pt-2 border-t border-dnd-border-antique/80 font-sans w-full">
+                    <span className="text-[#15803d] dark:text-[#4ade80] font-bold">{c.maxHp} PG</span>
+                    <span className="text-dnd-gold font-bold">{c.armorClass} CA</span>
+                    <span className="text-dnd-ink-muted text-[11px] font-medium">{c.race.split(' ')[0]}</span>
                   </div>
                 </button>
               );
@@ -516,7 +535,7 @@ export function PortalDashboard({ userEmail, player, initialPlayers = [] }: Port
         </section>
 
         {/* SUITE COMPLETA DE HOJA DE PERSONAJE (LAS 7 VISTAS INTERACTIVAS A–G) */}
-        <section className="space-y-6 pt-4 border-t border-dnd-border/80">
+        <section className="space-y-6 pt-4 border-t border-dnd-border-antique">
           <CharacterSheet
             character={activeCharRecord}
             activeTab={activeSheetTab}
@@ -544,46 +563,49 @@ export function PortalDashboard({ userEmail, player, initialPlayers = [] }: Port
         </section>
 
         {/* Baúl de la Compañía (Campaign Vault) */}
-        <section className="p-6 rounded-3xl bg-dnd-card border border-dnd-border space-y-4 shadow-xl">
-          <div className="flex items-center justify-between border-b border-dnd-border/80 pb-3">
-            <div className="flex items-center gap-2">
-              <Package className="w-5 h-5 text-amber-400" />
-              <h3 className="font-fantasy font-bold text-base text-slate-100">
-                Baúl de la Compañía (Tesoro y Provisiones Compartidas)
-              </h3>
+        <section className="p-6 rounded-sm bg-dnd-parchment text-dnd-ink border-2 border-dnd-border-antique dnd-notched space-y-4 shadow-md">
+          <div className="space-y-1">
+            <div className="flex items-center justify-between pb-1">
+              <div className="flex items-center gap-2">
+                <Package className="w-5 h-5 text-dnd-gold" />
+                <h3 className="font-dnd-title font-bold text-base text-dnd-crimson uppercase tracking-wider">
+                  Baúl de la Compañía (Tesoro y Provisiones Compartidas)
+                </h3>
+              </div>
+              <DndBadge variant="parchment" size="sm">
+                campaign_vault
+              </DndBadge>
             </div>
-            <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-slate-900 border border-slate-800 text-slate-300 font-mono">
-              campaign_vault
-            </span>
+            <TaperedRule variant="crimson" />
           </div>
 
-          {/* Monedas de Campaña */}
+          {/* Monedas y Provisiones */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center text-xs">
-            <div className="p-3 rounded-xl bg-dnd-surface border border-dnd-border">
-              <span className="text-slate-500 block text-[10px]">Piezas de Oro</span>
-              <span className="text-base font-bold text-dnd-gold">1,420 po</span>
+            <div className="p-3 rounded-sm bg-dnd-parchment-contrast border border-dnd-border-antique">
+              <span className="text-dnd-ink-muted font-dnd-title text-[10px] uppercase block">Piezas de Oro</span>
+              <span className="text-base font-dnd-title font-bold text-dnd-gold">1,420 po</span>
             </div>
-            <div className="p-3 rounded-xl bg-dnd-surface border border-dnd-border">
-              <span className="text-slate-500 block text-[10px]">Piezas de Plata</span>
-              <span className="text-base font-bold text-slate-300">380 pp</span>
+            <div className="p-3 rounded-sm bg-dnd-parchment-contrast border border-dnd-border-antique">
+              <span className="text-dnd-ink-muted font-dnd-title text-[10px] uppercase block">Piezas de Plata</span>
+              <span className="text-base font-dnd-title font-bold text-dnd-ink">380 pp</span>
             </div>
-            <div className="p-3 rounded-xl bg-dnd-surface border border-dnd-border">
-              <span className="text-slate-500 block text-[10px]">Pociones de Curación</span>
-              <span className="text-base font-bold text-red-400">4 (Mayor)</span>
+            <div className="p-3 rounded-sm bg-dnd-parchment-contrast border border-dnd-border-antique">
+              <span className="text-dnd-ink-muted font-dnd-title text-[10px] uppercase block">Pociones de Curación</span>
+              <span className="text-base font-dnd-title font-bold text-dnd-crimson">4 (Mayor)</span>
             </div>
-            <div className="p-3 rounded-xl bg-dnd-surface border border-dnd-border">
-              <span className="text-slate-500 block text-[10px]">Provisiones de Ración</span>
-              <span className="text-base font-bold text-emerald-400">18 Días</span>
+            <div className="p-3 rounded-sm bg-dnd-parchment-contrast border border-dnd-border-antique">
+              <span className="text-dnd-ink-muted font-dnd-title text-[10px] uppercase block">Provisiones de Ración</span>
+              <span className="text-base font-dnd-title font-bold text-emerald-700 dark:text-emerald-400">18 Días</span>
             </div>
           </div>
 
           {activeRole === 'dm' && (
-            <div className="p-3 rounded-xl bg-red-950/40 border border-red-800/50 text-red-200 text-xs flex items-center justify-between animate-in fade-in">
+            <div className="p-3 rounded-sm bg-dnd-crimson-surface border border-dnd-crimson text-dnd-crimson text-xs flex items-center justify-between animate-in fade-in font-dnd-body">
               <span className="flex items-center gap-2">
-                <Lock className="w-3.5 h-3.5 text-red-400" />
+                <Lock className="w-3.5 h-3.5 text-dnd-crimson" />
                 <strong>Vista DM Activa:</strong> Acceso al libro secreto de reparto y objetos no identificados de Phandalin.
               </span>
-              <span className="text-[10px] font-mono text-red-300">#dm-only</span>
+              <span className="text-[10px] font-mono font-bold text-dnd-crimson">#dm-only</span>
             </div>
           )}
         </section>

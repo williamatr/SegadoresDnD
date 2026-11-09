@@ -23,53 +23,53 @@ interface CalloutTheme {
 
 const CALLOUT_THEMES: Record<string, CalloutTheme> = {
   statblock: {
-    border: 'border-amber-600/50',
-    bg: 'bg-amber-950/20',
-    headerText: 'text-amber-200 font-fantasy',
+    border: 'border border-dnd-crimson/50',
+    bg: 'bg-dnd-parchment text-dnd-ink rounded-lg shadow-sm',
+    headerText: 'text-dnd-crimson font-dnd-title font-bold tracking-wide',
     icon: Shield
   },
   'dnd-grid': {
-    border: 'border-amber-700/40',
-    bg: 'bg-slate-950/50',
-    headerText: 'text-amber-300 font-semibold',
+    border: 'border border-dnd-gold/60',
+    bg: 'bg-dnd-parchment text-dnd-ink rounded-lg shadow-sm',
+    headerText: 'text-dnd-gold font-dnd-title font-bold tracking-wide',
     icon: Dices
   },
   info: {
-    border: 'border-sky-700/50',
-    bg: 'bg-sky-950/25',
-    headerText: 'text-sky-200 font-semibold',
+    border: 'border border-dnd-border-antique',
+    bg: 'bg-dnd-parchment text-dnd-ink rounded-lg shadow-sm',
+    headerText: 'text-dnd-crimson font-dnd-title font-bold tracking-wide',
     icon: Info
   },
   tip: {
-    border: 'border-emerald-700/50',
-    bg: 'bg-emerald-950/25',
-    headerText: 'text-emerald-200 font-semibold',
+    border: 'border border-emerald-600/40',
+    bg: 'bg-emerald-950/10 text-dnd-ink rounded-lg shadow-sm',
+    headerText: 'text-emerald-700 dark:text-emerald-400 font-dnd-title font-bold tracking-wide',
     icon: Sparkles
   },
   warning: {
-    border: 'border-amber-700/60',
-    bg: 'bg-amber-950/30',
-    headerText: 'text-amber-300 font-semibold',
+    border: 'border border-amber-600/40',
+    bg: 'bg-amber-950/10 text-dnd-ink rounded-lg shadow-sm',
+    headerText: 'text-amber-700 dark:text-amber-400 font-dnd-title font-bold tracking-wide',
     icon: AlertTriangle
   },
   todo: {
-    border: 'border-indigo-700/50',
-    bg: 'bg-indigo-950/25',
-    headerText: 'text-indigo-200 font-semibold',
+    border: 'border border-indigo-600/40',
+    bg: 'bg-indigo-950/10 text-dnd-ink rounded-lg shadow-sm',
+    headerText: 'text-indigo-700 dark:text-indigo-400 font-dnd-title font-bold tracking-wide',
     icon: ListTodo
   },
   dm: {
-    border: 'border-red-700/60',
-    bg: 'bg-red-950/40',
-    headerText: 'text-red-200 font-bold',
-    badgeBg: 'bg-red-900/60',
-    badgeText: 'text-red-300 border border-red-700/50',
+    border: 'border border-dnd-crimson',
+    bg: 'bg-dnd-crimson-surface text-dnd-ink rounded-lg shadow-sm',
+    headerText: 'text-dnd-crimson font-dnd-title font-bold tracking-wide',
+    badgeBg: 'bg-dnd-crimson',
+    badgeText: 'text-white border border-dnd-gold',
     icon: Lock
   },
   note: {
-    border: 'border-slate-700/60',
-    bg: 'bg-slate-900/40',
-    headerText: 'text-slate-200 font-semibold',
+    border: 'border border-dnd-border-antique',
+    bg: 'bg-dnd-parchment text-dnd-ink rounded-lg shadow-sm',
+    headerText: 'text-dnd-crimson font-dnd-title font-bold tracking-wide',
     icon: FileText
   }
 };
@@ -98,7 +98,7 @@ export function Callout({ callout, className = '', children }: CalloutProps) {
   const headerContent = (
     <div className="flex items-center justify-between w-full gap-2">
       <div className="flex items-center gap-2.5">
-        <IconComponent className="w-4 h-4 shrink-0 opacity-90" />
+        <IconComponent className="w-4 h-4 shrink-0 opacity-90 text-dnd-crimson" />
         <span className={`text-sm tracking-wide ${theme.headerText}`}>
           {callout.title}
         </span>
@@ -106,19 +106,19 @@ export function Callout({ callout, className = '', children }: CalloutProps) {
 
       <div className="flex items-center gap-2">
         {callout.isDmOnly && (
-          <span className="text-[10px] uppercase tracking-wider font-semibold px-2 py-0.5 rounded bg-red-900/80 text-red-200 border border-red-600/40 flex items-center gap-1 shadow-sm">
-            <Lock className="w-2.5 h-2.5" /> Confidencial DM
+          <span className="text-xs uppercase tracking-wider font-dnd-title font-bold px-2 py-0.5 rounded-md bg-dnd-crimson text-white border border-dnd-gold flex items-center gap-1 shadow-xs">
+            <Lock className="w-3 h-3 text-dnd-gold" /> Confidencial DM 🔒
           </span>
         )}
         {isCollapsible && (
-          <ChevronDown className="w-4 h-4 text-slate-400 group-open:rotate-180 transition-transform duration-200" />
+          <ChevronDown className="w-4 h-4 text-dnd-ink-subtle group-open:rotate-180 transition-transform duration-200" />
         )}
       </div>
     </div>
   );
 
   const bodyContent = (
-    <div className="text-sm leading-relaxed text-slate-300 mt-2.5 space-y-2 whitespace-pre-wrap font-sans">
+    <div className="text-xs leading-relaxed text-dnd-ink/90 mt-2.5 space-y-2 whitespace-pre-wrap font-dnd-body">
       {children || callout.content}
     </div>
   );
@@ -127,7 +127,7 @@ export function Callout({ callout, className = '', children }: CalloutProps) {
     return (
       <details
         open={defaultOpen}
-        className={`group my-4 rounded-xl border p-4 shadow-md transition-colors ${theme.border} ${theme.bg} ${className}`}
+        className={`group my-4 rounded-lg border p-4 shadow-sm transition-colors ${theme.border} ${theme.bg} ${className}`}
       >
         <summary className="list-none cursor-pointer select-none">
           {headerContent}
@@ -139,7 +139,7 @@ export function Callout({ callout, className = '', children }: CalloutProps) {
 
   return (
     <div
-      className={`my-4 rounded-xl border p-4 shadow-md ${theme.border} ${theme.bg} ${className}`}
+      className={`my-4 rounded-lg border p-4 shadow-sm ${theme.border} ${theme.bg} ${className}`}
     >
       {headerContent}
       {bodyContent}

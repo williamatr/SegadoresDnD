@@ -17,16 +17,16 @@ export function ExhaustionSelector({
   const speedPenalty = currentLevel * 5;
 
   return (
-    <div className="p-4 rounded-2xl bg-dnd-card border border-dnd-border space-y-3 shadow-md">
+    <div className="p-4 rounded-lg bg-dnd-parchment text-dnd-ink border border-dnd-border-antique dnd-notched space-y-3 shadow-sm">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Flame className={`w-4 h-4 ${currentLevel > 0 ? 'text-amber-500 animate-pulse' : 'text-slate-400'}`} />
-          <h4 className="font-fantasy font-semibold text-xs text-slate-200 uppercase tracking-wider">
+          <Flame className={`w-4 h-4 ${currentLevel > 0 ? 'text-dnd-terracotta animate-pulse' : 'text-dnd-ink-subtle'}`} />
+          <h4 className="font-dnd-title font-bold text-xs text-dnd-crimson uppercase tracking-wider">
             Agotamiento (D&D 5.5e)
           </h4>
         </div>
         {currentLevel > 0 && (
-          <span className="px-2 py-0.5 rounded-full bg-amber-950/80 border border-amber-700/60 text-amber-300 font-bold text-[11px] font-mono">
+          <span className="px-2 py-0.5 rounded-md bg-dnd-crimson border border-dnd-crimson-hover text-white font-bold text-xs font-dnd-title uppercase">
             Nivel {currentLevel}
           </span>
         )}
@@ -43,14 +43,14 @@ export function ExhaustionSelector({
               type="button"
               disabled={readOnly}
               onClick={() => onUpdateExhaustion?.(lvl)}
-              className={`py-1.5 rounded-lg text-xs font-mono font-bold transition flex flex-col items-center justify-center border ${
+              className={`py-1.5 rounded-md text-xs font-dnd-title font-bold transition flex flex-col items-center justify-center border ${
                 isSelected
                   ? lvl === 6
-                    ? 'bg-red-950 border-red-500 text-red-200 ring-2 ring-red-500'
+                    ? 'bg-dnd-crimson border-dnd-crimson-hover text-white ring-2 ring-dnd-crimson-hover shadow-sm'
                     : isDanger
-                    ? 'bg-amber-950 border-amber-500 text-amber-200 ring-1 ring-amber-500'
-                    : 'bg-dnd-surface border-dnd-gold text-dnd-gold ring-1 ring-dnd-gold'
-                  : 'bg-slate-900 border-slate-800 text-slate-400 hover:border-slate-700 hover:text-slate-200'
+                    ? 'bg-dnd-terracotta border-[#a34712] text-white ring-1 ring-[#a34712] shadow-sm'
+                    : 'bg-dnd-parchment-contrast border-dnd-gold text-dnd-crimson ring-1 ring-dnd-gold shadow-xs'
+                  : 'bg-dnd-parchment-dark border-dnd-border-antique text-dnd-ink-muted hover:border-dnd-gold hover:text-dnd-ink'
               }`}
             >
               <span>{lvl === 6 ? '💀' : lvl}</span>
@@ -61,23 +61,23 @@ export function ExhaustionSelector({
 
       {/* Desglose de Penalizaciones 5.5e */}
       {currentLevel > 0 ? (
-        <div className="p-2.5 rounded-xl bg-slate-950/70 border border-amber-900/40 space-y-1 text-xs">
-          <div className="flex items-center justify-between text-amber-300 font-medium">
+        <div className="p-2.5 rounded-sm bg-dnd-parchment-contrast border border-dnd-border-antique space-y-1 text-xs">
+          <div className="flex items-center justify-between text-dnd-crimson font-dnd-body font-semibold">
             <span>Penalizador a tiradas d20 y CD de conjuros:</span>
-            <span className="font-mono font-bold text-red-400">-{d20Penalty}</span>
+            <span className="font-dnd-title font-bold text-dnd-crimson">-{d20Penalty}</span>
           </div>
-          <div className="flex items-center justify-between text-amber-300 font-medium">
+          <div className="flex items-center justify-between text-dnd-crimson font-dnd-body font-semibold">
             <span>Reducción de velocidad:</span>
-            <span className="font-mono font-bold text-red-400">-{speedPenalty} pies</span>
+            <span className="font-dnd-title font-bold text-dnd-crimson">-{speedPenalty} pies</span>
           </div>
           {currentLevel === 6 && (
-            <p className="text-[11px] text-red-400 font-bold text-center pt-1 border-t border-red-900/60">
+            <p className="text-[11px] text-dnd-crimson font-dnd-title font-bold text-center pt-1 border-t border-dnd-border-antique">
               💀 Nivel 6: Muerte inmediata por agotamiento físico absoluto.
             </p>
           )}
         </div>
       ) : (
-        <p className="text-[11px] text-slate-500">
+        <p className="text-[11px] text-dnd-ink-muted font-dnd-body">
           Sin penalizadores de fatiga activos.
         </p>
       )}

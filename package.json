@@ -3,10 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "description": "Monorepo para SegadoresDnD - Wiki de campaña y gestor interactivo de personajes",
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
   "scripts": {
     "submodule:sync": "node scripts/sync-wiki.mjs",
     "sync:push": "node scripts/sync-characters-push.mjs",
@@ -17,6 +13,7 @@
     "predev": "pnpm submodule:sync",
     "build": "turbo run build",
     "dev": "turbo run dev",
+    "test": "turbo run test",
     "lint": "turbo run lint",
     "clean": "turbo run clean"
   },
