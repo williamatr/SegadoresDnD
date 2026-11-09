@@ -5,7 +5,7 @@ import type {
   EvaluatedCharacterState,
   StandardConditionId
 } from '../types/effects.ts';
-import { formatModifier } from './abilities.ts';
+import { formatModifier, calculateAbilityModifier } from './abilities.ts';
 
 function normalizeText(value: string): string {
   return value
@@ -163,22 +163,57 @@ export function evaluateCharacterState(character: Character): EvaluatedCharacter
   const isArtificer = classesNorm.includes('artifice');
   const isSporesDruid = classesNorm.includes('esporas') || (classesNorm.includes('druida') && normalizeText(character.player_notes ?? '').includes('esporas'));
 
-  const hasEquippedArmorOrShield = (character.inventory ?? []).some(
+  const dexMod = calculateAbilityModifier(character.ability_scores?.dex ?? 10);
+  const wisMod = calculateAbilityModifier(character.ability_scores?.wis ?? 10);
+
+  const equippedArmorItem = (character.inventory ?? []).find(
     item =>
       item.equipped &&
       (item.category === 'armor' ||
-        item.category === 'shield' ||
+        item.armor !== undefined ||
         normalizeText(item.name).includes('armadura de') ||
-        normalizeText(item.name).includes('cota de') ||
-        normalizeText(item.name).includes('escudo'))
+        normalizeText(item.name).includes('cota de'))
   );
 
-  if (isMonk && hasEquippedArmorOrShield) {
-    blockAction(availability, 'martial_arts', 'Armadura o escudo equipado');
-    blockAction(availability, 'unarmored_movement', 'Armadura o escudo equipado');
-    tacticalReminders.push(
-      'Monje con Armadura/Escudo: Defensa sin Armadura, Artes Marciales y Movimiento sin Armadura están desactivados, pero tus Puntos de Ki (Ráfaga de golpes, Defensa paciente, Paso del viento) siguen 100% activos.'
-    );
+  const equippedShieldItem = (character.inventory ?? []).find(
+    item =>
+      item.equipped &&
+      (item.category === 'shield' || normalizeText(item.name).includes('escudo'))
+  );
+
+  const hasEquippedArmorOrShield = Boolean(equippedArmorItem || equippedShieldItem);
+
+  if (isMonk) {
+    if (hasEquippedArmorOrShield) {
+      blockAction(availability, 'martial_arts', 'Armadura o escudo equipado');
+      blockAction(availability, 'unarmored_movement', 'Armadura o escudo equipado');
+      const baseArmorAc = equippedArmorItem?.armor?.baseAc ?? 16;
+      const shieldBonus = equippedShieldItem ? 2 : 0;
+      effectiveAc = baseArmorAc + shieldBonus;
+      acBreakdown.length = 0;
+      acBreakdown.push(`${equippedArmorItem?.name || 'Armadura equipada'} (CA ${effectiveAc})`);
+      tacticalReminders.push(
+        'Monje con Armadura/Escudo: Defensa sin Armadura, Artes Marciales (ataque desarmado con DES / 1d6 / golpe desarmado como acción adicional) y Movimiento sin Armadura (+10 pies) están desactivados. Tus Puntos de Ki (Puntos de Concentración: Ráfaga de golpes, Defensa paciente, Paso del viento) y armas siguen 100% activos.'
+      );
+    } else {
+      const unarmoredAc = 10 + dexMod + wisMod;
+      const hasMageArmor = (character.active_effects ?? []).some(e => normalizeText(e.name).includes('armadura de mago'));
+      effectiveAc = hasMageArmor ? Math.max(unarmoredAc, 13 + dexMod) : unarmoredAc;
+      acBreakdown.length = 0;
+      acBreakdown.push(`Defensa sin Armadura de Monje (10 + DES ${formatModifier(dexMod)} + SAB ${formatModifier(wisMod)}): ${unarmoredAc}`);
+      if (hasMageArmor && 13 + dexMod > unarmoredAc) {
+        acBreakdown.push(`Armadura de mago (13 + DES): ${13 + dexMod}`);
+      }
+
+      effectiveSpeed = (character.speed || 30) + 10;
+      speedBreakdown.length = 0;
+      speedBreakdown.push(`Velocidad base: ${character.speed || 30} pies`);
+      speedBreakdown.push('Movimiento sin Armadura de Monje (+10 pies)');
+
+      tacticalReminders.push(
+        `Monje sin Armadura: Defensa sin Armadura (CA ${effectiveAc}), Artes Marciales (ataques desarmados con DES 1d6${formatModifier(dexMod)} y golpe desarmado como acción adicional gratuita) y Movimiento sin Armadura (+10 pies -> ${effectiveSpeed} pies) están plenamente activos.`
+      );
+    }
   }
 
   if (isArtificer) {

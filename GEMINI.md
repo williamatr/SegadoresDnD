@@ -38,13 +38,40 @@ Este documento define las reglas de desarrollo, arquitectura, licencias y compat
 
 ---
 
-## 4. Sincronización del Lore (Bóveda de Obsidian)
+## 4. Sincronización del Lore y Flujo Canónico de Datos hacia Producción
 
-* **Submódulo Privado (`content/wiki/`):** Vinculado al repositorio privado `SegadoresDnD-Private`.
-* **Script Inteligente (`scripts/sync-wiki.mjs`):**
-  * `pnpm dev` ejecuta `predev` (`node scripts/sync-wiki.mjs`) con `GIT_TERMINAL_PROMPT=0`.
-  * Si el entorno tiene acceso al repo privado, actualiza el submódulo silenciosamente.
-  * Si el entorno es un clon público (reclutador / portafolio / sin internet), emite un aviso amigable y utiliza los mocks públicos de `content/mocks/` sin detener el arranque del servidor.
+### Regla Estricta de Aislamiento de Rutas (Prohibición de Rutas Locales Externas)
+* **PROHIBICIÓN OBLIGATORIA:** **Ningún agente, script del repositorio ni componente de la aplicación web debe leer o hacer referencia a rutas locales fuera del repositorio** (tales como `/home/william/Proyectos/Obsidian/...`).
+* En entornos de integración continua (CI/CD), contenedores Docker, GitHub Actions y despliegues en la nube (Vercel), esas rutas locales del host **no existen** y provocarán roturas fatales en tiempo de ejecución o compilación.
+
+### Pipeline Canónico de 3 Eslabones
+
+```mermaid
+flowchart LR
+    A["Bóveda Obsidian Local"] -->|"Git Push Privado"| B["Repo Privado: SegadoresDnD-Private"]
+    B -->|"Submódulo Git (pnpm submodule:sync)"| C["Monorepo: content/wiki/"]
+    C -->|"Scripts de Ingesta (scripts/sync-*.mjs)"| D[("Supabase DB (PostgreSQL)")]
+    C -->|"Actualización de Catálogos Tipados"| E["@segadores/dnd-core + Fallbacks en Código"]
+    D -->|"Lectura en Vivo (revalidate: 0)"| F["Producción Vercel (apps/segadores-web)"]
+    E -->|"Lógica y Reglas Compiladas"| F
+```
+
+1. **Eslabón 1: Bóveda Local $\rightarrow$ GitHub (`SegadoresDnD-Private`) $\rightarrow$ Submódulo `content/wiki/`:**
+   * El Dungeon Master o los jugadores redactan y actualizan notas en su bóveda de Obsidian conectada al repositorio privado `SegadoresDnD-Private`.
+   * El monorepo incorpora este repositorio como un submódulo Git en `content/wiki/`, actualizado de forma idempotente mediante `pnpm submodule:sync` (`node scripts/sync-wiki.mjs`).
+
+2. **Eslabón 2: Submódulo `content/wiki/` $\rightarrow$ Scripts de Ingesta (`scripts/sync-*.mjs`) $\rightarrow$ Supabase DB + Fallbacks Tipados:**
+   * Los scripts del repositorio (`scripts/sync-characters-push.mjs`, etc.) leen **exclusivamente de `content/wiki/`** dentro del workspace.
+   * Parsean y normalizan el contenido Markdown y frontmatter YAML, volcando los datos estructurados hacia las tablas de **Supabase**:
+     * `public.characters`: Estadísticas completas, atributos, inventarios, recursos, conjuros conocidos y preparados.
+     * `public.campaigns`: Campañas activas (`SEG-001: Segadores de Orcos`).
+     * `public.campaign_vault`: Baúl comunal de la compañía (pertenencias comunes).
+     * `public.campaign_characters`: Vínculos N:M de aventureros a la campaña.
+   * Simultáneamente, se sincronizan los catálogos canónicos tipados en código (`@segadores/dnd-core` y `apps/segadores-web/lib/campaign/characters.ts`) como garantía de fallbacks offline y tests unitarios.
+
+3. **Eslabón 3: Producción en Vercel (`apps/segadores-web`):**
+   * En los servidores de producción de Vercel (donde el submódulo privado `content/wiki/` puede no clonarse por ausencia de tokens SSH privados en el builder de Vercel), la web opera de forma completamente desacoplada del sistema de archivos local.
+   * `apps/segadores-web` consulta directamente las tablas de **Supabase** (con `export const revalidate = 0` para reflejar mutaciones en tiempo real) y los paquetes del monorepo (`@segadores/dnd-core`, `@segadores/character-sheet`, `content/mocks/`), garantizando 100% de disponibilidad, resiliencia y alta performance.
 
 ---
 

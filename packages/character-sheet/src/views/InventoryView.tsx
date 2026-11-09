@@ -192,8 +192,15 @@ export function InventoryView({
               {/* Botones de Acción (Equipar / Sintonizar) */}
               {!readOnly && (
                 <div className="flex items-center justify-end gap-2 pt-2 border-t border-dnd-border-antique/80 text-xs">
-                  {/* Botón de Equipar/Desequipar (Armas y Armaduras) */}
-                  {(item.category === 'weapon' || item.category === 'armor' || item.category === 'shield') && (
+                  {/* Botón de Equipar/Desequipar (Armas, Armaduras y Escudos) */}
+                  {(item.category === 'weapon' ||
+                    item.category === 'armor' ||
+                    item.category === 'shield' ||
+                    item.weapon !== undefined ||
+                    item.armor !== undefined ||
+                    item.name.toLowerCase().includes('cota') ||
+                    item.name.toLowerCase().includes('armadura') ||
+                    item.name.toLowerCase().includes('escudo')) && (
                     <button
                       onClick={() => onToggleEquipped?.(item.slug)}
                       className={`px-3 py-1 rounded-sm border font-dnd-title font-bold text-xs uppercase tracking-wider transition shadow-sm ${

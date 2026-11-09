@@ -39,6 +39,7 @@ export interface CharacterSheetCallbacks {
   onToggleInspiration?: (hasInspiration: boolean) => void;
   onToggleAttunement?: (itemSlug: string) => void;
   onToggleEquipped?: (itemSlug: string) => void;
+  onTogglePreparedSpell?: (spellName: string) => void;
   onApplyEffect?: (effect: ActiveEffect) => void;
   onRemoveEffect?: (effectId: string) => void;
   onUpdatePersonalityField?: (field: keyof CharacterPersonality, value: string) => void;
